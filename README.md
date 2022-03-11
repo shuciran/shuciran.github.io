@@ -1,3 +1,12 @@
+<html>
+
+   <h1>Brian Rodríguez (a.k.a Shuciran) Cybersec Release</h1>
+   <h2>My copy & paste git and something else...</h2>
+   <img src="img/background.jpg">
+
+</html>
+
+
 ## Going Wild about cybersecurity
 
 
@@ -14,5 +23,3 @@ Here are some ideas to get you started:
 - 📫 How to reach me: ...
 - 😄 Pronouns: ...
 - ⚡ Fun fac
-
-
