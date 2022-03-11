@@ -1,6 +1,6 @@
 #Brian Rodríguez (a.k.a Shuciran) Cybersec Release</h1>
 
-##My copy & paste git and something else...</h2>
+#My copy & paste git and something else...</h2>
 
 ### Hi there 👋
 
