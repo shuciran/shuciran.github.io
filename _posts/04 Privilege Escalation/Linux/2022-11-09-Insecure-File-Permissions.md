@@ -31,7 +31,6 @@ Jan27 18:00:01 victim CRON[2671]:(root) CMD (cd /var/scripts/ && ./user_backups.
 ```
 
 No that we know the location of the script, we can inspect its contents and permissions.
-
 ```bash
 student@debian:~$ cat /var/scripts/user_backups.sh
 #!/bin/bash
