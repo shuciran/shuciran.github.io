@@ -1,0 +1,291 @@
+To get started, let's simply run recon-ng:
+
+```
+kali@kali:~$ recon-ng
+[*] Version check disabled.
+
+                                          /\
+                                         / \\ /\
+    Sponsored by...               /\  /\/  \\V  \/\
+                                 / \\/ // \\\\\ \\ \/\
+                                // // BLACK HILLS \/ \\
+                               www.blackhillsinfosec.com
+
+                  ____   ____   ____   ____ _____ _  ____   ____  ____
+                 |____] | ___/ |____| |       |   | |____  |____ |
+                 |      |   \_ |    | |____   |   |  ____| |____ |____
+                                   www.practisec.com
+
+                      [recon-ng v5.0.0, Tim Tomes (@lanmaster53)]                       
+
+[*] No modules enabled/installed.
+
+[recon-ng][default] > 
+```
+
+According to the output, we need to install various modules to use recon-ng.
+
+We can add modules from the recon-ng "Marketplace" We'll search the marketplace from the main prompt with marketplace search, providing a search string as an argument.
+
+Search for modules that contain the term github:
+
+```
+recon-ng][default] > marketplace search github
+[*] Searching module index for 'github'...
+```
+|            Path                      | Version |     Status    | D | K |
+|--|--|--|--|--|
+| recon/companies-multi/github_miner              | 1.0     | not installed |   | * |
+| recon/profiles-contacts/github_users            | 1.0     | not installed |   | * |
+| recon/profiles-profiles/profiler                | 1.0     | not installed |   |   |
+| recon/profiles-repositories/github_repos        | 1.0     | not installed |   | * |
+| recon/repositories-profiles/github_commits      | 1.0     | not installed |   | * |
+| recon/repositories-vulnerabilities/github_dorks | 1.0     | not installed |   | * |
+
+```
+
+D = Has dependencies. See info for details.
+K = Requires keys. See info for details.
+```
+
+
+
+Notice that some of the modules are marked with an asterisk in the "K" column. These modules require credentials or API keys for third-party providers. The recon-ng wiki maintains a short list of the keys used by its modules. Some of these keys are available to free accounts, while others require a subscription.
+
+We can learn more about a module by using marketplace info followed by the module name. Since the GitHub modules require API keys, let's use this command to examine the recon/domains-hosts/google_site_web module:
+
+```
+[recon-ng][default] > marketplace info recon/domains-hosts/google_site_web
+```
+
+| path          | recon/domains-hosts/google_site_web                          |
+|--|--|
+| name          | Google Hostname Enumerator                                   |
+| author        | Tim Tomes (@lanmaster53)                                     |
+| version       | 1.0                                                          |
+| last_updated  | 2019-06-24                                                   |
+| description   | Harvests hosts from Google.com by using the 'site' operator. |
+| required_keys | []                                                           |
+| dependencies  | []                                                           |
+| files         | []                                                           |
+| status        | not installed                                                |
++------------------------------------------------------------------------------+
+```
+[recon-ng][default] > 
+
+```
+
+According to its description, this module searches Google with the "site" operator and it doesn't require an API key. Let's install the module with marketplace install:
+
+```
+[recon-ng][default] > marketplace install recon/domains-hosts/google_site_web
+[*] Module installed: recon/domains-hosts/google_site_web
+[*] Reloading modules...
+[recon-ng][default] > 
+```
+
+After installing the module, we can load it with module load followed by its name. Then, we'll use info to display details about the module and required parameters:
+
+```
+[recon-ng][default] > modules load recon/domains-hosts/google_site_web
+
+[recon-ng][default][google_site_web] > info
+
+      Name: Google Hostname Enumerator
+    Author: Tim Tomes (@lanmaster53)
+   Version: 1.0
+
+Description:
+  Harvests hosts from Google.com by using the 'site' search operator. Updates the 
+  'hosts' table with the results.
+
+Options:
+  Name    Current Value  Required  Description
+  ------  -------------  --------  -----------
+  SOURCE  default        yes       source of input (see 'show info' for details)
+
+Source Options:
+  default        SELECT DISTINCT domain FROM domains WHERE domain IS NOT NULL
+  <string>       string representing a single input
+  <path>         path to a file containing a list of inputs
+  query <sql>    database query returning one column of inputs
+
+[recon-ng][default][google_site_web] > 
+
+```
+
+> Listing 8 - Using recon/domains-hosts/google_site_web
+
+Notice that the output contains additional information about the module now that we've installed and loaded it. According to the output, the module requires the use of a _source_, which is the target we want to gather information about.
+
+In this case, we will use options set SOURCE megacorpone.com to set our target domain:
+
+```
+[recon-ng][default][google_site_web] > options set SOURCE megacorpone.com
+SOURCE => megacorpone.com
+```
+
+> Listing 9 - Setting a source
+
+Finally, we run the module:
+
+```
+[recon-ng][default][google_site_web] > run
+
+---------------
+MEGACORPONE.COM
+---------------
+[*] Searching Google for: site:megacorpone.com
+[*] [host] www.megacorpone.com (<blank>)
+[*] [host] vpn.megacorpone.com (<blank>)
+[*] [host] www2.megacorpone.com (<blank>)
+[*] [host] siem.megacorpone.com (<blank>)
+[*] Searching Google for: site:megacorpone.com -site:www.megacorpone.com -site:vpn.megacorpone.com -site:www2.megacorpone.com -site:siem.megacorpone.com
+
+-------
+SUMMARY
+-------
+[*] 4 total (4 new) hosts found.
+```
+
+> Listing 10 - Running a module
+
+The results mirror what we found from the Netcraft DNS search. However, we haven't wasted our time here. Recon-ng stores results in a local database and these results will feed into other recon-ng modules.
+
+We can use the show hosts command to view stored data:
+
+```
+[recon-ng][default][google_site_web] > back
+
+[recon-ng][default] > show
+Shows various framework items
+
+Usage: show <companies|contacts|credentials|domains|hosts|leaks|locations|netblocks|ports|profiles|pushpins|repositories|vulnerabilities>
+
+[recon-ng][default] > show hosts
+
++--------------------------------------------------------------------------------+
+| rowid |         host         | ip_address | region | country |      module     |
++--------------------------------------------------------------------------------+
+| 1     | www.megacorpone.com  |            |        |         | google_site_web |
+| 2     | vpn.megacorpone.com  |            |        |         | google_site_web |
+| 3     | www2.megacorpone.com |            |        |         | google_site_web |
+| 4     | siem.megacorpone.com |            |        |         | google_site_web |
++--------------------------------------------------------------------------------+
+
+[*] 4 rows returned
+[recon-ng][default] > 
+
+```
+
+> Listing 11 - Show hosts
+
+We have four hosts in our database but no additional information on them. Perhaps another module can fill in the IP addresses.
+
+Let's examine recon/hosts-hosts/resolve with marketplace info:
+
+```
+[recon-ng][default] > marketplace info recon/hosts-hosts/resolve
+
++-------------------------------------------------------------------------------+
+| path          | recon/hosts-hosts/resolve                                     |
+| name          | Hostname Resolver                                             |
+| author        | Tim Tomes (@lanmaster53)                                      |
+| version       | 1.0                                                           |
+| last_updated  | 2019-06-24                                                    |
+| description   | Resolves the IP address for a host. Updates the 'hosts' table |
+| required_keys | []                                                            |
+| dependencies  | []                                                            |
+| files         | []                                                            |
+| status        | installed                                                     |
++-------------------------------------------------------------------------------+
+
+[recon-ng][default] > 
+
+```
+
+> Listing 12 - Module information for recon/hosts-hosts/resolve
+
+The module description suits our needs so we will install it with marketplace install:
+
+```
+[recon-ng][default] > marketplace install recon/hosts-hosts/resolve
+[*] Module installed: recon/hosts-hosts/resolve
+[*] Reloading modules...
+```
+
+> Listing 13 - Installing the resolve module
+
+An "Invalid command" error may indicate that we are at the wrong command level. If this happens, run back to return to the main recon-ng prompt and try the command again.
+
+Once the module is installed, we can use it with modules load, and run info to display information about the module and its options:
+
+```
+[recon-ng][default] > modules load recon/hosts-hosts/resolve
+
+[recon-ng][default][resolve] > info
+
+      Name: Hostname Resolver
+    Author: Tim Tomes (@lanmaster53)
+   Version: 1.0
+
+Description:
+  Resolves the IP address for a host. Updates the 'hosts' table with the results.
+
+Options:
+  Name    Current Value  Required  Description
+  ------  -------------  --------  -----------
+  SOURCE  default        yes       source of input (see 'show info' for details)
+
+Source Options:
+  default        SELECT DISTINCT host FROM hosts WHERE host IS NOT NULL AND ip_address IS NULL
+  <string>       string representing a single input
+  <path>         path to a file containing a list of inputs
+  query <sql>    database query returning one column of inputs
+
+Comments:
+  * Note: Nameserver must be in IP form.
+```
+
+> Listing 14 - Installing and viewing recon/hosts-hosts/resolve
+
+As is clear from the above output, this module will resolve the IP address for a host.
+
+We need to provide the IP address we want to resolve as our source. We have four options we can set for the source: default, string, path, and query. Each option has a description alongside it as shown in Listing 14. For example, in the "google_site_web" recon-ng module, we used a string value.
+
+However, we want to leverage the database this time. If we use the "default" value, recon-ng will look up the host information in its database for any records that have a host name but no IP address.
+
+As shown in Listing 11, we have four hosts without IP addresses. If we select a "default" source, the module will run against all four hosts in our database automatically.
+
+Let's try this out by leaving our source set to "default" and then run the module:
+
+```
+[recon-ng][default][resolve] > run
+[*] www.megacorpone.com => 38.100.193.76
+[*] vpn.megacorpone.com => 38.100.193.77
+[*] www2.megacorpone.com => 38.100.193.79
+[*] siem.megacorpone.com => 38.100.193.89
+```
+
+> Listing 15 - Running recon/hosts-hosts/resolve
+
+Nice. We now have IP addresses for the four domains.
+
+If we show hosts again, we can verify the database has been updated with the results of both modules:
+
+```
+[recon-ng][default][resolve] > show hosts
+
++-----------------------------------------------------------------------------------+
+| rowid |         host         |   ip_address  | region | country |      module     |
++-----------------------------------------------------------------------------------+
+| 1     | www.megacorpone.com  | 38.100.193.76 |        |         | google_site_web |
+| 2     | vpn.megacorpone.com  | 38.100.193.77 |        |         | google_site_web |
+| 3     | www2.megacorpone.com | 38.100.193.79 |        |         | google_site_web |
+| 4     | siem.megacorpone.com | 38.100.193.89 |        |         | google_site_web |
++-----------------------------------------------------------------------------------+
+
+[*] 4 rows returned
+```
+
+> Listing 16 - Show hosts after multiple modules
