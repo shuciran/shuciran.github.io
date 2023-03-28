@@ -1,3 +1,13 @@
+---
+description: >-
+  Uploads Using Windows Scripting Languages
+title: Uploads Using Windows Scripting Languages              # Add title here
+date: 2022-11-17 08:00:00 -0600                           # Change the date to match completion date
+categories: [03 File Transfer, Uploads Using Windows Scripting Languages]                     # Change Templates to Writeup
+tags: [file transfer, scripting language upload]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 In certain scenarios, we may need to exfiltrate data from a target network using a Windows client. This can be complex since standard TFTP, FTP, and HTTP servers are rarely enabled on Windows by default.
 
 Fortunately, if outbound HTTP traffic is allowed, we can use the System.Net.WebClient PowerShell class to upload data to our Kali machine through an HTTP POST request.
