@@ -19,6 +19,7 @@ svn up -r 2 #Go to revision 2 inside the checkout folder
 ```
 
 > An example can be found at HTB Machine Worker `/_posts/HTB/Windows/2 Medium/2023-01-30-Worker.md`{: .filepath}
-{: .prompt-info }
+
+#{: .prompt-info }
 
 
