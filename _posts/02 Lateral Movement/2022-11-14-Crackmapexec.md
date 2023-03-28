@@ -1,6 +1,6 @@
 ---
 description: >-
-  Crackmapexec
+  Crackmapexec, tool to enumerate multiple protocols such as smb, rdp and ldap
 title: Crackmapexec                   # Add title here
 date: 2022-11-14 08:00:00 -0600                           # Change the date to match completion date
 categories: [02 Lateral Movement, Crackmapexec]                     # Change Templates to Writeup
