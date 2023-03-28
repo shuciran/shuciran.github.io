@@ -3,8 +3,8 @@ description: >-
   File transfer via web server.
 title: Local Web Server                 # Add title here
 date: 2022-09-05 08:00:00 -0600                           # Change the date to match completion date
-categories: [03 File Transfer, Local Web Server]                     # Change Templates to Writeup
-tags: [file transfer, web server]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+categories: [03 File Transfer, Linux - Local Web Server]                     # Change Templates to Writeup
+tags: [file transfer, linux web server]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
