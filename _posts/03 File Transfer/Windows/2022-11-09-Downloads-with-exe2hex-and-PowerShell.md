@@ -1,3 +1,13 @@
+---
+description: >-
+  Downloads with exe2hex and Powershell
+title: Downloads with exe2hex and Powershell              # Add title here
+date: 2022-11-09 08:00:00 -0600                           # Change the date to match completion date
+categories: [03 File Transfer, Downloads with exe2hex and Powershell]                     # Change Templates to Writeup
+tags: [file transfer, windows download, exe2hex, powershell]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 This technique is useful to compress the binary we want to transfer, convert it to a hex string, and embed it into a Windows script.
 
 On the Windows machine, we will paste this script into our shell and run it. It will redirect the hex data into powershell.exe, which will assemble it back into a binary. This will be done through a series of non-interactive commands.
@@ -46,7 +56,7 @@ powershell -Command "$h=Get-Content -readcount 0 -path './nc.hex';$l=$h[0].lengt
 
 When we copy and paste this script into a shell on our Windows machine and run it, we can see that it does, in fact, create a perfectly-working copy of our original nc.exe.
 
-```cmd
+```powershell
 ...
 000000000000000000000000000000000000000000000">>nc.hex
 
