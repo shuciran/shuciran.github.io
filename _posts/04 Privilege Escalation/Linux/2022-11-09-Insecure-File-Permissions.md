@@ -4,7 +4,7 @@ description: >-
 title: Insecure File Permissions              # Add title here
 date: 2022-11-09 08:00:00 -0600                           # Change the date to match completion date
 categories: [04 Privilege Escalation, Linux - Insecure File Permissions]                     # Change Templates to Writeup
-tags: [file transfer, insecure file permissions, linux privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [insecure file permissions, linux privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
