@@ -9,8 +9,8 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 In order to exploit a PATH Hijacking we need to identify two things:
-1) That the script can be executed on another user's context
-2) There is a missing relative path on a command or on a library
+- 1) That the script can be executed on another user's context
+- 2) There is a missing relative path on a command or on a library
 
 ## BASH
 Let's analyze the following code:
