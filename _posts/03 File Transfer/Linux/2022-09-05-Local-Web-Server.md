@@ -66,5 +66,8 @@ surge
    Success! - Published to blue-eyed-harmony.surge.sh
 ```
 
-If this is the first time, you'll need to provide an e-mail and a password.
+> If this is the first time, you'll need to provide an e-mail and a password.
 {: .prompt-info }
+
+> If you want to exploit XSS, SSRF or any vulnerability from another server you'll need to host a CORS file with content "*" this way you'll allow consumption of resources from external entities.
+{: .prompt-tip }
