@@ -14,7 +14,7 @@ Command to extract the whole git project:
 githacker --url http://10.10.11.134/.git/ --output-folder results
 ``` 
 Examples:
-[[Epsilon#^6edabc]]
+[a](/_posts/HTB/Linux/2%20Medium/2022-08-24-Epsilon.md)[^6edabc]
 
 ### Git
 Command to list the commits under a git project (you should be under .git folder):
