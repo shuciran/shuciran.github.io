@@ -2,7 +2,7 @@
 description: >-
   Abusing upnphost and its SSDPSRV dependency
 title: upnphost and SSDPSRV             # Add title here
-date: 2023-02-03 08:00:00 -0600                           # Change the date to match completion date
+date: 2022-11-21 08:00:00 -0600                           # Change the date to match completion date
 categories: [04 Privilege Escalation, Windows - upnphost and SSDPSRV]                     # Change Templates to Writeup
 tags: [windows privesc, upnphost, windows XP, vulnerable microsoft services]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
@@ -20,7 +20,7 @@ In order to check if we have any vulnerable service(s) on our system, we need to
 > Any binary you transfer via FTP requires you to set your FTP session to binary. You can do this by typing 'binary' in your FTP session.
 {: .prompt-tip }
 
-```cmd
+```bash
 ftp> binary 200 Type set to I. 
 ```
  
