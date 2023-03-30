@@ -3,7 +3,7 @@ description: >-
   Kernel Vulnerabilities via Drivers
 title: Kernel Vulnerabilities via Drivers             # Add title here
 date: 2022-11-11 08:00:00 -0600                           # Change the date to match completion date
-categories: [04 Privilege Escalation, Kernel Vulnerabilities via Drivers]                     # Change Templates to Writeup
+categories: [04 Privilege Escalation, Windows - Kernel Vulnerabilities via Drivers]                     # Change Templates to Writeup
 tags: [kernel, software vulnerability, windows privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -114,7 +114,7 @@ DefaultDestDir = 12
 
 Based on the version information, our driver should be vulnerable. Before we try to exploit it, we first have to compile the exploit since it's written in C.
 
-#### Compiling C/C++ Code on Windows
+### Compiling C/C++ Code on Windows
 
 The vast majority of exploits targeting kernel-level vulnerabilities (including the one we have selected) are written in a low-level programming language such as C or C++ and therefore require compilation. Ideally, we would compile the code on the platform version it is intended to run on. In those cases, we would simply create a virtual machine that matches our target and compile the code there. However, we can also cross-compile the code on an operating system entirely different from the one we are targeting. For example, we could compile a Windows binary on our Kali system.
 
