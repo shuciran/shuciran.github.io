@@ -1,7 +1,7 @@
 ---
 description: >-
   Search Privilige Access Vectors.
-title: For Privilege Access                   # Add title here
+title: For Privilege Access (Linux)                  # Add title here
 date: 2023-02-18 08:00:00 -0600                           # Change the date to match completion date
 categories: [01 Enumeration, Linux]                     # Change Templates to Writeup
 tags: [linux privesc, linux enumeration]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags

@@ -1,10 +1,10 @@
 ---
 description: >-
   Automated Enumeration for Linux Operating System. 
-title: Automated Enumeration                   # Add title here
+title: Automated Enumeration (Linux)                 # Add title here
 date: 2023-02-18 08:00:00 -0600                           # Change the date to match completion date
 categories: [01 Enumeration, Linux]                     # Change Templates to Writeup
-tags: [linux enumeration]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [linux enumeration, automatization]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---

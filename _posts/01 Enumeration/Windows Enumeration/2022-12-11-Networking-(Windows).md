@@ -1,10 +1,10 @@
 ---
 description: >-
   Enumerate Network related services and files on Windows Operating Systems.
-title: Networking                   # Add title here
+title: Networking (Windows)                 # Add title here
 date: 2022-12-11 08:00:00 -0600                           # Change the date to match completion date
 categories: [01 Enumeration, Windows]                     # Change Templates to Writeup
-tags: [windows enumeration]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [windows enumeration, networking]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
