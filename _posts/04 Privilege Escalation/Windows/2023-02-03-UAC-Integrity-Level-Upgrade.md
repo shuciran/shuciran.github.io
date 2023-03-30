@@ -1,3 +1,13 @@
+---
+description: >-
+  UAC Integrity Level Upgrade
+title: UAC Integrity Level Upgrade             # Add title here
+date: 2023-02-03 08:00:00 -0600                           # Change the date to match completion date
+categories: [04 Privilege Escalation, Windows - UAC Integrity Level Upgrade]                     # Change Templates to Writeup
+tags: [windows privesc, uac integrity level]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 Even while logged in as an administrative user, the account will have two security tokens, one running at a medium integrity level and the other at high integrity level. UAC acts as the separation mechanism between those two integrity levels.
 
 To see integrity levels in action, let's first login as the admin user, open a command prompt, and run the whoami /groups command:
