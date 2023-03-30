@@ -1,5 +1,15 @@
+---
+description: >-
+  Unquoted Service Path
+title: Unquoted Service Path             # Add title here
+date: 2023-02-03 08:00:00 -0600                           # Change the date to match completion date
+categories: [04 Privilege Escalation, Windows - Unquoted Service Path]                     # Change Templates to Writeup
+tags: [windows privesc, unquoted service path]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 First find programs without quotes and with spaces:
-```cmd
+```powershell
 wmic service get name,displayname,pathname,startmode |findstr /i "auto" |findstr /i /v "c:\windows\\" |findstr /i /v """
 ```
 
