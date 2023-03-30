@@ -10,13 +10,12 @@ show_image_post: false                                    # Change this to true
 ---
 #### PSPY
 [Pspy github download](https://github.com/DominicBreuker/pspy)
-Services running
+Monitoring Services running
 ```bash
 ./pspy64
 ```
 Examples:
-[[Epsilon#^30d41b]]
-
+[Epsilon](https://shuciran.github.io/posts/Epsilon/#fnref:pspy)
 #### IP Address
 ```bash
 ifconfig -a
