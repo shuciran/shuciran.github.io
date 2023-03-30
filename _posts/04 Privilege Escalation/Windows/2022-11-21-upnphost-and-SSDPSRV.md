@@ -21,7 +21,8 @@ In order to check if we have any vulnerable service(s) on our system, we need to
 {: .prompt-tip }
 
 ```bash
-ftp> binary 200 Type set to I. 
+ftp> binary 
+200 Type set to I. 
 ```
  
 > When accesschk.exe is uploaded and we execute the latest version of accesschk.exe from SysInternals, we won't be able to execute this in our low level shell. Why you ask? Well, when you run accesschk.exe for the first time in a GUI environment, it will give you a pop up window asking you to accept their EULA. If we run accesschk.exe via CLI it would freeze our shell. Wouldn't they build in some kind of parameter in the accesschk.exe binary to accept the EULA via CLI? Yes, they actually did. In older versions of accesschk.exe there was a parameter /accepteula which did exactly that, but they removed the parameter in newer releases. That being said, we will have to download an older version of accesschk.exe to fulfill our needs.
