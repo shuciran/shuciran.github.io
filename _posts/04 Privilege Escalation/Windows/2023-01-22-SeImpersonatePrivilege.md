@@ -2,7 +2,7 @@
 description: >-
   Multiple tools to abuse SeImpersonatePrivilege/SeAssignPrimaryTokenPrivilege
 title: SeImpersonatePrivilege             # Add title here
-date: 2022-11-11 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-01-22 08:00:00 -0600                           # Change the date to match completion date
 categories: [04 Privilege Escalation, Windows - SeImpersonatePrivilege/SeAssignPrimaryTokenPrivilege]                     # Change Templates to Writeup
 tags: [juicypotato, juicypotatong, roguewinrm, seimpersonateprivilege, seassignprimarytokenprivilege, windows privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
