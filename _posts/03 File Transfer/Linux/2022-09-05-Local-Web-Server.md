@@ -49,8 +49,8 @@ First we need to install surge with npm:
 npm install --global surge
 ```
 Then we need to execute the surge command and provide all the details needed to host our web server.
-- 1) File's path, all the files on it will be hosted.
-- 2) Name of your web server, this will be the subdomain you choose and it must have the surge.sh as domain, if it's already taken it won't work.
+- File's path, all the files within will be hosted.
+- Name of your web server, this will be the subdomain you choose and it must have the surge.sh as domain, if it's already taken it won't work.
 ```bash
 surge             
 

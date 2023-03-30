@@ -9,23 +9,23 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 
-REQUIREMENTS: This article assumes that you have already obtained a low privilege shell on your victim's computer. You have enumerated this machine and concluded that the operating system is Windows XP with SP0 or SP1 installed.
+This article assumes that you have already obtained a low privilege shell on your victim's computer. You have enumerated this machine and concluded that the operating system is Windows XP with SP0 or SP1 installed.
 
 If you meet the requirements above, we can continue! This method of privilege escalation relies on vulnerable Microsoft Services. Most services in newer Windows versions (starting from Windows XP SP2) are no longer vulnerable. Vulnerable in this case, means that we can edit the services' parameters.
 
 ##### Check for vulnerability
 
-In order to check if we have any vulnerable service(s) on our system, we need to download [accesschk.exe](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk) from [SysInternals](http://live.sysinternals.com/), and transfer it to our victim's machine via the low privilege shell we have already established.
+In order to check if we have any vulnerable service(s) on our system, we need to download [accesschk.exe](https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk) from [SysInternals](http://live.sysinternals.com/), and transfer it to our victim's machine via the low privilege shell we have already established.
 
-NOTE: Any binary you transfer via FTP requires you to set your FTP session to binary. You can do this by typing 'binary' in your FTP session.
+> Any binary you transfer via FTP requires you to set your FTP session to binary. You can do this by typing 'binary' in your FTP session.
+{: .prompt-tip }
 
 ```cmd
 ftp> binary 200 Type set to I. 
 ```
  
-PROBLEM:
-
-When accesschk.exe is uploaded and we execute the latest version of accesschk.exe from SysInternals, we won't be able to execute this in our low level shell. Why you ask? Well, when you run accesschk.exe for the first time in a GUI environment, it will give you a pop up window asking you to accept their EULA. If we run accesschk.exe via CLI it would freeze our shell. Wouldn't they build in some kind of parameter in the accesschk.exe binary to accept the EULA via CLI? Yes, they actually did. In older versions of accesschk.exe there was a parameter /accepteula which did exactly that, but they removed the parameter in newer releases. That being said, we will have to download an older version of accesschk.exe to fulfill our needs.
+> When accesschk.exe is uploaded and we execute the latest version of accesschk.exe from SysInternals, we won't be able to execute this in our low level shell. Why you ask? Well, when you run accesschk.exe for the first time in a GUI environment, it will give you a pop up window asking you to accept their EULA. If we run accesschk.exe via CLI it would freeze our shell. Wouldn't they build in some kind of parameter in the accesschk.exe binary to accept the EULA via CLI? Yes, they actually did. In older versions of accesschk.exe there was a parameter /accepteula which did exactly that, but they removed the parameter in newer releases. That being said, we will have to download an older version of accesschk.exe to fulfill our needs.
+{: .prompt-warning }
 
 You can download older versions with the /accepteula parameter from [here](https://web.archive.org/web/20071007120748if_/http://download.sysinternals.com/Files/Accesschk.zip%0D) and [here](https://xor.cat/assets/other/Accesschk.zip)
 With that issue out of the way, let's continue. Once you have uploaded the older version of accesschk.exe to your victim, we can use it to look for vulnerable services we can exploit. We can do this with the following query:
