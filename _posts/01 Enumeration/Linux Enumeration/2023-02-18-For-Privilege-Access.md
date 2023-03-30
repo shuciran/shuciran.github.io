@@ -35,7 +35,7 @@ find / -perm -4000 -type f 2>/dev/null `only executables`
 find / -perm -u=s -type f 2>/dev/null
 ```
 Examples:
-[[Epsilon#^fccec9]]
+[Epsilon](https://shuciran.github.io/posts/Epsilon/#fnref:setuid)
 [[pain - 10.11.1.35]#^]
 
 #### Sudoers
