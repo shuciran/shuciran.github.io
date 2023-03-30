@@ -13,18 +13,20 @@ tail_includes:
 
 <div class="post-meta text-muted">
     <!-- published date -->
-    <span>
-      {{ site.data.locales[site.lang].post.posted }}
-      {% include datetime.html date=page.date tooltip=true %}
+    <span class="semi-bold">
+      {{ page.author | default: site.social.name }}
+      {% include datetime.html date=page.date prep="on" tooltip=true %}
     </span>
 
     <!-- lastmod date -->
     {% if page.last_modified_at %}
     <span>
       {{ site.data.locales[site.lang].post.updated }}
-      {% include datetime.html date=page.last_modified_at tooltip=true %}
+      {% include datetime.html date=page.last_modified_at prefix="Updated" tooltip=true %}
     </span>
     {% endif %}
+    <!-- read time -->
+    {% include read-time.html content=content %}    
 
   {% if page.image %}
     {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
