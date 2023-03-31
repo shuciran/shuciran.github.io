@@ -1,5 +1,5 @@
 
-### Host entries:
+##### Host entries
 ```bash
 10.10.11.152    dc01.timelapse.htb timelapse.htb
 ```

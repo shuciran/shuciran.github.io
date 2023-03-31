@@ -1,5 +1,5 @@
 
-### Host entries:
+##### Host entries
 ```bash
 10.10.11.193    mentorquotes.htb api.mentorquotes.htb
 ```

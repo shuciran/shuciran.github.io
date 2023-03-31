@@ -1,4 +1,4 @@
-### Host entries:
+##### Host entries
 ```bash
 10.10.10.224 realcorp.htb
 ```

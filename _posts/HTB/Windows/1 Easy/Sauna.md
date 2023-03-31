@@ -1,5 +1,5 @@
 
-### Host entries:
+##### Host entries
 ```bash
 10.10.10.175 egotistical-bank.local
 ```

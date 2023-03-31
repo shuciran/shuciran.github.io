@@ -1,4 +1,4 @@
-### Host entries:
+##### Host entries
 ```bash
 10.10.10.161 FOREST.htb.local htb.local
 ```

@@ -1,5 +1,5 @@
 
-### Host entries:
+##### Host entries
 ```bash
 10.10.10.103 sizzle.htb.local sizzle.htb htb.local
 ```
