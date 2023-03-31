@@ -3,8 +3,8 @@ description: >-
   dotNET Project Compilation with Visual Studio
 title: dotNET Project Compilation with Visual Studio              # Add title here
 date: 2023-01-31 08:00:00 -0600                           # Change the date to match completion date
-categories: [06 Exploitation, dotNET Project Compilation with Visual Studio]                     # Change Templates to Writeup
-tags: [exploitation, dotNET, compilation, visual studio]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+categories: [05 utilities, dotNET Project Compilation with Visual Studio]                     # Change Templates to Writeup
+tags: [utilities, dotNET, compilation, visual studio]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
@@ -21,8 +21,7 @@ If we get a C# project not compiled, for example [SharpWSUS](https://github.com/
 - c) If the following message appears, click on "Stop Debugging":
 ![Description](/assets/img/Pasted image 20230125104842.png)
 
-- d) Finally go to the /bin/Release project's folder and you'll find the .exe file on it:
-
+- d) Finally go to the /bin/Release project's folder and you'll find the .exe file on it: 
 ![Description](/assets/img/Pasted image 20230125104229.png)
 Examples:
 [[Outdated#^474447]]
