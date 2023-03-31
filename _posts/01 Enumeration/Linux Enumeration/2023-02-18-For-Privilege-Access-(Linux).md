@@ -36,7 +36,6 @@ find / -perm -u=s -type f 2>/dev/null
 ```
 Examples:
 [Epsilon](https://shuciran.github.io/posts/Epsilon/#fnref:setuid)
-[[pain - 10.11.1.35]#^]
 
 #### Sudoers
 ``` 
