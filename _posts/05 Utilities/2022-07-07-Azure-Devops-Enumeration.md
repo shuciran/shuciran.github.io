@@ -1,10 +1,10 @@
 ---
 description: >-
-  CLI Commands Useful to enumerate AWS
-title: AWS CLI              # Add title here
-date: 2022-08-24 08:00:00 -0600                           # Change the date to match completion date
-categories: [05 Utilities, AWS CLI]                     # Change Templates to Writeup
-tags: [utilities, aws, lambda]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+  Azure Devops Enumeration
+title: Azure Devops Enumeration              # Add title here
+date: 2022-07-07 08:00:00 -0600                           # Change the date to match completion date
+categories: [05 Utilities, Azure Devops Enumeration]                     # Change Templates to Writeup
+tags: [utilities, azure, devops enumeration]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
