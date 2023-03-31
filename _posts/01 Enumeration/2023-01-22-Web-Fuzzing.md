@@ -20,7 +20,7 @@ wfuzz -c -t 200 --hw 55 --hc 403,404 -w /usr/share/seclists/Discovery/DNS/subdom
 wfuzz -c -t 200 --hw 55 --hc 403,404 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -H 'Host: FUZZ.worker.htb' -u http://worker.htb/
 ```
 Examples:
-[[Worker#^1c41c5]]
+[Worker](https://shuciran.github.io/posts/Worker/#fnref:web-fuzzing-subdomain)
 [[StreamIO#^a1b013]]
 
 #### Subdomain fuzzing:
