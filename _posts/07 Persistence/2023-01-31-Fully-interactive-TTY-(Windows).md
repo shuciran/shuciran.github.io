@@ -44,5 +44,6 @@ zsh: suspended  nc -lvnp 1234
 └─# stty raw -echo; fg
 ```
 5) Finally double click Enter and that will be it...
+   
 Examples:
 [Outdated](https://shuciran.github.io/posts/Outdated/#fnref:full-tty-windows)
