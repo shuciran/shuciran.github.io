@@ -3,7 +3,7 @@ description: >-
   dotNET Project Compilation with Visual Studio
 title: dotNET Project Compilation with Visual Studio              # Add title here
 date: 2023-01-31 08:00:00 -0600                           # Change the date to match completion date
-categories: [05 utilities, dotNET Project Compilation with Visual Studio]                     # Change Templates to Writeup
+categories: [05 Utilities, dotNET Project Compilation with Visual Studio]                     # Change Templates to Writeup
 tags: [utilities, dotNET, compilation, visual studio]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
