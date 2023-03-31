@@ -1,7 +1,7 @@
 ---
 description: >-
-  Insecure File Permissions
-title: Insecure File Permissions              # Add title here
+  Insecure File Permissions (Linux)
+title: Insecure File Permissions (Linux)           # Add title here
 date: 2022-11-09 08:00:00 -0600                           # Change the date to match completion date
 categories: [04 Privilege Escalation, Linux - Insecure File Permissions]                     # Change Templates to Writeup
 tags: [insecure file permissions, linux privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags

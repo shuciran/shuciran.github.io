@@ -1,7 +1,7 @@
 ---
 description: >-
-  Insecure File Permissions
-title: Insecure File Permissions              # Add title here
+  Insecure File Permissions (Windows)
+title: Insecure File Permissions (Windows)             # Add title here
 date: 2022-11-11 08:00:00 -0600                           # Change the date to match completion date
 categories: [04 Privilege Escalation, Windows - Insecure File Permissions]                     # Change Templates to Writeup
 tags: [insecure file permissions, windows privesc]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
