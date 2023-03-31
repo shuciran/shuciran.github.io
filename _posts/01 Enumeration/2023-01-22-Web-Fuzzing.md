@@ -28,7 +28,7 @@ Examples:
 wfuzz -c -t 200 --hc 404 -w /usr/share/seclists/Discovery/Web-Content/IIS.fuzz.txt -u http://10.10.10.203/FUZZ
 ```
 Examples:
-[[Worker#^1b40a0]]
+[Worker](https://shuciran.github.io/posts/Worker/#fnref:web-fuzzing)
 [[StreamIO#^a1b013]]
 
 #### Cookies fuzzing:

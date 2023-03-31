@@ -14,4 +14,4 @@ show_image_post: false                                    # Change this to true
 This is a web-GUI tool and adding the captures here is unnecesary, for further details about how to use it, please refer to the examples.
 
 Examples:
-[Worker](https://shuciran.github.io/posts/Worker/#fn:azure-devops-enum)
+[Worker](https://shuciran.github.io/posts/Worker/#fnref:azure-devops-enum)
