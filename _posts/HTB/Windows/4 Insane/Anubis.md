@@ -8,7 +8,7 @@ If Active Directory => Synchronize your NTP with the domain controller:
 nptdate 10.10.11.102
 ```
 
-# Content
+### Content
 
 - RPC Enumeration
 - SMB Enumeration
@@ -34,7 +34,7 @@ nptdate 10.10.11.102
 - Synchronizing our time with DC time (rdate) - HTTP Headers Information Leakage
 - Getting an interactive console as the administrator user on the DC (noPac.py)
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -184,7 +184,7 @@ Finally, we can craft our last payload to get a reverse shell:
 rlwrap nc -lvnp 443
 ```
 
-#### Additional Foothold path:
+### Additional Foothold path:
 We can retrieve a powershell reverse shell by using Windows commands written in base64, but since Windows only accepts UTF-16LE as encoding we cannot just send the payload as it is, we need to encode it first:
 ```bash
 echo -n "ping -n 1 10.10.14.4" | iconv -t utf-16le | xxd         
@@ -239,7 +239,7 @@ Ethernet adapter vEthernet (Ethernet):
 ```
 However it does not seems to be the real target but a container inside the machine.
 
-# Exploitation
+### Exploitation
 
 After get our foothold we can get a fully interactive shell with Invoke-ConPtyShell.ps1 script, to do so follow the [[Fully interactive TTY (Windows)]] guide.
 Afterwards we identify the following file inside the machine:
@@ -531,7 +531,7 @@ PS C:\Users\diegocruz\Desktop> whoami
 windcorp\diegocruz
 ```
 
-# Root privesc
+### Privilege Escalation
 
 Since the machine is using certificates we can enumerate them with certify.exe from the [SharpCollections Suite](https://github.com/Flangvik/SharpCollection/tree/master/NetFramework_4.5_Any) this tool will enumerate any vulnerable Certificate by using the following command: ^32beda
 ```powershell
@@ -729,12 +729,12 @@ C:\Windows\system32>
 
 ```
 
-# Credentials
+### Credentials
 ```bash
 localadmin:Secret123
 ```
 
-# Resources:
+### References
 [Nishang Powershell](https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.ps1) 
 [chisel](https://github.com/jpillora/chisel/releases)
 [SharpCollections Suite](https://github.com/Flangvik/SharpCollection/tree/master/NetFramework_4.5_Any) 

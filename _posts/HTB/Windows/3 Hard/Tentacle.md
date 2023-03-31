@@ -3,7 +3,7 @@
 10.10.10.224 realcorp.htb
 ```
 
-# Content
+### Content
 
 - DNS Enumeration (dnsenum)
 - SQUID Proxy
@@ -12,7 +12,7 @@
 - Exploit SSH using Kerberos (gssapi)
 - Abusing .k5login file Abusing krb5.keytab file
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 
@@ -369,7 +369,7 @@ PORT   STATE SERVICE VERSION
 Service Info: Host: smtp.realcorp.htb
 ```
 Just in case let's add it as well to the /etc/hosts, now let's find an exploit for this service SMTPD 2.0.0.
-# Exploitation
+### Exploitation
 With searchsploit we find the following scripts:
 ![[Pasted image 20230123121725.png]]
 There is a Remote Code Execution for version 6.6.1, this version (2.0.0) could be vulnerable since its a minor version, so let's check the code:
@@ -559,7 +559,7 @@ j.nakazawa
 
 ```
 
-# Root privesc
+### Privilege Escalation
 There is a cronjob being executed on the machine:
 ```bash
 [j.nakazawa@srv01 tmp]$ cat /etc/crontab
@@ -708,7 +708,7 @@ root
 
 ```
 
-# Credentials
+### Credentials
 ```bash
 j.nakazawa@realcorp.htb:sJB}RM>6Z~64_
 ```
@@ -731,7 +731,7 @@ password       sJB}RM>6Z~64_
 tls_fingerprint C9:6A:B9:F6:0A:D4:9C:2B:B9:F6:44:1F:30:B8:5E:5A:D8:0D:A5:60
 ```
 
-# Notes
+### Notes
 
 - Port tcp-3128 is a really interesting via to get access to an internal network if not configured correctly along with DNS enumeration it can be abused in such way that a machine/subnet can be compromised.
 - krb-user is a tool to exploit gssapi-with-mic authentication

