@@ -2,9 +2,9 @@
 description: >-
   Fully Interactive TTY (Linux)
 title: Fully Interactive TTY (Linux)              # Add title here
-date: 2022-08-24 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-01-23 08:00:00 -0600                           # Change the date to match completion date
 categories: [07 Persistence, Fully Interactive TTY (Linux)]                     # Change Templates to Writeup
-tags: [persistence, interactive tty]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [linux persistence, interactive tty, python]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
