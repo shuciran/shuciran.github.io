@@ -12,23 +12,18 @@ show_image_post: false                                    # Change this to true
 
 #### Basic Fuzzing:
 ```bash
-wfuzz -c -t 200 --hw 55 --hc 403,404 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -u http://worker.htb/FUZZ
+wfuzz -c -t 200 --hc 404 -w /usr/share/seclists/Discovery/Web-Content/IIS.fuzz.txt -u http://10.10.10.203/FUZZ
 ```
+Examples:
+[Worker](https://shuciran.github.io/posts/Worker/#fnref:web-fuzzing)
+[[StreamIO#^a1b013]]
 
-#### Virtual Hosting fuzzing:
+#### Subdomain fuzzing:
 ```bash
 wfuzz -c -t 200 --hw 55 --hc 403,404 -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -H 'Host: FUZZ.worker.htb' -u http://worker.htb/
 ```
 Examples:
 [Worker](https://shuciran.github.io/posts/Worker/#fnref:web-fuzzing-subdomain)
-[[StreamIO#^a1b013]]
-
-#### Subdomain fuzzing:
-```bash
-wfuzz -c -t 200 --hc 404 -w /usr/share/seclists/Discovery/Web-Content/IIS.fuzz.txt -u http://10.10.10.203/FUZZ
-```
-Examples:
-[Worker](https://shuciran.github.io/posts/Worker/#fnref:web-fuzzing)
 [[StreamIO#^a1b013]]
 
 #### Cookies fuzzing:
