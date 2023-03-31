@@ -24,4 +24,4 @@ If we get a C# project not compiled, for example [SharpWSUS](https://github.com/
 - d) Finally go to the /bin/Release project's folder and you'll find the .exe file on it: 
 ![Description](/assets/img/Pasted image 20230125104229.png)
 Examples:
-[[Outdated#^474447]]
+[Outdated](https://shuciran.github.io/posts/Outdated/#fnref:dotnet-compilation)

