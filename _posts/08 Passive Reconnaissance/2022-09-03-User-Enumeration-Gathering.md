@@ -8,7 +8,6 @@ tags: [passive reconnaissance, osint, user enum gathering]     # TAG names shoul
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-## Email Harvesting
 ### The Harvester
 
 ```bash
