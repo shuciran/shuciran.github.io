@@ -41,4 +41,3 @@ Then the format of the command would be like:
 ```python
 python3 crosslinked.py -f '{first}.{last}@mycompany.com' mycompany
 ```
-
