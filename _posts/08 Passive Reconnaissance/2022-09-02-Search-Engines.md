@@ -8,7 +8,8 @@ tags: [passive reconnaissance, osint, search engines]     # TAG names should alw
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-### [Shodan](shodan.io)
+## Shodan
+[Shodan](https://www.shodan.io)
 Search Engine for connected devices over the Internet.
 
 ### Filtering
@@ -19,8 +20,10 @@ You can use various filters while using shodan, among others are:
 
 ![Description](/assets/img/Pasted image 20220831230555.png)
 
-### [Censys](search.censys.io)
+### Censys
+[Censys](https://search.censys.io)
 Search Engine for connected devices over the Internet
 
-### [Snusbase](https://snusbase.com/search)
+### Snusbase
+[Snusbase](https://snusbase.com/search)
 Database search engine passwords, e-mails and hashes
