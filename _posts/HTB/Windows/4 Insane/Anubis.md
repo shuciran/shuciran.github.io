@@ -592,7 +592,7 @@ else {
         $STOPERROR = $true
     }
 }
-# To this
+# To this:
 else {
     $TargetUPN = $user.samaccountname 
     if(-not $TargetUPN)
