@@ -23,4 +23,4 @@ smb: \> PROMPT OFF
 smb: \> mget *
 ```
 Examples:
-[[Active#^72bf14]]
+[Active](https://shuciran.github.io/posts/Epsilon/#fnref:smb-download)
