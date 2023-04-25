@@ -23,4 +23,4 @@ gpp-decrypt edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH
 GPPstillStandingStrong2k18
 ```
 Examples:
-[Active](https://shuciran.github.io/posts/Active/#fnref:sysvol-gpp-decrypt]
+[Active](https://shuciran.github.io/posts/Active/#fnref:sysvol-gpp-decrypt)
