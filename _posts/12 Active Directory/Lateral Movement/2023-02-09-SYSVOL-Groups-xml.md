@@ -2,7 +2,7 @@
 description: >-
   SYSVOL lateral movemet abusing Groups.xml file.
 title: SYSVOL (Groups.xml)              # Add title here
-date: 2023-01-02 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-02-09 08:00:00 -0600                           # Change the date to match completion date
 categories: [12 Active Directory, Lateral Movement - SYSVOL (Groups.xml)]                     # Change Templates to Writeup
 tags: [active directory, lateral movement, groups.xml, sysvol share, gpp decrypt]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
