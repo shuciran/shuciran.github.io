@@ -2,7 +2,7 @@
 ```bash
 10.10.10.161 FOREST.htb.local htb.local
 ```
-If Active Directory => [[Synchronize NTP]] with the domain controller.
+If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NTP-Synchronization/) with the domain controller.
 
 ### Content
 

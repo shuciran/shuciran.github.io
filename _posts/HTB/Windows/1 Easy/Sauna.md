@@ -3,7 +3,7 @@
 ```bash
 10.10.10.175 egotistical-bank.local
 ```
-If Active Directory => [[Synchronize NTP]] with the domain controller.
+If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NTP-Synchronization/) with the domain controller.
 
 ### Content
 
