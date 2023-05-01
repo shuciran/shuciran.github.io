@@ -8,7 +8,7 @@ tags: [firefox, cache password, linux privesc]     # TAG names should always be 
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-### Firefox Cache passwords extract
+### Firefox Cache passwords (Windows)
 
 First go to the path file session for the user:
 ```powershell
@@ -29,4 +29,8 @@ Examples:
 [[StreamIO#^9a4b0a]]
 
 > Remember to install the `pycryptodome` for this tool to run correctly `pip install pycryptodome`
-{: .prompt-warn }
+{: .prompt-warning }
+
+### Firefox Cache passwords (LINUX)
+
+TODO
