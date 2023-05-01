@@ -20,9 +20,13 @@ C:\\Users\\nikk37\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\br53rxeg.defaul
 ```
 Notice that the name of the folder is randomly generated.
 
-Then extract both files key4.db and logins.json and use the ![firepwd.py](https://github.com/lclevy/firepwd) utility:
-```python3
+Then extract both files key4.db and logins.json and use the [firepwd.py](https://github.com/lclevy/firepwd) utility:
+```python
 python3 firepwd.py key4.db logins.json
 ```
 Examples:
+[Streamio](https://shuciran.github.io/posts/Streamio/#fnref:firefox-cache-passwords)
 [[StreamIO#^9a4b0a]]
+
+> Remember to install the `pycryptodome` for this tool to run correctly `pip install pycryptodome`
+{: .prompt-warn }

