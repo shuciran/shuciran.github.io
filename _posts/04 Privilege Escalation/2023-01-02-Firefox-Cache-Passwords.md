@@ -8,7 +8,7 @@ tags: [firefox, cache password, linux privesc]     # TAG names should always be 
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-### Firefox Cache passwords (Windows)
+### Firefox Cache passwords
 
 First go to the path file session for the user:
 ```powershell
@@ -30,7 +30,3 @@ Examples:
 
 > Remember to install the `pycryptodome` for this tool to run correctly `pip install pycryptodome`
 {: .prompt-warning }
-
-### Firefox Cache passwords (LINUX)
-
-TODO
