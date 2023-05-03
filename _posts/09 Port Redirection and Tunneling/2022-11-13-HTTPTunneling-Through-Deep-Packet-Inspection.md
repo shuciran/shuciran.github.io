@@ -2,7 +2,7 @@
 description: >-
   HTTP Tunneling Through Deep Packet Inspection
 title:  HTTP Tunneling Through Deep Packet Inspection             # Add title here
-date: 2023-02-06 08:00:00 -0600                           # Change the date to match completion date
+date: 2022-11-13 08:00:00 -0600                           # Change the date to match completion date
 categories: [09 Port Redirection and Tunneling, HTTP Tunneling Through Deep Packet Inspection]                     # Change Templates to Writeup
 tags: [port redirection and tunneling, httptunnel, htc, hts]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
