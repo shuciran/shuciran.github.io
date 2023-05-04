@@ -3,8 +3,8 @@ description: >-
   Reverse Shells
 title:  Reverse Shells              # Add title here
 date: 2023-02-11 08:00:00 -0600                           # Change the date to match completion date
-categories: [06 Exploitation,  Reverse Shells]                     # Change Templates to Writeup
-tags: [exploitation, reverse shell]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+categories: [07 Persistence,  Reverse Shells]                     # Change Templates to Writeup
+tags: [persistence, reverse shell]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---

