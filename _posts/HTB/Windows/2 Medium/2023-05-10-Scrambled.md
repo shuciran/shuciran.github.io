@@ -2,7 +2,7 @@
 description: >-
   Scrambled HTB Machine
 title: Scrambled (Medium)                # Add title here
-date: 2023-04-24 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-05-10 08:00:00 -0600                           # Change the date to match completion date
 categories: [HackTheBox, Windows - Medium]                     # Change Templates to Writeup
 tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
