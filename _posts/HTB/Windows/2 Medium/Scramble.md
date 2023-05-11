@@ -382,6 +382,7 @@ Let's try another technique called [[Silver Ticket]] to apply this technique we 
 * NTLM Hash
 * DC SID
 * SPN
+
 Since we already have the password from the service account we can generate the hash with this tool: [NTLM Hash Generator](https://codebeautify.org/ntlm-hash-generator)
 ![[Pasted image 20230122001452.png]]
 
