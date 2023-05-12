@@ -4,10 +4,11 @@ description: >-
 title: Scrambled (Medium)                # Add title here
 date: 2023-05-10 08:00:00 -0600                           # Change the date to match completion date
 categories: [HackTheBox, Windows - Medium]                     # Change Templates to Writeup
-tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [hackthebox, windows, ldap enum, web enum, information leakage, kerberos enum, kerbrute brute force, kerbrute smb enum, kerbrute smb enum, kerberos authentication, asreproast, kerberoasting, cracking hashes, mssql, kerberos auth, silver ticket, ticketer, getpac, ccache, mssql enum, xp_cmdshell, seimpersonateprivilege]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Scrambled.png                # Add infocard image here for post preview image
 ---
+
 ### Host entries:
 ```bash
 127.0.0.1       localhost
