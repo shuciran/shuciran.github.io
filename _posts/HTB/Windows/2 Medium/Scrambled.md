@@ -433,7 +433,8 @@ export KRB5CCNAME=10.10.11.168.ccache
 ```
 Then we can access to the MSSQL service:
 ```bash
-impacket-mssqlclient dc1.scrm.local -k                                                                                                                                                             
+impacket-mssqlclient dc1.scrm.local -k
+                                         
 Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
 
 [*] Encryption required, switching to TLS
