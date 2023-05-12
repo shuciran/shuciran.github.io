@@ -283,7 +283,6 @@ Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
 ```
 
 Often, users use username as password to test this we can use kerbrute to test it with Password Sprayin:
-
 ```bash
 kerbrute bruteuser --dc 10.10.11.168 -d scrm.local validUsers ksimpson
 
