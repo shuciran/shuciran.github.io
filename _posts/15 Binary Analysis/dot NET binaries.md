@@ -1,3 +1,13 @@
+---
+description: >-
+  dot NET binaries dissassemble
+title: dot NET binaries dissassemble                # Add title here
+date: 2023-02-09 08:00:00 -0600                           # Change the date to match completion date
+categories: [15 Binary Analysis, Dot Binaries dissassemble]                     # Change Templates to Writeup
+tags: [binary analysis, dot net, dissassembler, visual studio, ilspy, dnspy]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: true                                    # Change this to true
+#image: /assets/img/icons/Sizzle.png                # Add infocard image here for post preview image
+---
 ### iLSpy 
 
 ##### Visual Studio Code
