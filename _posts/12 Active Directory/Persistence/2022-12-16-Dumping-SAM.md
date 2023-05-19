@@ -19,9 +19,12 @@ reg save hklm\system c:\system
 
 You need to use impacket-secretsdump to retrieve hashes correctly (samdump2 is not useful here):
 
-```powershell
+```bash
 impacket-secretsdump -system system -sam sam LOCAL
 ```
+Examples:
+[Acute](https://shuciran.github.io/posts/Acute/#fnref:dumping-sam)
+
 
 ### fgdump.exe
 
