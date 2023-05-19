@@ -46,7 +46,7 @@ Services and Versions running:
 -   Always look for exploits, analyze them and check if something can be useful to exploit the machine.
 -   Chisel has some
 
-### Resources:
+### Resources
 
 
 
