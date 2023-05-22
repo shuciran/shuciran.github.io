@@ -8,7 +8,7 @@ tags: [linux enumeration, networking]     # TAG names should always be lowercase
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-#### PSPY
+### PSPY
 [Pspy github download](https://github.com/DominicBreuker/pspy)
 Monitoring Services running
 ```bash
@@ -16,19 +16,19 @@ Monitoring Services running
 ```
 Examples:
 [Epsilon](https://shuciran.github.io/posts/Epsilon/#fnref:pspy)
-#### IP Address
+### IP Address
 ```bash
 ifconfig -a
 ip address show
 ip a s
 ```
 
-#### DNS
+### DNS
 ```bash
 cat /etc/resolv.conf
 ```
 
-#### Network connections
+### Network connections
 ```bash
 netstat -tulnpa
 ss -tulnpwr
@@ -36,32 +36,40 @@ lsof -i
 watch ss -twurp `connections in live`
 ```
 
-#### Running services
+### Running services
 ```bash
 ps -aux
 ps -ef
 ```
 
-#### Routing and ARP Tables
+### Routing and ARP Tables
 ```bash
 route -n
 ip ro show
 arp -a 
 ```
 
-#### Print IPSEC VPN Keys (requires root)
+### Print IPSEC VPN Keys (requires root)
 ```bash
 ip xfrm state list
 ```
 
-#### Iptables Rules (requires root)
+### Iptables Rules (requires root)
 ```bash
 iptables -L -n
 cat /etc/iptables
 iptables-save
 ```
 
-#### Port Scanner
+### Hosts alive Scanner
+```bash
+for i in $(seq 1 255); do timeout 1 bash -c "ping -c 1 192.168.122.$i &>/dev/null" && echo "[+] IP 192.168.122.$i active" ; done
+```
+Examples:
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:hosts-scanner)
+
+
+### Port Scanner
 ```bash
 #!/bin/bash
 host=10.5.5.11
