@@ -60,22 +60,29 @@ iptables -L -n
 cat /etc/iptables
 iptables-save
 ```
+> Sometimes a one-liner is slowly, to play with threads we can create a script and disown the process of this one-liner in such way that the loop does not run one instruction at a time, this can be achieved with amperson (&)
+{: .prompt-tip }
 
-### Hosts alive Scanner
+### Host Scanner
 ```bash
-for i in $(seq 1 255); do timeout 1 bash -c "ping -c 1 192.168.122.$i &>/dev/null" && echo "[+] IP 192.168.122.$i active" ; done
+#!/bin/bash
+for i in $(seq 1 255):
+do
+        timeout 1 bash -c "ping -c 1 192.168.122.$i &>/dev/null" && echo "[+] IP 192.168.122.$i active" &
+done; wait
 ```
 Examples:
 [Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:hosts-scanner)
 
-
 ### Port Scanner
 ```bash
 #!/bin/bash
-host=10.5.5.11
+host=192.168.122.228
 for port in {1..65535}; do
-    timeout .1 bash -c "echo >/dev/tcp/$host/$port" &&
-        echo "port $port is open"
+    timeout .1 bash -c "echo >/dev/tcp/$host/$port" && echo "port $port is open" &
 done
 echo "Done"
 ```
+Examples:
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:port-scanner)
+
