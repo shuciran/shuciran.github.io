@@ -49,14 +49,15 @@ IPC$   *              Remote IPC
 Examples:
 [[Fulcrum#^cae2ef]]
 
-### Select-String
+### Select-String (Search String Pattern)
 Search files on the system
 ```powershell
 PS X:\fulcrum.local\scripts> Select-String -Path "X:\fulcrum.local\scripts\*.ps1" -Pattern Administrator
 PS X:\fulcrum.local\scripts> Select-String -Path "X:\fulcrum.local\scripts\*.ps1" -Pattern 923a
 ```
 Example:
-[[Fulcrum#^08db04]]
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:select-string)
+
 ### AD CS
 TODO
 [[Anubis]]
