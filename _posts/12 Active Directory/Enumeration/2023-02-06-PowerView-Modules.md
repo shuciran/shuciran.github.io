@@ -1,3 +1,14 @@
+---
+description: >-
+  Powerview Modules
+title: PowerView Modules             # Add title here
+date: 2023-02-06 08:00:00 -0600                           # Change the date to match completion date
+categories: [12 Active Directory, Enumeration]                     # Change Templates to Writeup
+tags: [active directory, enumeration, powerview, get-netloggedon, get-netsession, get-domainuser]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
+
 Calling an operating system API from PowerShell is not completely straightforward. Fortunately, other researchers have presented a technique that simplifies the process and also helps avoid endpoint security detection. The most common solution is the use of [PowerView](https://github.com/PowerShellEmpire/PowerTools/blob/master/PowerView/powerview.ps1), a PowerShell script which is a part of the PowerShell Empire framework.
 
 To use it we must download it and first import it:
@@ -26,4 +37,4 @@ $Cred = New-Object System.Management.Automation.PSCredential('FULCRUM\LDAP', $Se
 Get-DomainUser -Credential $Cred
 ```
 Examples:
-[[Fulcrum#^9b5e4e]]
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:powerview-getdomain-user)
