@@ -33,7 +33,7 @@ PS> $Creds = New-Object System.Management.Automation.PSCredential('timelapse.htb
 *PS> Invoke-Command -ComputerName dc01 -Credential $Creds -ScriptBlock { whoami }
 ```
 Examples:
-[[Fulcrum#^0145f0]]
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:invoke-command)
 
 ### Get-SMBShare
 Retrieves the local shares:
@@ -47,7 +47,7 @@ C$     *              Default share
 IPC$   *              Remote IPC
 ```
 Examples:
-[[Fulcrum#^cae2ef]]
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:get-smbshare)
 
 ### Select-String (Search String Pattern)
 Search files on the system
