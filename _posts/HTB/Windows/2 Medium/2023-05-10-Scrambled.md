@@ -386,7 +386,7 @@ Trying to connect to database using domain controller: [^mssql-connection]
 impacket-mssqlclient scrm.local/sa:sa@10.10.11.168
 ```
 
-Kerberos user enumeration with kerbrute:
+Kerberos user enumeration with kerbrute[^kerbrute]:
 ```bash
 kerbrute userenum -d scrm.local --dc 10.10.11.168 /usr/share/seclists/Kerberos/A-ZSurnames.txt 
 
@@ -784,3 +784,4 @@ MiscSvc:ScrambledEggs9900
 [^mssql-enum]: MSSQL Enumeration
 [^mssql-command-execution]: MSSQL Command Executiion via xp_cmdshell
 [^ysoserial-net]: Ysoserial.net Deserialization attack
+[^kerbrute]: Kerbrute user enumeration, it executes an AS-REP Roast attack on every enumerated user

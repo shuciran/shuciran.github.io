@@ -100,4 +100,4 @@ for port in 21 22 23 25 80 88 443 445 8080 8081 9001; do
 done;
 ```
 Examples:
-[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:fully-interactive-tty)
+[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:subnet-scanner)

@@ -51,7 +51,8 @@ This protocol may seem complicated and perhaps even convoluted, but it was desig
 
 ### Kerbrute
 
-Tool to validate valid users on the domain, remember that "users" is a dictionary and it must be created even if only one user needs to be tested:
+> Tool to validate valid users on the domain, remember that "users" is a dictionary and it must be created even if only one user needs to be tested
+{: .prompt-tip }
 ```bash
 kerbrute userenum -d scrm.local --dc 10.10.11.168 /usr/share/seclists/Kerberos/A-ZSurnames.txt 
 
@@ -74,8 +75,8 @@ Version: dev (9cfb81e) - 01/21/23 - Ronnie Flathers @ropnop
 2023/01/21 22:46:15 >  Done! Tested 13000 usernames (5 valid) in 104.092 seconds
 ```
 Example:
-[[Scramble#^68a075]]
-[[Tentacle#^3451a6]]
+[Scrambled](https://shuciran.github.io/posts/Scrambled/#fnref:kerbrute)
+[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:kerbrute)
 
 ### Password Spraying
 ```bash

@@ -243,7 +243,7 @@ Enumerating website we found a webpage with information disclosure:
 
 ![[Pasted image 20230121214935.png]]
 
-Kerberos user enumeration with kerbrute: ^68a075
+Kerberos user enumeration with kerbrute: [^68a075]
 ```bash
 kerbrute userenum -d scrm.local --dc 10.10.11.168 /usr/share/seclists/Kerberos/A-ZSurnames.txt 
 
