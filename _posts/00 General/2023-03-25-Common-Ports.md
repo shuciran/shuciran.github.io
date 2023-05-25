@@ -45,6 +45,7 @@ show_image_post: false                                    # Change this to true
 |3306|TCP|MySQL Database|
 |3389|TCP|Microsoft Terminal Server/Remote Desktop Protocol (RDP)|
 |3690|TCP|Subversion (SVN) version control system|
+|5432|TCP|PostgreSQL Database Server|
 |5800|TCP|Virtual Network Computing (VNC) Web Interface|
 |5985|TCP|Windows Remote Management (WinRM)|
 
