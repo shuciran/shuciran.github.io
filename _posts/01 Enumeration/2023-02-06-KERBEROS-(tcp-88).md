@@ -8,7 +8,7 @@ tags: [kerberos enumeration]     # TAG names should always be lowercase; replace
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-# Explanation
+### Explanation
 The Kerberos authentication protocol used by Microsoft is adopted from the Kerberos version 5 authentication protocol created by MIT and has been used as Microsoft's primary authentication mechanism since Windows Server 2003. While NTLM authentication works through a principle of challenge and response, Windows-based Kerberos authentication uses a ticket system.
 
 At a high level, Kerberos client authentication to a service in Active Directory involves the use of a domain controller in the role of a key distribution center, or KDC. This process is shown below.
@@ -100,7 +100,8 @@ Version: dev (9cfb81e) - 01/21/23 - Ronnie Flathers @ropnop
 Useful resource to get a dictionary with possible users on a domain (test with dot and without it):
 [kerberos enum userlists](https://github.com/attackdebris/kerberos_enum_userlists)
 
-#Note If users are found this tool will execute an [[ASREPRoast Attack]]
+> If users are found this tool will execute an [ASREPRoast Attack](https://shuciran.github.io/posts/ASREPRoast-Attack/)
+{: .prompt-warning }
 
 
 
