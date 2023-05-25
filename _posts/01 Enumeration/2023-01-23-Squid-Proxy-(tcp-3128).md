@@ -24,4 +24,4 @@ Then to enumerate the services we use the command "proxychains", keep in mind th
 proxychains -q nmap -sT -Pn -n -vvv 127.0.0.1
 ```
 Example:
-[[Tentacle#^26a864]]
+[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:squid-proxy)

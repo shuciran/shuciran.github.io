@@ -42,7 +42,7 @@ Examples:
 ### Script /dev/null
 First we run the following command:
 ```bash
-script /dev/null -c bash
+SHELL=/bin/bash script -q /dev/null
 ```
 Then, we need to Ctrl + Z the shell as follows:
 ```bash
@@ -60,3 +60,5 @@ Finally export the environment variables with commands:
 root@smtp:/home# export TERM=xterm
 root@smtp:/home# export SHELL=bash
 ```
+Examples:
+[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:fully-interactive-tty)

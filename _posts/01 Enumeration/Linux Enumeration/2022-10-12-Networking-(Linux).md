@@ -68,8 +68,7 @@ iptables-save
 #!/bin/bash
 for i in $(seq 1 255):
 do
-        timeout 1 bash -c "ping -c 1 192.168.122.$i &>/dev/null" && echo "[+] IP 192.168.122.$i active" &
-done; wait
+        timeout 1 bash -c "ping -c 1 192.168.122.$i &>/dev/null" && echo "[+] IP 192.168.122.$i active" & done; wait
 ```
 Examples:
 [Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:hosts-scanner)
@@ -86,3 +85,19 @@ echo "Done"
 Examples:
 [Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:port-scanner)
 
+### Subnet Port Scanner
+
+> This is a scanner using proxychains, if you don't have a proxychains configuration, remove the `proxychains` command.
+{: .prompt-warning }
+
+```bash
+#!/bin/bash
+
+for port in 21 22 23 25 80 88 443 445 8080 8081 9001; do
+        for i in $(seq 1 254); do
+                proxychains -q timeout 1 bash -c "echo '' > /dev/tcp/10.241.251.$i/$port" 2>/dev/null && echo "[+] Port $port - OPEN in Host: 10.241.251.$i" &
+        done;
+done;
+```
+Examples:
+[Tentacle](https://shuciran.github.io/posts/Tentacle/#fnref:fully-interactive-tty)
