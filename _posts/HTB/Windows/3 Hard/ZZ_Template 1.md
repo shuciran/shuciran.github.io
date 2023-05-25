@@ -1,10 +1,10 @@
 ---
 description: >-
-  Active HTB Machine
-title: Active (Hard)                # Add title here
-date: 2023-02-09 08:00:00 -0600                           # Change the date to match completion date
+  Tentacle HTB Machine
+title: Tentacle (Hard)                # Add title here
+date: 2023-05-24 08:00:00 -0600                           # Change the date to match completion date
 categories: [HackTheBox, Windows - Hard]                     # Change Templates to Writeup
-tags: [smb enumeration, smb full replication, gpp decryption, kerberoasting, hashcat, tgs cracking]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [hackthebox, tentacle,]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Active.png                # Add infocard image here for post preview image
 ---

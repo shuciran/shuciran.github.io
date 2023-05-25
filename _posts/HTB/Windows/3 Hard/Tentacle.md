@@ -191,13 +191,13 @@ Host's addresses:
 __________________                                                                                                                                                                        
 Name Servers:                                                                                                                                                                             
 ______________                                                                                                                                                                            
-ns.realcorp.htb.                         259200   IN    A        10.197.243.77                                                                                                            
+ns.realcorp.htb.                         259200   IN    A        10.197.243.77
 Mail (MX) Servers:                                                                                                                                                                        
 ___________________                                                                                                                                                                       
 Trying Zone Transfers and getting Bind Versions:                                                                                                                                          
 _________________________________________________                                                                                                                                         
 ______________________________________________________________________________________                                                                                                    
-ns.realcorp.htb.    259200   IN    A        10.197.243.77                                                                                                            
+ns.realcorp.htb.    259200   IN    A        10.197.243.77
 proxy.realcorp.htb. 259200   IN    CNAME    ns.realcorp.htb.
 ns.realcorp.htb.    259200   IN    A        10.197.243.77
 wpad.realcorp.htb.  259200   IN    A        10.197.243.31
