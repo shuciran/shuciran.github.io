@@ -2,15 +2,15 @@
 description: >-
   Querier HTB Machine
 title: Querier (Medium)                # Add title here
-date: 2023-04-24 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-04-30 08:00:00 -0600                           # Change the date to match completion date
 categories: [HackTheBox, Windows - Medium]                     # Change Templates to Writeup
-tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [hackthebox, ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Querier.png                # Add infocard image here for post preview image
 ---
 ### Host entries:
 ```bash
-10.10.10.125  
+10.10.10.248  
 ```
 If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NTP-Synchronization/) with the domain controller.
 
