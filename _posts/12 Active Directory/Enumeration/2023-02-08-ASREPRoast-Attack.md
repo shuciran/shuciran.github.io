@@ -3,7 +3,7 @@ description: >-
   ASREPRoast Attack
 title: ASREPRoast Attack             # Add title here
 date: 2023-02-08 08:00:00 -0600                           # Change the date to match completion date
-categories: [12 Active Directory, Enumeration]                     # Change Templates to Writeup
+categories: [12 Active Directory, AD - Enumeration]                     # Change Templates to Writeup
 tags: [active directory, enumeration, asreproast]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
