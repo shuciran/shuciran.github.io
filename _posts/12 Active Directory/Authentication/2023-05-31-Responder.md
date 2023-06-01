@@ -10,7 +10,6 @@ show_image_post: false                                    # Change this to true
 ---
 
 ### LLMNR (Link-Local Multicast Name Resolution)
-
 What is LLMNR?
 - Link-Local Multicast Name Resolution.
 - Used to identify hosts when DNS fails to do so.
