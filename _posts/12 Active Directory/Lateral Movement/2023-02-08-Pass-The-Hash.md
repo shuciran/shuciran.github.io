@@ -8,6 +8,20 @@ tags: [active directory, lateral movement, pass the hash]     # TAG names should
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
+
+### Pass The Hash Attack
+The _Pass the Hash_ (PtH) technique allows an attacker to authenticate to a remote system or service using a user's NTLM hash instead of the associated plaintext password. Note that this will not work for Kerberos authentication but only for server or service using NTLM authentication.
+
+Many third-party tools and frameworks use PtH to allow users to both authenticate and obtain code execution, including PsExec from Metasploit, Passing-the-hash toolkit, and [Impacket](https://github.com/SecureAuthCorp/impacket/blob/master/examples/smbclient.py). The mechanics behind them are more or less the same in that the attacker connects to the victim using the Server Message Block (SMB) protocol and performs authentication using the NTLM hash.
+
+Most tools built to exploit PtH create and start a Windows service (for example cmd.exe or an instance of PowerShell) and communicate with it using _Named Pipes_. This is done using the Service Control ManagerAPI.
+
+This technique requires an SMB connection through the firewall (commonly port 445), and the Windows _File and Print Sharing_ feature to be enabled. These requirements are common in internal enterprise environments.
+
+When a connection is performed, it normally uses a special admin share called Admin$. In order to establish a connection to this share, the attacker must present valid credentials with local administrative permissions. In other words, this type of lateral movement typically requires local administrative rights.
+
+Note that PtH uses the NTLM hash legitimately. However, the vulnerability lies in the fact that we gained unauthorized access to the password hash of a local administrator.
+
 > To extract hashes for a pass the hash, go to [Dumping SAM](https://shuciran.github.io/posts/Dumping-SAM/) section or [DCSync](https://shuciran.github.io/posts/DCSync/) section.
 {: .prompt-tip }
 
@@ -38,18 +52,6 @@ Microsoft Windows [Version 10.0.16299.309]
 C:\Windows\system32>
 ```
 
-### Explanation
-The _Pass the Hash_ (PtH) technique allows an attacker to authenticate to a remote system or service using a user's NTLM hash instead of the associated plaintext password. Note that this will not work for Kerberos authentication but only for server or service using NTLM authentication.
-
-Many third-party tools and frameworks use PtH to allow users to both authenticate and obtain code execution, including PsExec from Metasploit, Passing-the-hash toolkit, and [Impacket](https://github.com/SecureAuthCorp/impacket/blob/master/examples/smbclient.py). The mechanics behind them are more or less the same in that the attacker connects to the victim using the Server Message Block (SMB) protocol and performs authentication using the NTLM hash.
-
-Most tools built to exploit PtH create and start a Windows service (for example cmd.exe or an instance of PowerShell) and communicate with it using _Named Pipes_. This is done using the Service Control ManagerAPI.
-
-This technique requires an SMB connection through the firewall (commonly port 445), and the Windows _File and Print Sharing_ feature to be enabled. These requirements are common in internal enterprise environments.
-
-When a connection is performed, it normally uses a special admin share called Admin$. In order to establish a connection to this share, the attacker must present valid credentials with local administrative permissions. In other words, this type of lateral movement typically requires local administrative rights.
-
-Note that PtH uses the NTLM hash legitimately. However, the vulnerability lies in the fact that we gained unauthorized access to the password hash of a local administrator.
 
 
 
