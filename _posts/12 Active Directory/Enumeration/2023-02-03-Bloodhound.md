@@ -21,8 +21,8 @@ PS> .\SharpHound.exe
 Examples:
 
 [Streamio](https://shuciran.github.io/posts/Streamio/#fnref:sharphound)
-[[Outdated#^8d2e14]]
-[[Forest#^]]
+[Intelligence](https://shuciran.github.io/posts/Intelligence/#fnref:bloodhound-python)
+[Outdated](https://shuciran.github.io/posts/Outdated/#fnref:sharphound)
 
 ### Bloodhound.py
 Resources: [bloodhound.py](https://github.com/fox-it/BloodHound.py)
