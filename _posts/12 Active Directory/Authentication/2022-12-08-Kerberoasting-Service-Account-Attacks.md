@@ -19,8 +19,7 @@ impacket-GetUserSPNs htb.local/amanda:Ashare1972 -request
 ```
 Examples:
 [Scramble](https://shuciran.github.io/posts/Scramble/#fnref:kerberoasting-attack)
-
-[[Sizzle#^e17a07]]
+[Sizzle](https://shuciran.github.io/posts/Sizzle/#fnref:kerberoasting)
 
 [[Active#^659f81]]
 

@@ -19,7 +19,6 @@ PS> Invoke-BloodHound -CollectionMethod ACL,ObjectProps,Default
 PS> .\SharpHound.exe
 ```
 Examples:
-
 [Streamio](https://shuciran.github.io/posts/Streamio/#fnref:sharphound)
 [Intelligence](https://shuciran.github.io/posts/Intelligence/#fnref:bloodhound-python)
 [Outdated](https://shuciran.github.io/posts/Outdated/#fnref:sharphound)
@@ -35,8 +34,7 @@ Then run it to create the bloodhound files:
 bloodhound-python -c All -u amanda -p Ashare1972 -ns 10.10.10.103 -d htb.local
 ```
 [Streamio](https://shuciran.github.io/posts/Streamio/#fnref:bloodhound-python)
-[[Sizzle#^af63c2]]
-
+[Sizzle](https://shuciran.github.io/posts/Sizzle/#fnref:bloodhound-python)
 ### Running Bloodhound
 #Note To execute bloodhound we need to run the following commands (one command each line):
 ```bash
