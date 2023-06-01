@@ -14,4 +14,4 @@ If we get a .cer certificate from the /certsrv endpoint on the DC website we can
 evil-winrm -S -c certnew.cer -k amanda.key -i 10.10.10.103 -u 'amanda' -p 'Ashare1972'
 ```
 Examples:
-[[Sizzle#^6fd8c7]]
+[Sizzle](https://shuciran.github.io/posts/Sizzle/#fnref:evil-winrm)

