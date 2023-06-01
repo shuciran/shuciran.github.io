@@ -22,7 +22,6 @@ If Active Directory => [NTP Synchronization](https://shuciran.github.io/posts/NT
 - Intercepting Net-NTLMv2 Hashes with Responder
 - BloodHound Enumeration
 - Abusing ReadGMSAPassword Rights (gMSADumper)
-- Pywerview Usage
 - Abusing Unconstrained Delegation
 - Abusing AllowedToDelegate Rights (getST.py) (User Impersonation)
 - Using .ccache file with wmiexec.py (KRB5CCNAME)
@@ -377,7 +376,7 @@ ResourceGroupIds:
     ] 
 Domain SID: S-1-5-21-4210132550-3389855604-3437519686
 ```
-And the SPN can be extracted from Bloodhound in the extra properties of the user `svc_int`:
+And the SPN can be extracted from Bloodhound in the extra properties of the user `svc_int` since this is an Unconstrained Delegation the `WWW/dc.intelligence.htb` shows up:
 ![SPN-Bloodhound](/assets/img/Pasted image 20230601093711.png)
 
 And finally we have this information to abuse `impacket-ticketer`:
