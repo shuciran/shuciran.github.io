@@ -19,7 +19,7 @@ What is LLMNR?
 
 ### Responder
 > [!] Responder must be run as root.
-{. :prompt-danger }
+{: .prompt-danger }
 Tool to poisoning the network and catch authentication requests such as NTLM, NTLMv2, etc.
 ```bash
 responder -I tun0
