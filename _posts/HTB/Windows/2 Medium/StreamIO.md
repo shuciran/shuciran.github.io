@@ -988,13 +988,13 @@ SQL> select * from users;
 
 As we are already user yoshihide and the other user with a folder within the system is nikk37 then let’s crack the hash of its password by using crackstation:
 
-```
+```bash
 nikk37:get_dem_girls2@yahoo.com
 ```
 
-Execute evil-winrm as port tcp 5985 is open: ^963d06
+Execute evil-winrm as port tcp 5985 is open[^evil-winrm]:
 
-```
+```powershell
 evil-winrm -i 10.10.11.158 -u 'nikk37' -p 'get_dem_girls2@yahoo.com'
 
 Evil-WinRM shell v3.3
@@ -1297,31 +1297,6 @@ Command to identify if we have a powershell or command prompt shell.
 
 ### References
 
-[Offensive Security's Exploit Database Archive](https://www.exploit-db.com/papers/45870)
-
-[reverse shell windows](https://deephacking.tech/reverse-shells-en-windows/)
-
-[https://deephacking.tech/reverse-shells-en-windows/](https://deephacking.tech/reverse-shells-en-windows/)
-
-[Release v1.7.7 · jpillora/chisel](https://github.com/jpillora/chisel/releases/tag/v1.7.7)
-
-[GitHub - lclevy/firepwd: firepwd.py, an open source tool to decrypt Mozilla protected passwords](https://github.com/lclevy/firepwd)
-
-[BloodHound/SharpHound.ps1 at master · BloodHoundAD/BloodHound](https://github.com/BloodHoundAD/BloodHound/blob/master/Collectors/SharpHound.ps1)
-
-[PowerSploit/PowerView.ps1 at master · PowerShellMafia/PowerSploit](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
-
-[Powershell powerview commands](https://chryzsh.gitbooks.io/darthsidious/content/other/war-stories/domain-admin-in-30-minutes.html)
-
-[LAPS explanation](https://www.n00py.io/2020/12/dumping-laps-passwords-from-linux/)
 
 
-# Flags
-
-user.txt
-
-e58bf31a6f718b76b25761940252326a
-
-root.txt
-
-2cc34866191fabf6a5f3474c2979a48f
+[^evil-winrm]: Connection via evil-winrm

