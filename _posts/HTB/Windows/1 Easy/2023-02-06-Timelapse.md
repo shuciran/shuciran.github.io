@@ -6,7 +6,7 @@ date: 2023-02-06 08:00:00 -0600                           # Change the date to m
 categories: [HackTheBox, Windows - Easy]                     # Change Templates to Writeup
 tags: [hackthebox, windows, timelapse, kerberos, smb, ntp, pfx certificate, evil-winrm, powershell, history, information leakage, laps_reader]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
-image: /assets/img/icons/Active.png                # Add infocard image here for post preview image
+image: /assets/img/icons/Timelapse.png                # Add infocard image here for post preview image
 ---
 ### Host entries
 ```bash
@@ -290,7 +290,7 @@ pfx2john legacyy_dev_auth.pfx
 legacyy_dev_auth.pfx:$pfxng$1$20$2000$20$eb755568327396de179c4a5...
 45b03465a6ce0c974055e6dcc74f0e893:::::legacyy_dev_auth.pfx
 ```
-Hashcat output:
+Let's decrypt it with `john`:
 ```bash
 pfx2john legacyy_dev_auth.pfx | john /dev/stdin --wordlist=/usr/share/wordlists/rockyou.txt 
 Using default input encoding: UTF-8
@@ -340,7 +340,7 @@ Description = Access denied
 WMIC.exe : ERROR:
 Description = Access denied
 ```
-A good technique for privilege escalation on Windows is to read the [Powershell History](https://shuciran.github.io/posts/Powershell-History/) located in the PATH:  ^3ceb21
+A good technique for privilege escalation on Windows is to read the [Powershell History](https://shuciran.github.io/posts/Powershell-History/)[^powershell-history] located in the PATH:  
 ```powershell
 C:\Users\<Username>\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
 ```
@@ -453,3 +453,4 @@ administrator:d2s(09pQNZ.}Q.db5,m-drS2
 [^readlapspassword]: Python utility to read LAPS passwords
 [^pfx-certificate]: PFX Certificate login
 [^ldap-enumeration]: LDAP Enumeration
+[^powershell-history]: Powershell History

