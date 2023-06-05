@@ -33,7 +33,7 @@ Examples:
 [[Backdoor#^34b6a9]]
 [[Backdoor#^11157a]]
 
-## WPScan
+### WPScan
 For a thorough scan, we will need to provide the URL of the target (--url) and configure the enumerate option (--enumerate) to include "All Plugins" (ap), "All Themes" (at), "Config backups" (cb), and "Db exports" (dbe). 
 ```bash
 wpscan --url sandbox.local --enumerate ap,at,cb,dbe 
@@ -42,3 +42,11 @@ wpscan --url sandbox.local --enumerate ap,at,cb,dbe
 ```bash
 wpscan --url http://example.com/ --plugins-detection aggressive
 ```
+
+### Brute Force
+```bash
+wpscan --url http://locker.ptd/ -U MB6zE2vkSCV -P /usr/share/wordlists/rockyou.txt
+```
+
+> You can also add your API Token from wpscan directly by creating a user account to do so, you need to pass the `--api-token` parameter.
+{: .prompt-tip }
