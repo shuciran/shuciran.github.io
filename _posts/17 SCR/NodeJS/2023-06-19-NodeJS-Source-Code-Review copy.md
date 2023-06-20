@@ -10,8 +10,7 @@ show_image_post: false                                    # Change this to true
 ---
 
 ### Methods
-It is important to know that in a typical NodeJS server side plugin this are the low-hanging-fruit that qe need to check first:
-These methods are named as follows:
+It is important to know that in a typical NodeJS server side plugin this are the low-hanging-fruit that we need to check first:
 -   eval
 
 ### Internal 
