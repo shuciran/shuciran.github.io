@@ -1,0 +1,12 @@
+---
+description: >-
+   Source Code Review Methodology
+title:  Source Code Review Methodology             # Add title here
+date: 2023-06-19 08:00:00 -0600                           # Change the date to match completion date
+categories: [17 SCR, Source Code Review Methodology]                     # Change Templates to Writeup
+tags: [scr, methodology ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+show_image_post: false                                    # Change this to true
+#image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
+---
+
+As is always the case when we have access to the source code, we first like to just look around and get a feel for the application. How is it organized? Can we identify any coding style that can help us with string searches against the code base? Is there anything else that can help us streamline and minimize the amount of time we need to properly investigate our target?
