@@ -33,7 +33,6 @@ Excellent tool for decompile .jar files
 We first need to save the decompiled source code into human-readable .java files. JD-GUI allows us to do that via the File > Save All Sources menu. A tool for search strings Notepad++ which is already installed on our VM and could help us navigate this code base in a much easier way.
 ![JD-GUI-Decompiler](/assets/img/Pasted image 20230703211144.png)
 
-
 ### Frontend Search
 
 It is important to know that in a typical Java servlet, we can easily identify the HTTP request handler functions that handle each HTTP request type due to their constant and unique names.

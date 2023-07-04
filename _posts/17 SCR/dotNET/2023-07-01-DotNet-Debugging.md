@@ -36,3 +36,7 @@ Here we need to replace the attribute we mentioned in Listing 16 (line 11) to th
 Once we replace the relevant assembly attribute, we can just click on the Compile button, which will close the edit window. Finally, we'll save our edited assembly by clicking on the File > Save Module menu option, which presents us with the following dialog box:
 
 We can accept the defaults and have the edited assembly overwrite the original. At this point we are ready to start using our dnSpy debugger.
+
+### FileSystemUtils
+
+According to the original advisory, the DotNetNuke.dll assembly contains a class called FileSystemUtils. Furthermore, this class implements a method called PullFile. If we use the dnSpy search function, we can easily locate this function and look at its implementation.
