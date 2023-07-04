@@ -19,3 +19,6 @@ These methods are named as follows:
 -   _doDelete_
 -   _doCopy_
 -   _doOptions_
+
+### Java Recognize
+A quick Google search leads us to a file extensions explanation page, which states that the .do extension is typically a URL mapping scheme for compiled Java code.
