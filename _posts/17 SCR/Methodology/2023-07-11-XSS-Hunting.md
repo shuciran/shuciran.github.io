@@ -2,7 +2,7 @@
 description: >-
   XSS Hunting
 title:  XSS Hunting             # Add title here
-date: 2023-06-22 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-07-11 08:00:00 -0600                           # Change the date to match completion date
 categories: [17 SCR, XSS Hunting]                     # Change Templates to Writeup
 tags: [scr, methodology, xss hunting]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true

@@ -26,13 +26,3 @@ internals.batch = function (batchRequest, resultsData, pos, parts, callback) {
     var error = null;
 <SNIP>
 ```
-
-*** Call ***
-Calling the function called "batch"
-```bash
-var callBatch = function (pos, parts) {
-         return function (callback) {
-             internals.batch(request, resultsData, pos, parts, callback);
-         };
-     };
-```
