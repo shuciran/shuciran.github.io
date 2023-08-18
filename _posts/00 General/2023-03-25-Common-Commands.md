@@ -18,3 +18,10 @@ Useful command to reload zsh when it is modified (alias, keys, etc.):
 ```bash
 source ~/.zshrc
 ```
+### Pyenv
+```python
+pyenv install <version>
+pyenv versions
+pyenv global <version>
+```
+
