@@ -9,6 +9,14 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 
+```
+The existence of bin/www, package.json, and routes/ indicate that this is a NodeJS web application. In particular, package.json identifies a NodeJS project and manages its dependencies.1
+```
+
+```
+The existence of the docker-compose.yml and Dockerfile files indicate that this application is started using Docker containers.
+```
+
 ### Methods
 It is important to know that in a typical NodeJS server side plugin this are the low-hanging-fruit that we need to check first:
 -   eval
@@ -26,3 +34,4 @@ internals.batch = function (batchRequest, resultsData, pos, parts, callback) {
     var error = null;
 <SNIP>
 ```
+
