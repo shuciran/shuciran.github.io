@@ -8,9 +8,9 @@ tags: [scr, nodejs ]     # TAG names should always be lowercase; replace templat
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
-
+### Assessing the Application
 ```
-The existence of bin/www, package.json, and routes/ indicate that this is a NodeJS web application. In particular, package.json identifies a NodeJS project and manages its dependencies.1
+The existence of bin/www, package.json, and routes/ indicate that this is a NodeJS web application. In particular, package.json identifies a NodeJS project and manages its dependencies.
 ```
 
 ```
