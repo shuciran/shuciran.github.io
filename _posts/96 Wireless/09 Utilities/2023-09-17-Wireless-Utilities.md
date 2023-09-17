@@ -3,8 +3,8 @@ description: >-
   Wireless Utilities
 title:  Wireless Utilities            # Add title here
 date: 2023-09-17 08:00:00 -0600                           # Change the date to match completion date
-categories: [96 Wireless, Wireless Utilities ]                     # Change Templates to Writeup
-tags: [wireless, iw, iwconfig, utilities]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+categories: [96 Wireless, Utilities ]                     # Change Templates to Writeup
+tags: [wireless, iw, iwconfig]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
@@ -52,21 +52,6 @@ kali@kali:~$ sudo iw dev wlan0 scan | egrep "DS Parameter set|SSID:"
 	SSID: 6F36E6
 	DS Parameter set: channel 11
 ```
-To display the current regulatory domain, we use iw reg get:
-```bash
-kali@kali:~$ sudo iw reg get
-global
-country 00: DFS-UNSET
-	(2402 - 2472 @ 40), (6, 20), (N/A)
-	(2457 - 2482 @ 20), (6, 20), (N/A), AUTO-BW, PASSIVE-SCAN
-	(2474 - 2494 @ 20), (6, 20), (N/A), NO-OFDM, PASSIVE-SCAN
-	(5170 - 5250 @ 80), (6, 20), (N/A), AUTO-BW, PASSIVE-SCAN
-	(5250 - 5330 @ 80), (6, 20), (0 ms), DFS, AUTO-BW, PASSIVE-SCAN
-	(5490 - 5730 @ 160), (6, 20), (0 ms), DFS, PASSIVE-SCAN
-	(5735 - 5835 @ 80), (6, 20), (N/A), PASSIVE-SCAN
-	(57240 - 63720 @ 2160), (N/A, 0), (N/A)
-```
-By default, Kali is set to global regulatory domain (00).
 
 #### iwconfig and other utilities (deprecated)
 - `iwlist` allows for the initiation of scanning, listing frequencies, bit rates, and encryption keys.
