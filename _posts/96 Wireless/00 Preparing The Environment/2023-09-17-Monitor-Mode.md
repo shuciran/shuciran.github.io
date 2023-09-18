@@ -63,6 +63,11 @@ iw dev <interface> set monitor none
 ifconfig <interface> down
 iw dev <interface> set monitor none
 ifconfig <interface> up
+
+# Also you can try with the deprecated commands:
+sudo ip link set wlan0 down
+sudo iwconfig wlan0 mode monitor
+sudo ip link set wlan0 up
 ```
 
 #### Managed mode
