@@ -31,6 +31,7 @@ Wiphy phy0
 		 * P2P-GO
 		 * outside context of a BSS
 ```
+
 To get a listing of wireless access points that are within range of our wireless card, we will use `iw` with the `dev wlan0` option
 ```bash
 kali@kali:~$ sudo iw dev wlan0 scan | grep SSID
