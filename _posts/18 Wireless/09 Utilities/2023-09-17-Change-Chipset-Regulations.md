@@ -3,7 +3,7 @@ description: >-
   Change Chipset Regulations
 title:  Change Chipset Regulations           # Add title here
 date: 2023-09-17 08:00:00 -0600                           # Change the date to match completion date
-categories: [96 Wireless, Utilities]                     # Change Templates to Writeup
+categories: [18 Wireless, Utilities]                     # Change Templates to Writeup
 tags: [wireless, chipset regulations, iw]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
