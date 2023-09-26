@@ -1,4 +1,5 @@
-Built-in Wireshark
+### SSHDUMP Remote Capture
+
 Let's review how to do remote packet capture with SSH from within Wireshark. If we've previously isolated our devices to only the wireless interfaces, we can refocus to External Capture devices. We'll select External Capture and then de-select all others in the interface's dropdown menu.
 
 ![SSHDump](/assets/img/Pasted image 20230925232200.png)

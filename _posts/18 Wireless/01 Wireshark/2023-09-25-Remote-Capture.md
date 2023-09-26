@@ -1,10 +1,10 @@
 ---
 description: >-
-  Wireshark Tricks
-title:  Wireshark Tricks           # Add title here
+  Remote Capture
+title:  Remote Capture           # Add title here
 date: 2023-09-25 08:00:00 -0600                           # Change the date to match completion date
 categories: [18 Wireless, Wireshark]                     # Change Templates to Writeup
-tags: [wireless, wireshark]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [wireless, wireshark, remote capture]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
