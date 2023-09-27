@@ -33,6 +33,12 @@ airodump-ng -r <file.cap>
 airodump-ng wlan0 --wps
 ```
 
+### Reading a pcap
+Read a pcap and extract the data:
+```bash
+airodump-ng -r airdrop.pcap
+```
+
 ### Airodump-ng Interactive Mode
 
 The following keys are allowed while executing airodump-ng
