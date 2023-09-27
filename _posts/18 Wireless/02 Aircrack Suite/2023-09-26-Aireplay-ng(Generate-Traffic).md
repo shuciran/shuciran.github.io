@@ -1,7 +1,7 @@
 ---
 description: >-
-  Aireplay-ng
-title:  Aireplay-ng        # Add title here
+  Aireplay-ng (Generate-Traffic)
+title:  Aireplay-ng (Generate-Traffic)       # Add title here
 date: 2023-09-26 08:00:00 -0600                           # Change the date to match completion date
 categories: [18 Wireless, Aircrack Suite]                     # Change Templates to Writeup
 tags: [wireless, aireplay-ng]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
