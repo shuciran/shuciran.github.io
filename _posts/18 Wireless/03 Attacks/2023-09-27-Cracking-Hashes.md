@@ -2,7 +2,7 @@
 description: >-
   Cracking Hashes
 title:  Cracking Hashes      # Add title here
-date: 2023-09-26 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-09-27 08:00:00 -0600                           # Change the date to match completion date
 categories: [18 Wireless, Attacks]                     # Change Templates to Writeup
 tags: [wireless, cracking hashes]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
