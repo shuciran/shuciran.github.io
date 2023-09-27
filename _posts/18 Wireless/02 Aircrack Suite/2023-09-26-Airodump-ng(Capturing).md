@@ -2,8 +2,7 @@
 description: >-
   Airodump-ng
 title:  Airodump-ng         # Add title here
-date: 2023-09-26
- 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-09-26 08:00:00 -0600                           # Change the date to match completion date
 categories: [18 Wireless, Aircrack Suite]                     # Change Templates to Writeup
 tags: [wireless, airodump-ng]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
