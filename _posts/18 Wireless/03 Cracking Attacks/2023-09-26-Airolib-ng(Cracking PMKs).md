@@ -11,7 +11,7 @@ show_image_post: false                                    # Change this to true
 
 ### Airolib-ng
 
-Airolib-ng is an aircrack-ng suite tool designed to store and manage essid and password lists, compute their Pairwise Master Keys (PMKs) and use them in WPA/WPA2 cracking through sqlite3.
+Airolib-ng is a tool designed to store and manage ESSID and password lists, compute their Pairwise Master Keys (PMKs) and use them in WPA/WPA2 cracking through sqlite3.
 
 ```bash
 # create a text file containing the ESSID of the target AP
