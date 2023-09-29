@@ -28,6 +28,30 @@ sudo dumpcap -w - -P -i wlan0mon
 sudo tshark -w - -i wlan0mon
 ```
 
+#### TSHARK EAP [^tshark-eap]
+```bash
+# show packets in a file
+sudo tshark -r wpa-eap-tls.pcap 
+
+# show captured packets applying a filter for packets containing certificates exchanged during handshaek
+sudo tshark -r wpa-eap-tls.pcap -Y "tls.handshake.certificate" 
+
+# show all data (-x)
+sudo tshark -r wpa-eap-tls.pcap -Y "tls.handshake.certificate" -x
+
+# show all fields in capture files (the ones filtered with -Y)
+tshark -r b64.pcap -Y "tls.handshake.certificate" -T pdml
+
+# show a specific field (in this case, the certificate)
+tshark -r b64.pcap -Y "tls.handshake.certificate" -T fields -e "tls.handshake.certificate" 
+
+# full plaintext dump of packet (the same that you can see on wireshark)
+tshark -nr b64.pcap -2 -R "ssl.handshake.certificate" -V
+
+# in JSON format, easier to read:
+tshark -nr b64.pcap -2 -R "ssl.handshake.certificate" -T json -V
+```
+
 ### Piping packets to wireshark
 ```bash
 sudo tcpdump -U -w - -i wlan0mon | wireshark -k -i -

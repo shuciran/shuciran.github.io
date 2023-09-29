@@ -11,9 +11,9 @@ show_image_post: false                                    # Change this to true
 
 ### Methodology
 
-First, we'll need to capture a handshake. 
-Next, we will make a guess at the passphrase and send that guess into the hash function. 
-We will then compare the output from the hash function to the handshake.
+- First, we'll need to capture a handshake. 
+- Next, we will make a guess at the passphrase and send that guess into the hash function. 
+- We will then compare the output from the hash function to the handshake.
 
 ### Capturing the Handshake
 

