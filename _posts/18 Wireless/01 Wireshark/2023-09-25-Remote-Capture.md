@@ -61,3 +61,5 @@ sudo tcpdump -U -w - -i wlan0mon | wireshark -k -i -
 ```bash
 ssh root@10.11.0.196 "sudo -S tcpdump -U -w - -i wlan0mon" | sudo wireshark -k -i -
 ```
+
+[^tshark-eap]: tshark eap filters

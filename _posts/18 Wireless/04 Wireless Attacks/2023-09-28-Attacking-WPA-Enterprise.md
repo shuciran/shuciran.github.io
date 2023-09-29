@@ -16,9 +16,11 @@ show_image_post: false                                    # Change this to true
 - It is common to use a username and password to authenticate, which could be tied to domain credentials.
 
 ### WPA enterprise
-Each user uses his own user and password (if client certificates are not used). Each user's traffic is encrypted with a different key. Connection in windows:
+Each user uses his own user and password (if client certificates are not used). Each user's traffic is encrypted with a different key. 
+Connection in windows:
 ![WPA-Enterprise-Windows](/assets/img/Pasted image 20230928223432.png)
-and in mac
+
+And in mac:
 ![WPA-Enterprise-Mac](/assets/img/Pasted image 20230928223504.png)
 
 Looks like a captive portal but it's safer. In WPA enterprise we attack the clients, not the AP nor the RADIUS 
@@ -298,4 +300,3 @@ Tool to create fake APs
 ``./eapmd5pass -w dict -r eapmd5-sample.dump``
 
 
-[^tshark-eap]: tshark eap filters
