@@ -24,7 +24,7 @@ wlan.ssid contains "XYZ"
 wlan.bssid contains 00:01:20:43:21:12
 # X represents frame types: 0 (management), 1 (control), 2 (data), and 3 (extension)
 wlan.fc.type == X
-# X represents frame subtypes
+# X represents frame subtypes {0x08 for beacons, 0x04 for probes}
 wlan.fc.subtype == X
 # EAPoL frames
 wlan.fc.type_subtype in {0x0 0x1 0xb}

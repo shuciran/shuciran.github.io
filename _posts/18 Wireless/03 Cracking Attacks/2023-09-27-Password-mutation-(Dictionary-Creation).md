@@ -3,7 +3,7 @@ description: >-
   Password mutation (Dictionary Creation)
 title:  Password mutation (Dictionary Creation)      # Add title here
 date: 2023-09-27 08:00:00 -0600                           # Change the date to match completion date
-categories: [18 Wireless, Wireless Attacks]                     # Change Templates to Writeup
+categories: [18 Wireless, Cracking Attacks]                     # Change Templates to Writeup
 tags: [wireless, password mutation, dictionary creation]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -106,7 +106,7 @@ A set of three words generates about 6,000 passwords, four words generates about
 Tool that recovers WPA pre-shared keys using both dictionary and rainbow table attacks. Although coWPAtty is not being developed anymore, it is still useful, especially when using its rainbow table attack method. Install it with ``sudo apt install cowpatty``
 
 ```bash
-#Generate rainbow tables
+#Generate rainbow tables. We run genpmk with -f to define our wordlist, -d to output to a file, and -s to specify the ESSID.
 genpmk -f <password file> -d hashes -s test
 
 cowpatty -r wpa-01.pcap -d hashes -s test 
