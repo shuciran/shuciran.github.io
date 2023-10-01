@@ -9,6 +9,45 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 
+### Monitor Mode
+#### airmon-ng
+```bash
+# Monitor Mode
+sudo airmon-ng start wlan0
+# If you get error for the process being running you can use 1 of 2 options
+# First option
+sudo airmon-ng check kill
+# Second option
+killall dhclient wpa_supplicant
+# Finally restart the service
+sudo service NetworkManager restart
+```
+### Falsifying MAC address
+#### macchanger
+```bash
+# List Organizational Unique Identifier (OUI) 
+macchanger -l
+# Change the MAC of an interface
+sudo ifconfig wlan0 down
+macchanger --mac=00:00:00:00:00:00 wlan0
+sudo ifconfig wlan0 up
+```
+### Manually configure Monitor Mode
+``` bash
+# Use the following command to set interface in monitor mode.
+iw dev <interface> set monitor none
+
+# If this gives you device busy error, then do the following:
+ifconfig <interface> down
+iw dev <interface> set monitor none
+ifconfig <interface> up
+
+# Also you can try with the deprecated commands:
+sudo ip link set wlan0 down
+sudo iwconfig wlan0 mode monitor
+sudo ip link set wlan0 up
+```
+
 ### Wireless Monitor Mode Interface
 
 First, we add an interface with the interface option and the add parameter followed by its name (wlan0mon). Lastly the type option with monitor places our new interface in monitor mode:
@@ -49,26 +88,7 @@ command failed: No such device (-19)
 
 ### Change between monitor and manage mode
 
-#### Monitor mode
-##### airmon-ng
-```bash
-airmon-ng start wlan0
-```
-##### Manually
-``` bash
-# Use the following command to set interface in monitor mode.
-iw dev <interface> set monitor none
 
-# If this gives you device busy error, then do the following:
-ifconfig <interface> down
-iw dev <interface> set monitor none
-ifconfig <interface> up
-
-# Also you can try with the deprecated commands:
-sudo ip link set wlan0 down
-sudo iwconfig wlan0 mode monitor
-sudo ip link set wlan0 up
-```
 
 #### Managed mode
 > Needed for connecting to networks!!!
