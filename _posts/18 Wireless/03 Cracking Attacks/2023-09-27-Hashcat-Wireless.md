@@ -27,6 +27,15 @@ A utility that is specifically relevant for our purposes is cap2hccapx. It expor
 > We can pause (``p``) and resume (``r``) the hashcat execution
 {: .prompt-tip }
 
+### Extracting the Hash with AirCrack-NG
+```bash
+# It is also possible to extract a hash with aircrack
+sudo aircrack-ng -J <myCapture> archivo.cap 
+
+# Then you can use the utility hccap2john to extract for cracking
+hccap2jhon <myCapture> > myHash
+```
+### Extracting Hash with cap2hccapx.bin
 ```bash
 # info about cracking hardware
 hashcat -I 

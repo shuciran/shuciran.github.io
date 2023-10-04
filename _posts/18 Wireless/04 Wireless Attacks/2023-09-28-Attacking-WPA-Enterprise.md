@@ -11,7 +11,7 @@ show_image_post: false                                    # Change this to true
 
 ### Basics
 - WPA Enterprise uses Extensible Authentication Protocol (EAP)
-- Authentication is done using a Remote Authentication Dial-In User Service (RADIUS)2 server.
+- Authentication is done using a Remote Authentication Dial-In User Service (RADIUS) server.
 - Authentication to a RADIUS server with most common EAP methods, requires the use of certificates on the server side at the very least.
 - It is common to use a username and password to authenticate, which could be tied to domain credentials.
 
@@ -113,7 +113,7 @@ Finally, we can get information about the certificate with `openssl x509 -inform
 Install freeradius `sudo apt install freeradius`
 
 ##### Certificate Authority
-This should be similar to the certificate that we captured on step 4)
+This should be similar to the certificate that we captured during `Analyze pcap with wireshark and extract certificate`
 ```bash
 # The folder is unreachable even with sudo, so you need to become root first
 sudo -s

