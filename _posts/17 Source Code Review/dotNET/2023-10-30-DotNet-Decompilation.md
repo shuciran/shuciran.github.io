@@ -13,7 +13,7 @@ show_image_post: false                                    # Change this to true
 
 We use dnSpy and attempt to decompile an executable's code. We'll drag the test.exe file to the dnSpy window, which automatically triggers the decompilation process in dnSpy.
 
-![drag-and-drop-dnspy](/assets/img/Pasted image 20231030230710.png)
+![drag-and-drop-dnspy](/assets/img/Pasted-image-20231030230710.png)
 
 To view the source code of this executable, we'll have to expand the test assembly navigation tree and select test.exe, dotnetapp, and then Program. According to the output, the decompilation process was successful.
 
