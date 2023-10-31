@@ -24,4 +24,4 @@ Useful online passive reconnaissance tool to gather domain information.
 ### Github
 It is possible to enumerate files/repos/code on github, such information could contain sensitive data about a webpage/domain such as source code and credentials.
 
-![Description](/assets/img/Pasted image 20230405001513.png)
+![Description](/assets/img/Pasted-image-20230405001513.png)

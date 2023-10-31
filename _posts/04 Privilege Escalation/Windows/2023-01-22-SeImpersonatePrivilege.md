@@ -22,7 +22,7 @@ There are few requirements needed for Juicy Potato to work:
 
 As we see in the screenshot below, we have a shell running as — **Kohsuke, and the SeImpersonatePrivilege is enabled.**
 
-![Description](/assets/img/Pasted image 20221120150443.png)
+![Description](/assets/img/Pasted-image-20221120150443.png)
 
 To escalate, we need to upload the Juicy Potato executable to the compromised machine. A compiled version is available at the tool’s GitHub account:
 

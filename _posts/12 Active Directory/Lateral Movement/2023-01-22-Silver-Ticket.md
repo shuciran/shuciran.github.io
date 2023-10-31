@@ -19,7 +19,7 @@ To generate a Silver ticket we need 3 resources:
 {: .prompt-danger }
 
 If we don't have the NTLM Hash but we have the password we can generate the hash with this tool: [NTLM Hash Generator](https://codebeautify.org/ntlm-hash-generator)
-![Getting-NTLM-Hash](/assets/img/Pasted image 20230122000844.png)
+![Getting-NTLM-Hash](/assets/img/Pasted-image-20230122000844.png)
 
 ### Extracting DC SID
 To create the ticket, we first need the obtain the so-called _Security Identifier_ or _SID_ of the domain. A SID is an unique name for any object in Active Directory and has the following structure:
@@ -101,7 +101,7 @@ intelligence\administrator
 
 Resources:
 [SilverTicket Explanation S4vitar Minuto 1:20:00](https://www.youtube.com/watch?v=osmFGqnFe8c&ab_channel=S4viOnLive%28BackupDirectosdeTwitch%29):
-![Silver-Ticket-Attack](/assets/img/Pasted image 20230122223446.png)
+![Silver-Ticket-Attack](/assets/img/Pasted-image-20230122223446.png)
 
 ### Mimikatz
 An additional option is to load the silver ticket to memory with mimikatz as follows:

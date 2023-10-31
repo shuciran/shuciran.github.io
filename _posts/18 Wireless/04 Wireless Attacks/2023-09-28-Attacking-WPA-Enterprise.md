@@ -18,10 +18,10 @@ show_image_post: false                                    # Change this to true
 ### WPA enterprise
 Each user uses his own user and password (if client certificates are not used). Each user's traffic is encrypted with a different key. 
 Connection in windows:
-![WPA-Enterprise-Windows](/assets/img/Pasted image 20230928223432.png)
+![WPA-Enterprise-Windows](/assets/img/Pasted-image-20230928223432.png)
 
 And in mac:
-![WPA-Enterprise-Mac](/assets/img/Pasted image 20230928223504.png)
+![WPA-Enterprise-Mac](/assets/img/Pasted-image-20230928223504.png)
 
 Looks like a captive portal but it's safer. In WPA enterprise we attack the clients, not the AP nor the RADIUS 
 
@@ -104,7 +104,7 @@ Wireshark filter for packets with certificate: ``tls.handshake.certificate`` als
 
 If from wireshark we now open Extensible Authentication Protocol > Transport Layer Security. We now have to open the TLSv1 Record Layer: Handshake Protocol: Certificate (or similar, as the TLS version will vary). Once there, we will have to expand Handshake Protocol: Certificate item, then Certificates (plural). Inside Certificates, we can see one or more entries named Certificate. Each of them will be preceded by the length. For each certificate, we right click and select Export Packet Bytes to save the data into a file with a .der extension.4
 
-![Wireshark-Certificate-Download](/assets/img/Pasted image 20230928231211.png)
+![Wireshark-Certificate-Download](/assets/img/Pasted-image-20230928231211.png)
 
 Finally, we can get information about the certificate with `openssl x509 -inform der -in CERT_FILENAME -text` or we can check the validity by using ``openssl x509 -in CERT_FILENAME -noout -enddate`` where **CERT_FILENAME** is the .pem or .crt file.
 

@@ -139,7 +139,7 @@ Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows
 
 By enumerating the web server we identify the following links to download two different files:
 
-![Web-Server-Download](/assets/img/Pasted image 20230530213130.png)
+![Web-Server-Download](/assets/img/Pasted-image-20230530213130.png)
 
 ### Exploitation
 Accessing this links, we identify a pattern on both files `http://intelligence.htb/documents/2020-12-15-upload.pdf` and `http://intelligence.htb/documents/2020-01-01-upload.pdf` as we can see this seems to be an static link with a slightly difference which is the dates, so let's proceed to create a python script that creates a datelist:
@@ -183,7 +183,7 @@ pdfgrep 'password' *.pdf
 2020-06-04-upload.pdf:After logging in please change your password as soon as possible.
 ```
 Within this pdf we found a password `NewIntelligenceCorpUser9876`:
-![Downloadable-Content-With-Password](/assets/img/Pasted image 20230530214716.png)
+![Downloadable-Content-With-Password](/assets/img/Pasted-image-20230530214716.png)
 
 Now we need to search for a user, we can use the same command as before but unfortunately this is unsuccessful:
 ```bash
@@ -350,7 +350,7 @@ After trying to access via `evil-winrm` unsuccessfully, now is time to think out
 bloodhound.py -c All -u 'Ted.Graves' -p 'Mr.Teddy' -ns 10.10.10.248 -d intelligence.htb
 ```
 From Bloodhound we receive the following results:
-![Bloodhound-Results](/assets/img/Pasted image 20230601074941.png)
+![Bloodhound-Results](/assets/img/Pasted-image-20230601074941.png)
 
 After searching about how to execute a `ReadGMSAPassword` from our user, an excellent technique to obtain the GMSA password is abusing of [gMSADumper.py](https://github.com/micahvandeusen/gMSADumper) as follows:
 ```bash
@@ -377,7 +377,7 @@ ResourceGroupIds:
 Domain SID: S-1-5-21-4210132550-3389855604-3437519686
 ```
 And the SPN can be extracted from Bloodhound in the extra properties of the user `svc_int` since this is an Unconstrained Delegation the `WWW/dc.intelligence.htb` shows up:
-![SPN-Bloodhound](/assets/img/Pasted image 20230601093711.png)
+![SPN-Bloodhound](/assets/img/Pasted-image-20230601093711.png)
 
 And finally we have this information to abuse `impacket-ticketer`:
 ```bash

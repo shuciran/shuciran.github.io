@@ -21,9 +21,9 @@ We can authenticate via WINRM by creating a certificate, this is an AD CS featur
 openssl req -newkey rsa:2048 -nodes -keyout amanda.key -out amanda.csr # All the options required are by default
 ```
 Then we proceed to sign certificate as user by Sign-in to `http://10.10.10.103/certsrv`  and paste the content of amanda.csr into the text field:
-![Winrm-auth-certificate](/assets/img/Pasted image 20230129030758.png)
+![Winrm-auth-certificate](/assets/img/Pasted-image-20230129030758.png)
 Download base64-encoded certificate:
-![winrm-base64-cert](/assets/img/Pasted image 20230129030850.png)
+![winrm-base64-cert](/assets/img/Pasted-image-20230129030850.png)
 And modify the winrm_shell.rb script:
 #Note `remember to run the script in the same folder as in certnew.cer and amanda.key`
 ```bash

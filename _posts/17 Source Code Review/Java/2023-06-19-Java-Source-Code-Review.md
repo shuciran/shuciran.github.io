@@ -28,10 +28,10 @@ C:\Program Files (x86)\ManageEngine\AppManager12\working\WEB-INF\lib # This path
 ```
 ### JD-GUI
 Excellent tool for decompile .jar files
-![JD-GUI](/assets/img/Pasted image 20230703211001.png)
+![JD-GUI](/assets/img/Pasted-image-20230703211001.png)
 
 We first need to save the decompiled source code into human-readable .java files. JD-GUI allows us to do that via the File > Save All Sources menu. A tool for search strings Notepad++ which is already installed on our VM and could help us navigate this code base in a much easier way.
-![JD-GUI-Decompiler](/assets/img/Pasted image 20230703211144.png)
+![JD-GUI-Decompiler](/assets/img/Pasted-image-20230703211144.png)
 
 ### Frontend Search
 

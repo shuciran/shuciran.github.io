@@ -13,7 +13,7 @@ The Kerberos authentication protocol used by Microsoft is adopted from the Kerbe
 
 At a high level, Kerberos client authentication to a service in Active Directory involves the use of a domain controller in the role of a key distribution center, or KDC. This process is shown below.
 
-![Description](/assets/img/Pasted image 20221113212909.png)
+![Description](/assets/img/Pasted-image-20221113212909.png)
 
 For example, when a user logs in to their workstation, a request is sent to the domain controller, which has the role of KDC and also maintains the Authentication Server service. This _Authentication Server Request_ (or _AS_REQ_) contains a time stamp that is encrypted using a hash derived from the password of the user and the username.
 

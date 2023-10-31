@@ -16,7 +16,7 @@ It is possible to install [iLSpy](https://marketplace.visualstudio.com/items?ite
 
 1) Go to the extension and select the binary:
 
-![Using-ILSpy-for-dissassemble](/assets/img/Pasted image 20230512224937.png)
+![Using-ILSpy-for-dissassemble](/assets/img/Pasted-image-20230512224937.png)
 
 Examples:
 [Cascade](https://shuciran.github.io/posts/Cascade/#fnref:net-dissassemble-ilspy)

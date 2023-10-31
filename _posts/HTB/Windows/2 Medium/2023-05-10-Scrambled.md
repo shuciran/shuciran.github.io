@@ -411,10 +411,10 @@ Version: dev (9cfb81e) - 01/21/23 - Ronnie Flathers @ropnop
 
 There is a web page under port 80 which has information about possible steps that can be made to access the internal network since NTLM is no longer active due to security reasons:
 
-![Security-NTLM](/assets/img/Pasted image 20230511075718.png)
+![Security-NTLM](/assets/img/Pasted-image-20230511075718.png)
 
 Inspecting the web page we notice that a user's name is being leaked on this image:
-![Leaked-user](/assets/img/Pasted image 20230511075506.png)
+![Leaked-user](/assets/img/Pasted-image-20230511075506.png)
 
 It is always a good idea to gather more information on kerberos with the structure of the already leaked user for that we can use the following [kerberos usernames list](https://github.com/attackdebris/kerberos_enum_userlists) to enumerate valid user against the kerberos:
 
@@ -514,7 +514,7 @@ After several attempts and so many errors must probably this is not the path to 
 
 An excellent resource to try further attacks against an Active Directory is [WADComs](https://wadcoms.github.io/#spn):
 
-![Wadcoms](/assets/img/Pasted image 20230511211224.png)
+![Wadcoms](/assets/img/Pasted-image-20230511211224.png)
 
 An interesting attack is the one with ticketer.py, impacket’s ticketer.py can perform Silver Ticket attacks, which crafts a valid TGS ticket for a specific service using a valid user’s NTLM hash. It is then possible to gain access to that service. To further exploit we need three main things:
 
@@ -536,7 +536,7 @@ Domain SID: S-1-5-21-2743207045-1827831105-2542523200
 ```
 Then we proceed to get the NTLM Hash, this can be done on the following [page](https://codebeautify.org/ntlm-hash-generator)
 
-![Hash-Generator](/assets/img/Pasted image 20230511213706.png)
+![Hash-Generator](/assets/img/Pasted-image-20230511213706.png)
 
 Once we have all we can proceed to execute a Silver Ticket attack as follows:
 ```bash
@@ -717,9 +717,9 @@ ScrambleLib.dll:    PE32 executable (DLL) (console) Intel 80386 Mono/.Net assemb
 
 After debugging with a Windows Server 2012 and extract the source code we found the following deserialization vulnerable code: [^ysoserial-net]
 
-![Description](/assets/img/Pasted image 20230122220052.png)
+![Description](/assets/img/Pasted-image-20230122220052.png)
 Now the important thing is to found the vulnerable input where it can be exploited, after running the ScrambleClient.exe we can identify a debug functionality which gives us a hint about what is being executed with this executable:
-![Description](/assets/img/Pasted image 20230122220636.png)
+![Description](/assets/img/Pasted-image-20230122220636.png)
 
 Since this is .NET and there is a possible Deserialization vulnerability, we can generate the following payload with [ysoserial.net](https://github.com/pwntester/ysoserial.net/releases/tag/v1.35)
 ```cmd
@@ -775,7 +775,7 @@ MiscSvc:ScrambledEggs9900
 ### References
 
 [SilverTicket Explanation Minuto 1:20:00](https://www.youtube.com/watch?v=osmFGqnFe8c&ab_channel=S4viOnLive%28BackupDirectosdeTwitch%29):
-![Description](/assets/img/Pasted image 20230122223446.png)
+![Description](/assets/img/Pasted-image-20230122223446.png)
 [ysoserial.net](https://github.com/pwntester/ysoserial.net/releases/tag/v1.35)
 [GetUserSNPs.py issue](https://github.com/fortra/impacket/issues/1206)
 [NTLM Hash Generator](https://codebeautify.org/ntlm-hash-generator)

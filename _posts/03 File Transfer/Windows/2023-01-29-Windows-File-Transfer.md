@@ -27,9 +27,9 @@ Then you can access directly to this folder from the file explorer itself, by pu
 ```bash
 \\192.168.119.186\shareFolder
 ```
-![Description](/assets/img/Pasted image 20220907003801.png)
+![Description](/assets/img/Pasted-image-20220907003801.png)
 If by any chance we get the following error:
-![Description](/assets/img/Pasted image 20230129045937.png)
+![Description](/assets/img/Pasted-image-20230129045937.png)
 We need to create a share with authentication to mount our share in the victim machine as another NFS:
 ```bash
 impacket-smbserver shareFolder $(pwd) -smb2support -username shuciran -password shuciran123

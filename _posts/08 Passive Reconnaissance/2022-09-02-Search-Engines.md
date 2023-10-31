@@ -17,7 +17,7 @@ You can use various filters while using shodan, among others are:
 - port
 - country
 
-![Description](/assets/img/Pasted image 20220831230555.png)
+![Description](/assets/img/Pasted-image-20220831230555.png)
 
 ### Censys
 [Censys](https://search.censys.io)

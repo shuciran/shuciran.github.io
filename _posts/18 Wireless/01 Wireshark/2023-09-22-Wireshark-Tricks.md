@@ -13,13 +13,13 @@ show_image_post: false                                    # Change this to true
 
 The packet list layout can be rearranged in various ways. Let's select Edit > Preferences > Appearance > Layout to choose another arrangement.
 
-![Wireshark-Layout](/assets/img/Pasted image 20230922001943.png)
+![Wireshark-Layout](/assets/img/Pasted-image-20230922001943.png)
 
 ### Wireless Toolbar
 
 You can display the toolbar by clicking View > Wireless Toolbar
 
-![Wireless-Toolbar](/assets/img/Pasted image 20230922002547.png)
+![Wireless-Toolbar](/assets/img/Pasted-image-20230922002547.png)
 
 ### Wireshark Hoping
 
