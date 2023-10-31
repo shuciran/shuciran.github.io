@@ -2,7 +2,7 @@
 description: >-
   DotNet Decompilation
 title:  DotNet Decompilation             # Add title here
-date: 2023-07-01 08:00:00 -0600                           # Change the date to match completion date
+date: 2023-10-30 08:00:00 -0600                           # Change the date to match completion date
 categories: [17 SCR, DotNet Decompilation]                     # Change Templates to Writeup
 tags: [scr, dotnet, decompilation]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
