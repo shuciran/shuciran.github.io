@@ -1,172 +1,27 @@
-This post is to show Markdown syntax rendering on [**Chirpy**](https://github.com/cotes2020/jekyll-theme-chirpy/fork), you can also use it as an example of writing. Now, let's start looking at text and typography.
+# Categories Menu
+|Categories|Comment|
+|----------|-------|
+|[00 General](https://shuciran.github.io/categories/00-general/)| Used for simple information used on a day to day basis such as ports and commands |
+|[01 Enumeration](https://shuciran.github.io/categories/01-enumeration/)| Enumeration for the most common services to be found on pentest and CTFs |
+|[02 Lateral Movement](https://shuciran.github.io/categories/02-lateral-movement/)| Useful techniques to exploit Lateral movements on both Windows and Linux operating systems |
+|[03 File Transfer](https://shuciran.github.io/categories/03-file-transfer/)| Techniques to upload files on both Windows and Linux (tested on real environments, it works!) |
+|[04 Privilege Escalation](https://shuciran.github.io/categories/04-privilege-escalation/)| Some of the tested techniques used for privilege escalation |
+|[05 Utilities](https://shuciran.github.io/categories/05-utilities/) | Miscellaneous and useful functions, techniques and stuff to exploit specific unusual software that is not to be seen in the wild so often |
+|[06 Exploitation](https://shuciran.github.io/categories/06-exploitation/) | Attacks that are useful to gain access to the system via the most common attacks, still in progress since new attacks might and will arise... |
+|[07 Persistence](https://shuciran.github.io/categories/07-persistence/) | How to get persistence once that you gained access to the machine |
+|[08 Passive Reconnaissance](https://shuciran.github.io/categories/08-passive-reconnaissance/)| Passive enumeration through open sources intelligence (OSINT) |
+|[09 Port Redirection and Tunneling](https://shuciran.github.io/categories/09-port-redirection-and-tunneling/)| Port redirection through some of the most common tools |
+|[10 Client Side Attacks](https://shuciran.github.io/categories/10-client-side-attacks/) | Client side attacks such as e-mail attachment via open SMTP and more... |
+|[11 Password Attacks](https://shuciran.github.io/categories/11-password-attacks/)| Cracking and brute force mostly...|
+|[12 Active Directory](https://shuciran.github.io/categories/12-active-directory/)| Active Directory methodology for all the stages on this type of assessment, proved on real environments...|
+|[16 Cloud](https://shuciran.github.io/categories/16-cloud/)| Cloud techniques for enumeration, exploitation and post exploitation |
+|[17 SCR](https://shuciran.github.io/categories/17-scr/)| Source Code Review techniques for exploitation on whitebox assessment | 
+|[18 Wireless](https://shuciran.github.io/categories/18-wireless/) | Most common wireless attacks | 
+|[19 Python Scripting](https://shuciran.github.io/categories/19-python-scripting/) | Python scripting tips and templates |
+|[99 Tips & Tricks](https://shuciran.github.io/categories/99-tips-tricks/) | Tips and tricks for general stuff |
+|[HackTheBox](https://shuciran.github.io/categories/hackthebox/) | Hack The Box machines writeups | 
+|[Chirpy Markdown]| Chirpy markdown syntax that could be used for creating this notes | 
 
-## Titles
----
-# H1 - heading
 
-<h2 data-toc-skip>H2 - heading</h2>
 
-<h3 data-toc-skip>H3 - heading</h3>
 
-<h4>H4 - heading</h4>
----
-
-[Worker](https://shuciran.github.io/posts/Worker/#fnref:azure-devops-enum)
-
-## Paragraph
-
-Quisque egestas convallis ipsum, ut sollicitudin risus tincidunt a. Maecenas interdum malesuada egestas. Duis consectetur porta risus, sit amet vulputate urna facilisis ac. Phasellus semper dui non purus ultrices sodales. Aliquam ante lorem, ornare a feugiat ac, finibus nec mauris. Vivamus ut tristique nisi. Sed vel leo vulputate, efficitur risus non, posuere mi. Nullam tincidunt bibendum rutrum. Proin commodo ornare sapien. Vivamus interdum diam sed sapien blandit, sit amet aliquam risus mattis. Nullam arcu turpis, mollis quis laoreet at, placerat id nibh. Suspendisse venenatis eros eros.
-
-## Lists
-
-### Ordered list
-
-1. Firstly
-2. Secondly
-3. Thirdly
-
-### Unordered list
-
-- Chapter
-  + Section
-    * Paragraph
-
-### ToDo list
-
-- [ ] Job
-  + [x] Step 1
-  + [x] Step 2
-  + [ ] Step 3
-
-### Description list
-
-Sun
-: the star around which the earth orbits
-
-Moon
-: the natural satellite of the earth, visible by reflected light from the sun
-
-## Block Quote
-
-> This line shows the _block quote_.
-
-## Prompts
-
-> An example showing the `tip` type prompt.
-{: .prompt-tip }
-
-> An example showing the `info` type prompt.
-{: .prompt-info }
-
-> An example showing the `warning` type prompt.
-{: .prompt-warning }
-
-> An example showing the `danger` type prompt.
-{: .prompt-danger }
-
-## Tables
-
-| Company                      | Contact          | Country |
-|:-----------------------------|:-----------------|--------:|
-| Alfreds Futterkiste          | Maria Anders     | Germany |
-| Island Trading               | Helen Bennett    | UK      |
-| Magazzini Alimentari Riuniti | Giovanni Rovelli | Italy   |
-
-## Links
-
-<http://127.0.0.1:4000>
-
-## Footnote
-
-Click the hook will locate the footnote[^footnote], and here is another footnote[^fn-nth-2].
-
-## Inline code
-
-This is an example of `Inline Code`.
-
-## Filepath
-
-Here is the `/path/to/the/file.extend`{: .filepath}.
-
-## Code blocks
-
-### Common
-
-```
-This is a common code snippet, without syntax highlight and line number.
-```
-
-### Specific Language
-
-```bash
-if [ $? -ne 0 ]; then
-  echo "The command was not successful.";
-  #do the needful / exit
-fi;
-```
-
-### Specific filename
-
-```sass
-@import
-  "colors/light-typography",
-  "colors/dark-typography"
-```
-{: file='_sass/jekyll-theme-chirpy.scss'}
-
-## Mathematics
-
-The mathematics powered by [**MathJax**](https://www.mathjax.org/):
-
-$$ \sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6} $$
-
-When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are
-
-$$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
-
-## Mermaid SVG
-
-```mermaid
- gantt
-  title  Adding GANTT diagram functionality to mermaid
-  apple :a, 2017-07-20, 1w
-  banana :crit, b, 2017-07-23, 1d
-  cherry :active, c, after b a, 1d
-```
-
-## Images
-
-### Default (with caption)
-
-![Desktop View](/posts/20190808/mockup.png){: width="972" height="589" }
-_Full screen width and center alignment_
-
-### Left aligned
-
-![Desktop View](/posts/20190808/mockup.png){: width="972" height="589" .w-75 .normal}
-
-### Float to left
-
-![Desktop View](/posts/20190808/mockup.png){: width="972" height="589" .w-50 .left}
-Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
-
-### Float to right
-
-![Desktop View](/posts/20190808/mockup.png){: width="972" height="589" .w-50 .right}
-Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
-
-### Dark/Light mode & Shadow
-
-The image below will toggle dark/light mode based on theme preference, notice it has shadows.
-
-![light mode only](/posts/20190808/devtools-light.png){: .light .w-75 .shadow .rounded-10 w='1212' h='668' }
-![dark mode only](/posts/20190808/devtools-dark.png){: .dark .w-75 .shadow .rounded-10 w='1212' h='668' }
-
-## Video
-
-{% include embed/youtube.html id='Balreaj8Yqs' %}
-
-## Reverse Footnote
-
-[^footnote]: The footnote source
-[^fn-nth-2]: The 2nd footnote source
