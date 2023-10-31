@@ -1,7 +1,7 @@
 ---
 description: >-
-  dotNET Project Compilation
-title: dotNET Project Compilation             # Add title here
+  DotNet Project Compilation
+title: DotNet Project Compilation             # Add title here
 date: 2023-01-31 08:00:00 -0600                           # Change the date to match completion date
 categories: [17 SCR, DotNet Source Code Review]                     # Change Templates to Writeup
 tags: [scr, dotnet, compilation ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags

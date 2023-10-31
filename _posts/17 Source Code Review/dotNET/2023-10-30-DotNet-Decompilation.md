@@ -34,3 +34,7 @@ The search then throws the following results:
 
 > To retrieve such results we need to go to Options and unmark "Search in GAC assemblies" option
 {: .prompt-tip }
+
+By picking one of the functions and try to find its cross-references. We'll select the Base64UrlDecode function by right-clicking on it and selecting Analyze from the context menu.
+
+![](/assets/img/Pasted-image-20231031024851.png){: .light .w-75 .shadow w='1212' h='668' }
