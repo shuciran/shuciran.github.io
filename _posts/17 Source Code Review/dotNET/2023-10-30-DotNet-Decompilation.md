@@ -21,9 +21,16 @@ To view the source code of this executable, we'll have to expand the test assemb
 
 #### Cross-References
 
-Cross-References
-When analyzing and debugging more complex applications, one of the most useful features of a decompiler is the ability to find cross-references5 to a particular variable or function. We can use cross-references to better understand the code logic. For example, we can monitor the execution flow statically or set strategic breakpoints6 to debug and inspect the target application. We can demonstrate the effectiveness of cross-references in this process with a simple example.
+When analyzing and debugging more complex applications, one of the most useful features of a decompiler is the ability to find cross-references to a particular variable or function. We can use cross-references to better understand the code logic. For example, we can monitor the execution flow statically or set strategic breakpoints to debug and inspect the target application. We can demonstrate the effectiveness of cross-references in this process with a simple example.
 
 Let's suppose that while studying our DotNetNuke target application, we noticed a few Base64-encoded values in the HTTP requests captured by Burp Suite. Since we would like to better understand where these values are decoded and processed within our target application, we could make the assumption that any functions that handle Base64-encoded values contain the word "base64".
 
-We'll follow this assumption and start searching for these functions in dnSpy. For a thorough analysis we should open all the .NET modules loaded by the web application in our decompiler. However, for the purpose of this exercise, we'll only open the main DNN module, C:\inetpub\wwwroot\dotnetnuke\bin\DotNetNuke.dll, and search for the term "base64" within method names as shown in Figure 34.
+We'll follow this assumption and start searching for these functions in dnSpy. For a thorough analysis we should open all the .NET modules loaded by the web application in our decompiler. However, for the purpose of this exercise, we'll only open the main DNN module, C:\inetpub\wwwroot\dotnetnuke\bin\DotNetNuke.dll, and search for the term "base64" within method names as shown below:
+
+![DNN-Method-Search](/assets/img/Pasted-image-20231031001854.png)
+
+The search then throws the following results:
+![DNN-Results-Search](/assets/img/Pasted-image-20231031002110.png)
+
+> To retrieve such results we need to go to Options and unmark "Search in GAC assemblies" option
+{: .prompt-tip }
