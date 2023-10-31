@@ -37,4 +37,12 @@ The search then throws the following results:
 
 By picking one of the functions and try to find its cross-references. We'll select the Base64UrlDecode function by right-clicking on it and selecting Analyze from the context menu.
 
-![](/assets/img/Pasted-image-20231031024851.png){: .light .w-75 .shadow w='1212' h='668' }
+![DnSpy-Menu-Analyze](/assets/img/Pasted-image-20231031024851.png){: .dark .w-75 .shadow .rounded-10 w='1212' h='668' }
+
+The results should appear in the Analyzer window. Specifically, expanding the function name reveals two options: _Used By_ and _Uses_:
+![DnSpy-Analyzer](/assets/img/Pasted-image-20231031033850.png)
+
+As the name suggests, the Used By node expands to reveal where our example function is called within the target DLL. This is extremely useful when analyzing source code. If we now click on the cross-reference, dnSpy reveals the location of the function call in the source code:
+
+![Function-Called](/assets/img/Pasted-image-20231031034124.png)
+![Function-Called](/assets/img/Pasted-image-20231031034124.png)
