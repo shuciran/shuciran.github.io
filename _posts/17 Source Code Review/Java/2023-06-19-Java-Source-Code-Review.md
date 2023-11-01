@@ -12,9 +12,24 @@ show_image_post: false                                    # Change this to true
 ### Java Reconnaissance
 A quick Google search leads us to a file extensions explanation page, which states that the .do extension is typically a URL mapping scheme for compiled Java code.
 
-### web.xml
+### HTTP Routing (web.xml)
 Java web applications use a deployment descriptor file named web.xml to determine how URLs map to servlets, which URLs require authentication, and other information. This file is essential when we look for the implementations of any given functionality exposed by the web application.
 Within the working directory, we see a WEB-INF folder, which is the Java's default configuration folder path where we can find the web.xml file. This file contains a number of servlet names to servlet classes as well as the servlet name to URL mappings. Information like this will become useful once we know exactly which class we are targeting, since it will tell us how to reach it.
+
+```xml
+<!-- SubscriptionHandler-->
+<servlet id="SubscriptionHandler">
+  <servlet-name>SubscriptionHandler</servlet-name>
+  <servlet-class>org.opencrx.kernel.workflow.servlet.SubscriptionHandlerServlet</servlet-class>
+	</servlet>
+...
+<servlet-mapping>
+  <servlet-name>SubscriptionHandler</servlet-name>
+	<url-pattern>/SubscriptionHandler/*</url-pattern>
+</servlet-mapping>
+```
+
+In this example, the web.xml file defines a servlet with the "SubscriptionHandler" id for the org.opencrx.kernel.workflow.servlet.SubscriptionHandlerServlet class. A "servlet-mapping" entry maps the /SubscriptionHandler/* URL to the SubscriptionHandler. The star character indicates a wildcard. The servlet class is responsible for parsing the URL path and deciding what to do with HTTP requests.
 
 ### Java Path Finding
 

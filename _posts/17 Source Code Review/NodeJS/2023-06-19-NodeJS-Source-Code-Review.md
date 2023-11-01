@@ -17,6 +17,20 @@ The existence of bin/www, package.json, and routes/ indicate that this is a Node
 The existence of the docker-compose.yml and Dockerfile files indicate that this application is started using Docker containers.
 ```
 
+### HTTP Routing
+
+Some programming languages and frameworks include routing information directly in the source code. For example, ExpressJS uses this method of routing:
+```javascript
+var express = require('express');
+var router = express.Router();
+...
+
+router.get('/login', function(req, res, next) {
+  res.render('login', { title: 'Login' });
+});
+```
+
+
 ### Methods
 It is important to know that in a typical NodeJS server side plugin this are the low-hanging-fruit that we need to check first:
 -   eval
