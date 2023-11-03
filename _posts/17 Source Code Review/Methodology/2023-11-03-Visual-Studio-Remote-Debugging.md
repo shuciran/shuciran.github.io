@@ -1,10 +1,10 @@
 ---
 description: >-
-   Visual Studio Debugging
-title:  Visual Studio Debugging            # Add title here
-date: 2023-10-31 08:00:00 -0600                           # Change the date to match completion date
-categories: [17 SCR, Visual Studio Debugging]                     # Change Templates to Writeup
-tags: [scr, vscode, debugging ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+   Visual Studio Remote Debugging
+title:  Visual Studio Remote Debugging            # Add title here
+date: 2023-11-03 08:00:00 -0600                           # Change the date to match completion date
+categories: [17 SCR, Visual Studio Remote Debugging]                     # Change Templates to Writeup
+tags: [scr, vscode, remote debugging ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
@@ -70,7 +70,7 @@ Listening for transport dt_socket at address: 9898
 2021-03-02 14:14:40.896  INFO 11376 --- [           main] com.offsec.awae.NumberGameApplication    : Started NumberGameApplication in 2.509 seconds (JVM running for 3.11)
 ```
 > REMEMBER TO RUN THIS COMMAND AS SUDO, OPEN PORTS ON YOUR MACHINE REQUIRES ROOT
-{: .prompt-warning }
+{: .prompt-danger }
 
 Now that the application has started, we can access it on port 8000 with our browser.
 
@@ -88,12 +88,14 @@ Depending on our configuration, we might receive a pop-up asking for us to switc
 
 Once the debugger has established a connection with the remote program, the debugging context menu should open. We can verify everything is working by submitting a number on the web page and checking if the debugger pauses on our breakpoint.
 
-Figure 66: Breakpoint has been hit
-Figure 66: Breakpoint has been hit
+![Breakpoint-hit](/assets/img/Pasted-image-20231103015909.png)
+
 The debugger reached the breakpoint and paused execution. Let's click Step Over twice to break execution on line 26. We'll click on this: Main Controller in the Variables window to find the value of the answer variable.
 
-Figure 67: Finding the value of 
-Figure 67: Finding the value of "answer"
+![Step-over-three-times](/assets/img/Pasted-image-20231103020137.png)
+
 Now that we have the answer, we can click Continue to let execution resume. We can submit another request with the correct answer. When we are finished with the debugger connection, we can click Disconnect. We can then switch to our terminal and press C+c to stop the Java application.
 
-While this application's functionality is trivial, this exercise demonstrates the value of remote debugging when developing exploits for web applications. This section served as an introduction to the remote debugging, and we will use this process extensively throughout the rest of the course.
+![Correct-answer-after-remote-debugging](/assets/img/Pasted-image-20231103020226.png)
+
+While this application's functionality is trivial, this exercise demonstrates the value of remote debugging when developing exploits for web applications.
