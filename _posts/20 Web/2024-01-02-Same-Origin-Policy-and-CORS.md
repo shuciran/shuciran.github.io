@@ -4,7 +4,7 @@ description: >-
 title:  Same-Origin Policy and CORS           # Add title here
 date: 2024-01-02 08:00:00 -0600                           # Change the date to match completion date
 categories: [20 Web, Same-Origin Policy and CORS]                     # Change Templates to Writeup
-tags: [Web, same-origin policy, cors]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [web, same-origin policy, cors]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
