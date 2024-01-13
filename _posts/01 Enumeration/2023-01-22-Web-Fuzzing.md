@@ -76,9 +76,9 @@ python3 dirsearch.py -u https://example.com/ -e php,asp,aspx,jsp,html,txt -x 403
 - -p: Specifies the percentage of progress updates to be displayed.
 - -o: Specifies the output file.
 ```bash
-ffuf -w /path/to/wordlist.txt -u https://example.com/FUZZ -H "Authorization: Bearer 123456789" -t 100 -recursion -recursion-depth 2 -mc 200,301,302,307 -ac -e .php,.txt,.html -fc 404 -p 0.5 -o output.html
+ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u https://example.com/FUZZ -H "Authorization: Bearer 123456789" -t 100 -recursion -recursion-depth 2 -mc 200,301,302,307 -ac -e .php,.txt,.html -fc 404 -p 0.5 -o output.html
 ```
 #### Subdomain Fuzzing:
 ```bash
-ffuf -w wordlist.txt -u http://target.com/FUZZ -H "Host: FUZZ.target.com" -fs 4242
+ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://10.129.94.147/FUZZ -H "Host: FUZZ.inlanefreight.htb"
 ```
