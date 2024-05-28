@@ -9,6 +9,8 @@ show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
 
+### Sideloadly
+
 For non-jailbroken devices, sideloadly can be used to sign and install IPAs. The application runs on Windows and macOS and requires the iOS device to be connected to the host via USB or Wi-Fi
 
 It requires a free or paid Apple developer account to obtin a code signing certificate. Based on the type of developer account, Apple imposes certain restrictions:

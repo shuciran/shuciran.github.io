@@ -18,9 +18,12 @@
 |[17 SCR](https://shuciran.github.io/categories/17-scr/)| Source Code Review techniques for exploitation on whitebox assessment | 
 |[18 Wireless](https://shuciran.github.io/categories/18-wireless/) | Most common wireless attacks | 
 |[19 Python Scripting](https://shuciran.github.io/categories/19-python-scripting/) | Python scripting tips and templates |
+|[20 Web](https://shuciran.github.io/categories/20-web/) | Multiple Web Pentest Notes |
+|[21 Mobile](https://shuciran.github.io/categories/21-mobile/) | Mobile multiple pentest notes |
+|[98 Useful Installations](https://shuciran.github.io/categories/98-useful-installations/) | Installation of multiple tools that are useful for certain scenarios |
 |[99 Tips & Tricks](https://shuciran.github.io/categories/99-tips-tricks/) | Tips and tricks for general stuff |
 |[HackTheBox](https://shuciran.github.io/categories/hackthebox/) | Hack The Box machines writeups | 
-|[Chirpy Markdown]| Chirpy markdown syntax that could be used for creating this notes | 
+|[Chirpy Markdown](https://shuciran.github.io/posts/Chirpy-Markdown/) | Chirpy markdown syntax that could be used for creating this notes | 
 
 
 
