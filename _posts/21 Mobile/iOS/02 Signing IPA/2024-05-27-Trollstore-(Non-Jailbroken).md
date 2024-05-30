@@ -4,7 +4,7 @@ description: >-
 title:  Signing IPA with TrollStore (Non-jailbroken)           # Add title here
 date: 2024-05-27 08:00:00 -0600                           # Change the date to match completion date
 categories: [21 Mobile, Signing IPA - TrollStore]                     # Change Templates to Writeup
-tags: [signing, ipa, trollstore]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [mobile, signing, ipa, trollstore]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
 ---
