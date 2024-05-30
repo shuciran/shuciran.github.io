@@ -20,6 +20,11 @@ The IPA can be directly installed on the iOS device via the command line with `i
 ipainstaller App_name.ipa
 ```
 
+Usage:
+```bash
+plutil -xml file.plist
+```
+
 ### Finding files
 
 An easy way to find local files related to an application on an iOS device is by making use of the ipainstaller tool. We can use this tool to list all the installed apps on the device and determine where the files of these apps are located by making use of the commands displayed below:
