@@ -176,5 +176,6 @@ Find id_rsa using dd binary with SUID
 
 ### References
 
-
+- https://www.exploit-db.com/exploits/51475
+- https://gtfobins.github.io/gtfobins/dd/
 
