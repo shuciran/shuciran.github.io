@@ -159,15 +159,15 @@ root@destroyercms:~#
 ```
 
 ### Post Exploitation
-Finally, read the flag on /root directory:
-```bash
-root@destroyercms:~# ls
-ETSCTF_<REDACTED>
-```
+Flags are stored at:
+
+`/etc/passwd`
+`/etc/shadow`
+`environment variables`
+`/root`
 
 ### Credentials
-Find id_rsa using dd binary with SUID
-
+Find id_rsa for user root using dd binary with SUID
 
 ### Notes
 
@@ -176,6 +176,5 @@ Find id_rsa using dd binary with SUID
 
 ### References
 
-- https://www.exploit-db.com/exploits/51475
-- https://gtfobins.github.io/gtfobins/dd/
-
+- [GetSimple CMS RCE exploit](https://www.exploit-db.com/exploits/51475)
+- [GTFObin dd binary](https://gtfobins.github.io/gtfobins/dd/)
