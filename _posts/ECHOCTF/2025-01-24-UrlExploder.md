@@ -195,7 +195,7 @@ Flags are stored at:
 
 `/etc/passwd`
 `/etc/shadow`
-`enviornment variables (env command)`
+`environment variables (env command)`
 `/root`
 
 
