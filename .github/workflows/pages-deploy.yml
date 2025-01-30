@@ -58,7 +58,7 @@ jobs:
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
         with:
-          name: site-artifact
+          name: github-pages
           path: "_site"
           overwrite: true  # Ensures old artifacts are replaced
 
@@ -72,7 +72,7 @@ jobs:
       - name: Download site artifact
         uses: actions/download-artifact@v4
         with:
-          name: site-artifact
+          name: github-pages
           path: _site
 
       - name: Debug Downloaded Directory
