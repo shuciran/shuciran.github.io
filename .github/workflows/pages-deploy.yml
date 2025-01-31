@@ -26,13 +26,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  # Update to latest version
+        uses: actions/checkout@v4  # ✅ Updated to latest version
         with:
           fetch-depth: 0
 
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v4  # Update to latest version
+        uses: actions/configure-pages@v4  # ✅ Updated to latest version
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -41,7 +41,7 @@ jobs:
           bundler-cache: true
 
       - name: Build site
-        run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
+        run: bundle exec jekyll b -d "_site"
         env:
           JEKYLL_ENV: "production"
 
@@ -50,9 +50,11 @@ jobs:
           bundle exec htmlproofer _site --disable-external --check-html --allow_hash_href
 
       - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v2  # 🚀 Updated to v2
+        uses: actions/upload-artifact@v4  # ✅ Uses v4 (Fixes deprecation issue)
         with:
-          path: "_site${{ steps.pages.outputs.base_path }}"
+          name: github-pages
+          path: _site
+          retention-days: 1  # Short retention to save storage
 
   deploy:
     environment:
@@ -60,7 +62,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2  # 🚀 Updated to v2
+      - name: Download site artifact
+        uses: actions/download-artifact@v4  # ✅ Uses v4 (Fixes deprecation issue)
+        with:
+          name: github-pages
+          path: _site
+
+      - name: Upload to GitHub Pages
+        uses: actions/deploy-pages@v2  # ✅ Updated to latest deploy version
+        with:
+          artifact_path: _site  # ✅ Manually setting the artifact path
