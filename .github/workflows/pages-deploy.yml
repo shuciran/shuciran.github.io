@@ -25,14 +25,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4  # ✅ Updated to latest version
+      - name: Checkout repository
+        uses: actions/checkout@v4  # ✅ Latest version
         with:
           fetch-depth: 0
 
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v4  # ✅ Updated to latest version
+        uses: actions/configure-pages@v4  # ✅ Updated to v4
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -49,27 +49,31 @@ jobs:
         run: |
           bundle exec htmlproofer _site --disable-external --check-html --allow_hash_href
 
-      - name: Upload site artifact
-        uses: actions/upload-artifact@v4  # ✅ Uses v4 (Fixes deprecation issue)
+      - name: Upload built site as artifact
+        uses: actions/upload-artifact@v4  # ✅ Correct version
         with:
           name: github-pages
-          path: _site
+          path: _site/
           retention-days: 1  # Short retention to save storage
 
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
 
     steps:
       - name: Download site artifact
-        uses: actions/download-artifact@v4  # ✅ Uses v4
+        uses: actions/download-artifact@v4  # ✅ Correct version
         with:
           name: github-pages
-          path: _site
+          path: _site/
+
+      - name: Prepare artifact for GitHub Pages
+        run: |
+          mv _site public  # Move to expected deployment directory
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2  # ✅ Trigger deployment
+        uses: actions/deploy-pages@v2  # ✅ Correct deployment step
