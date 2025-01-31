@@ -70,10 +70,6 @@ jobs:
           name: github-pages
           path: _site
 
-      - name: Move files to GitHub Pages workspace
-        run: |
-          mv _site "$GITHUB_WORKSPACE"
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2  # ✅ Trigger deployment
