@@ -4,7 +4,7 @@ description: >-
 title: Filethingies (Advanced)                # Add title here
 date: 2025-01-29 08:00:00 -0600                           # Change the date to match completion date
 categories: [echoCTF, Advanced]                     # Change Templates to Writeup
-tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [Default Credentials, File Thingie, RCE, LFI]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Filethingies.png                # Add infocard image here for post preview image
 ---

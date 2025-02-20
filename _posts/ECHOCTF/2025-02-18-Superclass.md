@@ -4,7 +4,7 @@ description: >-
 title: Superclass (Advanced)                # Add title here
 date: 2025-02-18 08:00:00 -0600                           # Change the date to match completion date
 categories: [echoCTF, Advanced]                     # Change Templates to Writeup
-tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [Unrestricted File Upload, Open eClass, Supervisor.conf ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Superclass.png                # Add infocard image here for post preview image
 ---
