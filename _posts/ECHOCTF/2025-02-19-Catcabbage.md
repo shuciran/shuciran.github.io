@@ -4,7 +4,7 @@ description: >-
 title: Catcabbage (Intermediate)                # Add title here
 date: 2025-02-19 08:00:00 -0600                           # Change the date to match completion date
 categories: [echoCTF, Intermediate]                     # Change Templates to Writeup
-tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
+tags: [Default Credentials, RCE, BlackCat CMS, broccoli-compass]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
 image: /assets/img/icons/Catcabbage.png                # Add infocard image here for post preview image
 ---
@@ -16,7 +16,7 @@ image: /assets/img/icons/Catcabbage.png                # Add infocard image here
 ### Content
 
 -  Default Credentials
--  Blackcat Cms v1.4 - Remote Code Execution (RCE) 
+-  Blackcat CMS v1.4 - Remote Code Execution (RCE) 
 -  RCE in broccoli-compass
 
 ### Reconnaissance
