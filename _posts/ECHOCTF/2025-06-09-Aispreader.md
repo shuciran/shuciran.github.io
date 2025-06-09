@@ -1,16 +1,16 @@
 ---
 description: >-
-  DestroyerCMS echoCTF Machine
-title: DestroyerCMS (Intermediate)                # Add title here
-date: 2025-01-23 08:00:00 -0600                           # Change the date to match completion date
-categories: [echoCTF, Advanced]                     # Change Templates to Writeup
+  Aispreader echoCTF Machine
+title: Aispreader (Expert)                # Add title here
+date: 2025-06-09 08:00:00 -0600                           # Change the date to match completion date
+categories: [echoCTF, Expert]                     # Change Templates to Writeup
 tags: []     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: true                                    # Change this to true
-image: /assets/img/icons/Destroyercms.png                # Add infocard image here for post preview image
+image: /assets/img/icons/Aispreader.png                # Add infocard image here for post preview image
 ---
 ##### Host entries
 ```bash
-10.10.10.103 sizzle.htb.local sizzle.htb htb.local
+10.0.14.34
 ```
 
 ### Content
