@@ -2,8 +2,8 @@
 description: >-
   Building a Speech To Text System
 title: Building a Speech To Text System      # Add title here
-date: 2025-10-22 08:00:00 -0600                           # Change the date to match completion date
-categories: [23 AI and ML attack, Attacking LLM]                     # Change Templates to Writeup
+date: 2025-10-30 08:00:00 -0600                           # Change the date to match completion date
+categories: [23 AI and ML attack, 01 Attacking LLM]                     # Change Templates to Writeup
 tags: [AI, Speech to text]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -18,6 +18,9 @@ To convert speech to text, the two most important libraries we need are:
 - And to load an audio file, we will need the soundfile library.
 
 ```bash
+apt update && apt install python3-pip -y
+mkdir llm-speech-to-text
+cd llm-speech-to-text
 cat >requirements.txt <<EOF
 torch==2.6.0
 transformers==4.30.0
@@ -27,9 +30,15 @@ EOF
 pip install -r requirements.txt
 ```
 
+```bash
+git clone https://gitlab.practical-devsecops.training/marudhamaran/caisp-sample-files.git
+ls -al caisp-sample-files/audio-samples
+```
+
 #### Converting Speech to Text
 
-```bash
+```python
+cat > simple_speech_to_text.py <<'EOF'
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 import soundfile as sf
 import torch
@@ -73,4 +82,16 @@ if __name__ == "__main__":
             transcription = speech_to_text(audio_file)
 
             print("Returned Transcription:", transcription)
+EOF
+```
+Audio Samples:
+```bash
+caisp-sample-files/audio-samples/01.wav
+caisp-sample-files/audio-samples/02.wav
+caisp-sample-files/audio-samples/03.wav
+caisp-sample-files/audio-samples/04.wav
+caisp-sample-files/audio-samples/05.wav
+caisp-sample-files/audio-samples/06.wav
+caisp-sample-files/audio-samples/07.wav
+caisp-sample-files/audio-samples/08.wav
 ```

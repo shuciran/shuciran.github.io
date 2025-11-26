@@ -3,7 +3,7 @@ description: >-
     Evaluating AI Models Using pytest-evals
 title: Evaluating AI Models Using pytest-evals      # Add title here
 date: 2025-10-22 08:00:00 -0600                           # Change the date to match completion date
-categories: [23 AI and ML attack, Attacking LLM]                     # Change Templates to Writeup
+categories: [23 AI and ML attack, 01 Attacking LLM]                     # Change Templates to Writeup
 tags: [AI, pytest-evals]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -19,20 +19,14 @@ As AI models become integral to production systems, proper evaluation is crucial
 - Compare different model versions
 - Create reproducible test suites for regression testing
 
-#### Commands
-
+#### Requirements:
 ```bash
+apt update && apt install python3-pip python3 python3.10-venv -y
 mkdir llm-evaluation
 cd llm-evaluation
 python3 -m venv venv
 source venv/bin/activate
-``` 
-Dependencies
-```bash
 pip install pytest==7.4.0 pandas==2.0.3 matplotlib==3.7.2 numpy==1.24.3 pytest-evals==0.3.4
-```
-
-```bash
 mkdir -p mock_llm
 mkdir -p tests/data
 touch tests/__init__.py
@@ -40,8 +34,7 @@ touch tests/conftest.py
 
 pytest --help
 ```
-
-Usage:
+#### Creating a Mock LLM
 ```bash
 mkdir -p mock_llm tests
 touch mock_llm/__init__.py
@@ -80,6 +73,9 @@ class MockLLM:
         else:
             return "general_inquiry"
 EOF
+```
+#### Basic Testing
+```bash
 cat > test_llm.py <<'EOF'
 from mock_llm.simple_llm import MockLLM
 
@@ -100,9 +96,10 @@ for example in examples:
     print(f"Classification: '{category}'")
     print("---")
 EOF
-
+python test_llm.py
 ```
-
+#### Creating pytest Configuration
+This configuration adds our mock_llm module to the Python path and creates a pytest fixture that shares the classifier function across all tests.
 ```bash
 cat > tests/conftest.py <<'EOF'
 import pytest
@@ -148,8 +145,7 @@ Running the evaluation phase:
 ```bash
 pytest --run-eval -v
 ```
-### Debugging and Fixing Evaluation Tests
-Creating an Analysis Test
+### Creating an Analysis Test
 ```bash
 cat > tests/test_analysis.py <<'EOF'
 import pytest
@@ -182,7 +178,7 @@ def test_analysis(eval_results):
 EOF
 pytest --run-eval-analysis -v
 ```
-Fixing the Evaluation Test
+#### Fixing the Evaluation Test
 ```bash
 cat > tests/test_simple_eval.py <<'EOF'
 import pytest
@@ -208,7 +204,7 @@ def test_customer_inquiry(eval_bag, classifier):
 EOF
 pytest --run-eval --run-eval-analysis -v
 ```
-Adding More Test Cases
+#### Adding More Test Cases
 ```bash
 cat > tests/test_multiple_cases.py <<'EOF'
 import pytest
@@ -233,3 +229,21 @@ def test_classifier_cases(eval_bag, classifier, input_text, expected):
 EOF
 pytest --run-eval --run-eval-analysis -v
 ```
+
+#### Key Benefits of pytest-evals for LLM Testing
+Here’s why pytest-evals is great for testing AI models:
+
+1) Two Simple Steps:
+- First, we collect what the AI says (using –run-eval)
+- Then, we check if it’s right (using –run-eval-analysis)
+2) Easy Problem-Finding:
+- We can see exactly which questions the AI got wrong
+- We can tell if the AI is wrong or if our test is wrong
+3) Better Testing:
+- We look at how well the AI does overall, not just one answer
+- We can check many different things about the AI’s answers
+- We decide what score is good enough for our AI
+4) Works for Big Tests:
+- We can ask the AI hundreds of questions at once
+- We can group similar questions together
+- We can make different kinds of tests for the same AI

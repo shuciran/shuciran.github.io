@@ -3,7 +3,7 @@ description: >-
   Creating a Webscraper using Pyscrap
 title: Creating a Webscraper using Pyscrap        # Add title here
 date: 2025-10-22 08:00:00 -0600                           # Change the date to match completion date
-categories: [23 AI and ML attack, Attacking LLM]                     # Change Templates to Writeup
+categories: [23 AI and ML attack, 01 Attacking LLM]                     # Change Templates to Writeup
 tags: [AI, Webscraper,Pyscrap]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
@@ -53,7 +53,10 @@ if __name__ == '__main__':
     web_content = scrape(url, max_chars)
     print(web_content)
 ```
-
+Uage:
+```bash
+python3 simple_scraper.py https://www.practical-devsecops.com
+```
 
 ```bash
 wget -O simple_scraper.py https://gitlab.practical-devsecops.training/-/snippets/73/raw/main/simple_scraper.py

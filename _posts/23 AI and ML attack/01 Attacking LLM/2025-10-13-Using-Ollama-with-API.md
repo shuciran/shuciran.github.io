@@ -3,7 +3,7 @@ description: >-
   Using Ollama with API
 title: Using Ollama with API       # Add title here
 date: 2025-10-13 08:00:00 -0600                           # Change the date to match completion date
-categories: [23 AI and ML attack, Attacking LLM]                     # Change Templates to Writeup
+categories: [23 AI and ML attack, 01 Attacking LLM]                     # Change Templates to Writeup
 tags: [AI, ollama, ML, API ]     # TAG names should always be lowercase; replace template with writeup, and add relevant tags
 show_image_post: false                                    # Change this to true
 #image: /assets/img/machine-0-infocard.png                # Add infocard image here for post preview image
